@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Icon from 'components/AppIcon';
+import Modal from 'components/ui/Modal';
 import { useSkills } from 'context/SkillsContext';
 
 const SkillsManager = () => {
@@ -390,188 +391,173 @@ const SkillsManager = () => {
       </div>
 
       {/* Category Modal */}
-      {showCategoryModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
-            <h2 className="text-2xl font-bold text-primary-800 mb-4">
-              {editingCategory ? 'Edit Category' : 'Add Category'}
-            </h2>
-            <div className="space-y-4">
-              {!editingCategory && (
-                <div>
-                  <label className="block text-sm font-medium text-primary-700 mb-1">Category Key</label>
-                  <input
-                    type="text"
-                    value={categoryForm.key}
-                    onChange={(e) => setCategoryForm({ ...categoryForm, key: e.target.value })}
-                    placeholder="e.g., frontend"
-                    className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
-                  />
-                </div>
-              )}
-              <div>
-                <label className="block text-sm font-medium text-primary-700 mb-1">Title</label>
-                <input
-                  type="text"
-                  value={categoryForm.title}
-                  onChange={(e) => setCategoryForm({ ...categoryForm, title: e.target.value })}
-                  placeholder="e.g., Frontend Development"
-                  className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-primary-700 mb-1">Icon</label>
-                <select
-                  value={categoryForm.icon}
-                  onChange={(e) => setCategoryForm({ ...categoryForm, icon: e.target.value })}
-                  className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
-                >
-                  {iconOptions.map((icon) => (
-                    <option key={icon} value={icon}>{icon}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-primary-700 mb-1">Color</label>
-                <select
-                  value={categoryForm.color}
-                  onChange={(e) => setCategoryForm({ ...categoryForm, color: e.target.value })}
-                  className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
-                >
-                  {colorOptions.map((color) => (
-                    <option key={color} value={color}>{color}</option>
-                  ))}
-                </select>
-              </div>
+      <Modal
+        isOpen={showCategoryModal}
+        onClose={() => { setShowCategoryModal(false); setEditingCategory(null); setCategoryForm({ key: '', title: '', icon: 'Code', color: 'accent' }); }}
+        title={editingCategory ? 'Edit Category' : 'Add Category'}
+        footer={
+          <>
+            <button
+              onClick={() => { setShowCategoryModal(false); setEditingCategory(null); setCategoryForm({ key: '', title: '', icon: 'Code', color: 'accent' }); }}
+              className="flex-1 px-4 py-2 border border-primary-200 text-primary-700 rounded-lg hover:bg-primary-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={editingCategory ? handleUpdateCategory : handleAddCategory}
+              className="flex-1 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-600 transition-colors"
+            >
+              {editingCategory ? 'Update' : 'Add'}
+            </button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          {!editingCategory && (
+            <div>
+              <label className="block text-sm font-medium text-primary-700 mb-1">Category Key</label>
+              <input
+                type="text"
+                value={categoryForm.key}
+                onChange={(e) => setCategoryForm({ ...categoryForm, key: e.target.value })}
+                placeholder="e.g., frontend"
+                className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              />
             </div>
-            <div className="flex space-x-3 mt-6">
-              <button
-                onClick={() => {
-                  setShowCategoryModal(false);
-                  setEditingCategory(null);
-                  setCategoryForm({ key: '', title: '', icon: 'Code', color: 'accent' });
-                }}
-                className="flex-1 px-4 py-2 border border-primary-200 text-primary-700 rounded-lg hover:bg-primary-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={editingCategory ? handleUpdateCategory : handleAddCategory}
-                className="flex-1 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-600 transition-colors"
-              >
-                {editingCategory ? 'Update' : 'Add'}
-              </button>
-            </div>
+          )}
+          <div>
+            <label className="block text-sm font-medium text-primary-700 mb-1">Title</label>
+            <input
+              type="text"
+              value={categoryForm.title}
+              onChange={(e) => setCategoryForm({ ...categoryForm, title: e.target.value })}
+              placeholder="e.g., Frontend Development"
+              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-primary-700 mb-1">Icon</label>
+            <select
+              value={categoryForm.icon}
+              onChange={(e) => setCategoryForm({ ...categoryForm, icon: e.target.value })}
+              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+            >
+              {iconOptions.map((icon) => (
+                <option key={icon} value={icon}>{icon}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-primary-700 mb-1">Color</label>
+            <select
+              value={categoryForm.color}
+              onChange={(e) => setCategoryForm({ ...categoryForm, color: e.target.value })}
+              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+            >
+              {colorOptions.map((color) => (
+                <option key={color} value={color}>{color}</option>
+              ))}
+            </select>
           </div>
         </div>
-      )}
+      </Modal>
 
       {/* Skill Modal */}
-      {showSkillModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
-            <h2 className="text-2xl font-bold text-primary-800 mb-4">
-              {editingSkill ? 'Edit Skill' : 'Add Skill'}
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-primary-700 mb-1">Skill Name</label>
-                <input
-                  type="text"
-                  value={skillForm.name}
-                  onChange={(e) => setSkillForm({ ...skillForm, name: e.target.value })}
-                  placeholder="e.g., React.js"
-                  className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-primary-700 mb-1">
-                  Level: {skillForm.level}%
-                </label>
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  value={skillForm.level}
-                  onChange={(e) => setSkillForm({ ...skillForm, level: parseInt(e.target.value) })}
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-primary-700 mb-1">Icon</label>
-                <select
-                  value={skillForm.icon}
-                  onChange={(e) => setSkillForm({ ...skillForm, icon: e.target.value })}
-                  className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
-                >
-                  {iconOptions.map((icon) => (
-                    <option key={icon} value={icon}>{icon}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div className="flex space-x-3 mt-6">
-              <button
-                onClick={() => {
-                  setShowSkillModal(false);
-                  setEditingSkill(null);
-                  setSkillForm({ name: '', level: 50, icon: 'Code' });
-                }}
-                className="flex-1 px-4 py-2 border border-primary-200 text-primary-700 rounded-lg hover:bg-primary-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={editingSkill ? handleUpdateSkill : handleAddSkill}
-                className="flex-1 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-600 transition-colors"
-              >
-                {editingSkill ? 'Update' : 'Add'}
-              </button>
-            </div>
+      <Modal
+        isOpen={showSkillModal}
+        onClose={() => { setShowSkillModal(false); setEditingSkill(null); setSkillForm({ name: '', level: 50, icon: 'Code' }); }}
+        title={editingSkill ? 'Edit Skill' : 'Add Skill'}
+        footer={
+          <>
+            <button
+              onClick={() => { setShowSkillModal(false); setEditingSkill(null); setSkillForm({ name: '', level: 50, icon: 'Code' }); }}
+              className="flex-1 px-4 py-2 border border-primary-200 text-primary-700 rounded-lg hover:bg-primary-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={editingSkill ? handleUpdateSkill : handleAddSkill}
+              className="flex-1 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-600 transition-colors"
+            >
+              {editingSkill ? 'Update' : 'Add'}
+            </button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-primary-700 mb-1">Skill Name</label>
+            <input
+              type="text"
+              value={skillForm.name}
+              onChange={(e) => setSkillForm({ ...skillForm, name: e.target.value })}
+              placeholder="e.g., React.js"
+              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-primary-700 mb-1">
+              Level: {skillForm.level}%
+            </label>
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={skillForm.level}
+              onChange={(e) => setSkillForm({ ...skillForm, level: parseInt(e.target.value) })}
+              className="w-full"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-primary-700 mb-1">Icon</label>
+            <select
+              value={skillForm.icon}
+              onChange={(e) => setSkillForm({ ...skillForm, icon: e.target.value })}
+              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+            >
+              {iconOptions.map((icon) => (
+                <option key={icon} value={icon}>{icon}</option>
+              ))}
+            </select>
           </div>
         </div>
-      )}
+      </Modal>
 
       {/* Tech Modal */}
-      {showTechModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
-            <h2 className="text-2xl font-bold text-primary-800 mb-4">
-              {editingTech !== null ? 'Edit Technology' : 'Add Technology'}
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-primary-700 mb-1">Technology Name</label>
-                <input
-                  type="text"
-                  value={techForm}
-                  onChange={(e) => setTechForm(e.target.value)}
-                  placeholder="e.g., React"
-                  className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
-                />
-              </div>
-            </div>
-            <div className="flex space-x-3 mt-6">
-              <button
-                onClick={() => {
-                  setShowTechModal(false);
-                  setEditingTech(null);
-                  setTechForm('');
-                }}
-                className="flex-1 px-4 py-2 border border-primary-200 text-primary-700 rounded-lg hover:bg-primary-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={editingTech !== null ? handleUpdateTech : handleAddTech}
-                className="flex-1 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-600 transition-colors"
-              >
-                {editingTech !== null ? 'Update' : 'Add'}
-              </button>
-            </div>
+      <Modal
+        isOpen={showTechModal}
+        onClose={() => { setShowTechModal(false); setEditingTech(null); setTechForm(''); }}
+        title={editingTech !== null ? 'Edit Technology' : 'Add Technology'}
+        footer={
+          <>
+            <button
+              onClick={() => { setShowTechModal(false); setEditingTech(null); setTechForm(''); }}
+              className="flex-1 px-4 py-2 border border-primary-200 text-primary-700 rounded-lg hover:bg-primary-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={editingTech !== null ? handleUpdateTech : handleAddTech}
+              className="flex-1 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-600 transition-colors"
+            >
+              {editingTech !== null ? 'Update' : 'Add'}
+            </button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-primary-700 mb-1">Technology Name</label>
+            <input
+              type="text"
+              value={techForm}
+              onChange={(e) => setTechForm(e.target.value)}
+              placeholder="e.g., React"
+              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+            />
           </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 };
