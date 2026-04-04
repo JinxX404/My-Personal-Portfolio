@@ -3,13 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@dhiwise/component-tagger": "^1.0.9",
     "@supabase/supabase-js": "^2.75.0",
     "@tailwindcss/forms": "^0.5.7",
-    "@testing-library/jest-dom": "^5.15.1",
-    "@testing-library/react": "^11.2.7",
-    "@testing-library/user-event": "^12.8.3",
-    "axios": "^1.8.4",
     "date-fns": "^4.1.0",
     "dotenv": "^16.0.1",
     "framer-motion": "^10.16.4",
@@ -17,13 +12,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
-    "react-hook-form": "^7.55.0",
     "react-router-dom": "6.0.2",
-    "react-router-hash-link": "^2.4.3",
     "recharts": "^2.15.2",
-    "tailwindcss-animate": "^1.0.7",
-    "tailwindcss-elevation": "^2.0.0",
-    "tailwindcss-fluid-type": "^2.0.7",
     "zod": "^4.3.5"
   },
   "scripts": {
@@ -33,17 +23,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
-    "test:e2e:debug": "playwright test --debug",
-    "test:blogs": "playwright test blogs-manager blog-detail",
-    "test:blogs-manager": "playwright test blogs-manager",
-    "test:blog-detail": "playwright test blog-detail",
-    "test:report": "playwright show-report"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "test:e2e:debug": "playwright test --debug"
   },
   "browserslist": {
     "production": [

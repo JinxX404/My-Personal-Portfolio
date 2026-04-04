@@ -1,58 +1,6 @@
 // src/lib/validation.js
 import { z } from "zod";
 
-// ==================== BLOG SCHEMAS ====================
-
-export const blogSchema = z.object({
-  title: z
-    .string()
-    .min(3, "Title must be at least 3 characters")
-    .max(200, "Title must be less than 200 characters"),
-  slug: z
-    .string()
-    .regex(
-      /^[a-z0-9-]+$/,
-      "Slug must only contain lowercase letters, numbers, and hyphens"
-    )
-    .optional()
-    .nullable(),
-  excerpt: z
-    .string()
-    .max(500, "Excerpt must be less than 500 characters")
-    .optional()
-    .nullable(),
-  content: z
-    .string()
-    .min(10, "Content must be at least 10 characters")
-    .optional()
-    .nullable(),
-  category: z
-    .string()
-    .max(50, "Category must be less than 50 characters")
-    .optional()
-    .nullable(),
-  status: z.enum(["draft", "published", "archived"]).default("draft"),
-  featured: z.boolean().default(false),
-  cover_image: z.string().url("Invalid cover image URL").optional().nullable(),
-  tags: z.array(z.string()).optional().default([]),
-  meta_title: z
-    .string()
-    .max(70, "Meta title should be under 70 characters")
-    .optional()
-    .nullable(),
-  meta_description: z
-    .string()
-    .max(160, "Meta description should be under 160 characters")
-    .optional()
-    .nullable(),
-});
-
-export const blogCreateSchema = blogSchema.extend({
-  title: z.string().min(3, "Title is required"),
-});
-
-export const blogUpdateSchema = blogSchema.partial();
-
 // ==================== PROJECT SCHEMAS ====================
 
 export const projectSchema = z.object({

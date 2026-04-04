@@ -83,28 +83,6 @@ export const SkeletonCard = ({ className = '' }) => (
   </div>
 );
 
-// Blog post skeleton
-export const SkeletonBlogPost = ({ className = '' }) => (
-  <div className={`bg-white dark:bg-primary-800 rounded-xl shadow-md overflow-hidden ${className}`}>
-    <SkeletonImage aspectRatio="16/9" />
-    <div className="p-6 space-y-4">
-      <div className="flex items-center gap-2">
-        <Skeleton height={20} width={80} rounded="full" />
-        <Skeleton height={16} width={100} />
-      </div>
-      <Skeleton height={28} className="w-full" />
-      <SkeletonText lines={3} />
-      <div className="flex items-center justify-between pt-2">
-        <div className="flex items-center gap-2">
-          <SkeletonAvatar size={32} />
-          <Skeleton height={16} width={100} />
-        </div>
-        <Skeleton height={16} width={80} />
-      </div>
-    </div>
-  </div>
-);
-
 // Project card skeleton
 export const SkeletonProjectCard = ({ className = '' }) => (
   <div className={`bg-white dark:bg-primary-800 rounded-xl shadow-lg overflow-hidden ${className}`}>
