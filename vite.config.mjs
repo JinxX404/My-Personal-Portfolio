@@ -9,6 +9,17 @@ export default defineConfig({
   build: {
     // outDir: "build",
     chunkSizeWarningLimit: 500,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom', 'react-helmet'],
+          'framer-motion': ['framer-motion'],
+          'supabase': ['@supabase/supabase-js'],
+          'charts': ['recharts'],
+          'utils': ['zod', 'date-fns'],
+        },
+      },
+    },
   },
   plugins: [tsconfigPaths(), react()],
   server: {

@@ -51,11 +51,27 @@ export const fetchProjects = async (filters = {}) => {
   }
 };
 
-export const fetchPublishedProjects = async () => {
-  return fetchProjects({
-    publishing_status: "published",
-    visibility: "public",
-  });
+export const fetchPublishedProjects = async (options = {}) => {
+  const { limit, offset } = options;
+  if (!isSupabaseConfigured()) {
+    return { success: false, error: "Supabase not configured" };
+  }
+
+  try {
+    let query = supabase
+      .from("projects")
+      .select("*", { count: 'exact' })
+      .eq("publishing_status", "published")
+      .eq("visibility", "public")
+      .order("created_at", { ascending: false });
+
+    if (limit) query = query.range(offset || 0, (offset || 0) + limit - 1);
+
+    const { data, error, count } = await query;
+    return { success: true, data, count, error };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 };
 
 export const fetchFeaturedProjects = async () => {

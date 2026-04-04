@@ -26,63 +26,85 @@ const PortfolioGallery = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [portfolioProjects, setPortfolioProjects] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const PAGE_SIZE = 20;
+
+  const transformProjects = (projects) => {
+    return projects.map((project) => {
+      const technologies = Array.isArray(project.technologies) ? project.technologies : [];
+      const tags = Array.isArray(project.tags) ? project.tags : [];
+      const heroImages = Array.isArray(project.hero_images) ? project.hero_images : [];
+      const metrics = Array.isArray(project.metrics) ? project.metrics : [];
+
+      let metricsLabel = project.results || 'Proven Results';
+      if (metrics.length) {
+        const metric = metrics[0];
+        if (typeof metric === 'string') {
+          metricsLabel = metric;
+        } else if (metric && (metric.label || metric.value)) {
+          metricsLabel = [metric.label, metric.value].filter(Boolean).join(': ');
+        }
+      }
+
+      return {
+        id: project.id,
+        title: project.title || 'Untitled Project',
+        category: project.category || 'General',
+        technologies,
+        description: project.description || 'No description available yet.',
+        image: heroImages.length ? heroImages[0] : fallbackImage,
+        metrics: metricsLabel,
+        featured: Boolean(project.featured),
+        liveUrl: project.demo_url || '#',
+        githubUrl: project.repository_url || '#',
+        tags
+      };
+    });
+  };
+
+  const loadInitialProjects = async () => {
+    if (!useSupabase) {
+      setPortfolioProjects([]);
+      return;
+    }
+
+    setIsFetching(true);
+    const { fetchPublishedProjects } = await import('../../services/projectsService.js');
+    const result = await fetchPublishedProjects({ limit: PAGE_SIZE, offset: 0 });
+
+    if (result.success && Array.isArray(result.data) && result.data.length) {
+      setPortfolioProjects(transformProjects(result.data));
+      setHasMore(result.data.length >= PAGE_SIZE || (result.count && result.data.length < result.count));
+    } else {
+      setPortfolioProjects([]);
+      setHasMore(false);
+    }
+
+    setIsFetching(false);
+  };
+
+  const loadMoreProjects = async () => {
+    if (!useSupabase || isLoadingMore || !hasMore) return;
+
+    setIsLoadingMore(true);
+    const { fetchPublishedProjects } = await import('../../services/projectsService.js');
+    const offset = portfolioProjects.length;
+    const result = await fetchPublishedProjects({ limit: PAGE_SIZE, offset });
+
+    if (result.success && Array.isArray(result.data) && result.data.length) {
+      setPortfolioProjects(prev => [...prev, ...transformProjects(result.data)]);
+      setHasMore(result.data.length >= PAGE_SIZE);
+    } else {
+      setHasMore(false);
+    }
+
+    setIsLoadingMore(false);
+  };
 
   useEffect(() => {
-    const loadProjects = async () => {
-      if (!useSupabase) {
-        setPortfolioProjects([]);
-        return;
-      }
-
-      setIsFetching(true);
-      const { fetchPublishedProjects } = await import('../../services/projectsService.js');
-      const result = await fetchPublishedProjects();
-
-      if (result.success && Array.isArray(result.data) && result.data.length) {
-        // Safety filter: only show published projects
-        const publishedProjects = result.data.filter(p => p.publishing_status === 'published');
-
-        const transformedProjects = publishedProjects.map((project) => {
-          const technologies = Array.isArray(project.technologies) ? project.technologies : [];
-          const tags = Array.isArray(project.tags) ? project.tags : [];
-          const heroImages = Array.isArray(project.hero_images) ? project.hero_images : [];
-          const metrics = Array.isArray(project.metrics) ? project.metrics : [];
-
-          let metricsLabel = project.results || 'Proven Results';
-          if (metrics.length) {
-            const metric = metrics[0];
-            if (typeof metric === 'string') {
-              metricsLabel = metric;
-            } else if (metric && (metric.label || metric.value)) {
-              metricsLabel = [metric.label, metric.value].filter(Boolean).join(': ');
-            }
-          }
-
-          return {
-            id: project.id,
-            title: project.title || 'Untitled Project',
-            category: project.category || 'General',
-            technologies,
-            description: project.description || 'No description available yet.',
-            image: heroImages.length ? heroImages[0] : fallbackImage,
-            metrics: metricsLabel,
-            featured: Boolean(project.featured),
-            liveUrl: project.demo_url || '#',
-            githubUrl: project.repository_url || '#',
-            tags
-          };
-        });
-
-        setPortfolioProjects(transformedProjects);
-      } else {
-        setPortfolioProjects([]);
-      }
-
-      setIsFetching(false);
-    };
-
-    loadProjects();
-  }, [getPublishedProjects, useSupabase]);
+    loadInitialProjects();
+  }, [useSupabase]);
 
 
   const displayProjects = portfolioProjects;
@@ -401,6 +423,7 @@ const PortfolioGallery = () => {
                 ))}
               </motion.div>
             ) : filteredProjects.length > 0 ? (
+              <>
               <motion.div
                 key={`${activeFilter}-${viewMode}-${searchQuery}`}
                 initial={{ opacity: 0 }}
@@ -415,6 +438,30 @@ const PortfolioGallery = () => {
                   <ProjectCard key={project.id} project={project} index={index} />
                 ))}
               </motion.div>
+
+              {/* Load More Button */}
+              {hasMore && !isFetching && (
+                <div className="text-center mt-12">
+                  <button
+                    onClick={loadMoreProjects}
+                    disabled={isLoadingMore}
+                    className="btn-primary inline-flex items-center gap-2"
+                  >
+                    {isLoadingMore ? (
+                      <>
+                        <Icon name="Loader" size={18} className="animate-spin" />
+                        <span>Loading...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Icon name="Plus" size={18} />
+                        <span>Load More Projects</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+              </>
             ) : (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}

@@ -1,2 +1,0 @@
-import{j as e,R as t,I as n,L as c}from"./index-Cnm7xBKq.js";const o=({items:r})=>e.jsx("nav",{className:"flex items-center gap-2 text-sm text-secondary-600 mb-6","aria-label":"Breadcrumb",children:r.map((a,s)=>e.jsxs(t.Fragment,{children:[s>0&&e.jsx(n,{name:"ChevronRight",size:14}),a.href?e.jsx(c,{to:a.href,className:"hover:text-accent transition-colors",children:a.label}):e.jsx("span",{className:"text-primary-800 dark:text-primary-200 font-medium",children:a.label})]},a.href||a.label))});export{o as B};
-//# sourceMappingURL=Breadcrumb-_oj1s6jj.js.map
