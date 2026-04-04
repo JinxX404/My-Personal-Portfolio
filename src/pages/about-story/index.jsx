@@ -4,175 +4,32 @@ import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
+import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
+import { useSkills } from 'context/SkillsContext';
 
 const AboutStory = () => {
+  const { profile, careerData } = usePortfolioSettings();
+  const { skillCategories } = useSkills();
   const [activeTimelineItem, setActiveTimelineItem] = useState(null);
   const [visibleSections, setVisibleSections] = useState(new Set());
 
-  // Mock data for personal information
-  const personalInfo = {
-    name: "Moataz Mohammed",
-    title: "Backend Engineer",
-    location: "Assiut, Egypt",
-    experience: "1+ Years",
-    profileImage: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fpreview.redd.it%2Fswxzho8udhn71.jpg%3Fauto%3Dwebp%26s%3Dc283a63d039de4b428aea7c55f7b6722fbaddd14&f=1&nofb=1&ipt=8aec085f671e2169d525f14c9d6cf3250263f58adb06b35af99f856c6e2fc601",
-    biography: `I’m a recent graduate in Information Technology from Egyptian E-Learning University, specializing in software engineering. I’m passionate about backend development and have a strong interest in .NET technologies.
-My goal is to grow as a software engineer and create impactful, innovative solutions that solve real problems and make a difference. I’m always looking for opportunities to learn and improve.`,
-    philosophy: `I believe in thoughtful digital craftsmanship – where every line of code, every interaction, and every design decision serves a purpose. Technology should enhance human capability, not complicate it.`,
-    mission: "To create digital experiences that are not just functional, but delightful, accessible, and meaningful to the people who interact with them."
-  };
+  const careerTimeline = careerData?.timeline || [];
+  const careerValues = careerData?.values || [];
+  const careerInterests = careerData?.interests || [];
+  const philosophy = careerData?.philosophy || '';
+  const mission = careerData?.mission || '';
 
-  // Mock timeline data
-  const timelineData = [
-    // {
-    //   id: 1,
-    //   year: "2024",
-    //   title: "Senior Full-Stack Developer",
-    //   company: "TechForward Inc.",
-    //   type: "career",
-    //   description: "Leading frontend architecture for enterprise applications, mentoring junior developers, and driving technical innovation across multiple product teams.",
-    //   achievements: ["Led team of 6 developers", "Improved app performance by 40%", "Implemented design system"],
-    //   technologies: ["React", "TypeScript", "Node.js", "AWS"]
-    // },
-    // {
-    //   id: 2,
-    //   year: "2023",
-    //   title: "AWS Solutions Architect Certification",
-    //   company: "Amazon Web Services",
-    //   type: "certification",
-    //   description: "Achieved professional-level certification in cloud architecture and solutions design.",
-    //   achievements: ["Cloud architecture expertise", "Serverless applications", "DevOps practices"],
-    //   technologies: ["AWS", "Lambda", "CloudFormation", "Docker"]
-    // },
-    // {
-    //   id: 3,
-    //   year: "2022",
-    //   title: "Frontend Team Lead",
-    //   company: "Digital Innovations Co.",
-    //   type: "career",
-    //   description: "Transitioned to leadership role, establishing frontend best practices and mentoring team members while continuing hands-on development.",
-    //   achievements: ["Established coding standards", "Reduced bug reports by 60%", "Launched 3 major products"],
-    //   technologies: ["React", "Vue.js", "GraphQL", "Jest"]
-    // },
-    // {
-    //   id: 4,
-    //   year: "2020",
-    //   title: "React Developer Certification",
-    //   company: "Meta (Facebook)",
-    //   type: "certification",
-    //   description: "Completed advanced React certification program focusing on modern patterns and performance optimization.",
-    //   achievements: ["Advanced React patterns", "Performance optimization", "Testing strategies"],
-    //   technologies: ["React", "Redux", "Testing Library", "Webpack"]
-    // },
-    // {
-    //   id: 5,
-    //   year: "2019",
-    //   title: "Full-Stack Developer",
-    //   company: "StartupHub",
-    //   type: "career",
-    //   description: "Joined early-stage startup to build products from ground up, wearing multiple hats and learning rapid development cycles.",
-    //   achievements: ["Built 5 products from scratch", "Scaled to 10K+ users", "Implemented CI/CD"],
-    //   technologies: ["JavaScript", "Python", "PostgreSQL", "Docker"]
-    // },
-    {
-      id: 6,
-      year: "2025",
-      title: "Bachelor's degree in Information Technology",
-      company: "Egyptian E-Learning University, Egypt",
-      type: "education",
-      description: "Bachelor\'s degree in IT",
-      achievements: ["Graduate with distinction with honors"],
-      technologies: ["Java", "C#", "Python", "DSA","Django Rest Framework","Docker", "Redis"]
-    }
-  ];
+  // Transform skillCategories context into the AboutStory format
+  const skillsData = Object.values(skillCategories || {}).map(cat => ({
+    category: cat.title,
+    skills: (cat.skills || []).map(s => ({
+      name: s.name,
+      level: s.level || 50,
+      years: 1
+    }))
+  }));
 
-  // Mock skills data
-  const skillsData = [
-    {
-      category: "Frontend Development",
-      skills: [
-        { name: "React/Next.js", level: 50, years: 1 },
-        { name: "TypeScript", level: 50, years: 1 },
-        // { name: "Vue.js", level: 85, years: 3 },
-        { name: "CSS/Tailwind", level: 50, years: 1 },
-        { name: "HTML", level: 95, years: 3 },
-        { name: "JavaScript", level: 60, years: 3 },
-      ]
-    },
-    {
-      category: "Backend Development",
-      skills: [
-        { name: "Django Rest Framework", level: 70, years: 1 },
-        { name: "Python", level: 82, years: 2 },
-        { name: "PostgreSQL", level: 85, years: 1 },
-        { name: "RestAPI", level: 60, years: 1 },
-        { name: "Java", level: 80, years: 4 },
-        { name: "MS SQL SERVER", level: 60, years: 2 },
-        { name: "MongoDB", level: 70, years: 1 }
-      ]
-    },
-    {
-      category: "DevOps & Tools",
-      skills: [
-        // { name: "AWS", level: 85, years: 3 },
-        { name: "Docker", level: 80, years: 1 },
-        { name: "Git", level: 90, years: 3 },
-        // { name: "CI/CD", level: 82, years: 4 }
-      ]
-    }
-  ];
 
-  // Mock values data
-  const valuesData = [
-    {
-      icon: "Heart",
-      title: "User-Centric Design",
-      description: "Every decision starts with understanding the human behind the screen. I believe technology should enhance lives, not complicate them.",
-      example: "Redesigned a complex dashboard that reduced user task completion time by 65% through intuitive information architecture."
-    },
-    {
-      icon: "Zap",
-      title: "Performance Excellence",
-      description: "Fast, efficient, and scalable solutions that perform beautifully under pressure. Every millisecond matters in user experience.",
-      example: "Optimized a React application that improved load times from 8 seconds to under 2 seconds, increasing user retention by 40%."
-    },
-    {
-      icon: "Shield",
-      title: "Quality & Reliability",
-      description: "Building robust systems with comprehensive testing, clear documentation, and maintainable code that stands the test of time.",
-      example: "Implemented testing strategy that achieved 95% code coverage and reduced production bugs by 80% over 12 months."
-    },
-    {
-      icon: "Users",
-      title: "Collaborative Growth",
-      description: "Great products are built by great teams. I believe in knowledge sharing, mentoring, and lifting others as we climb.",
-      example: "Mentored 12 junior developers over 3 years, with 10 receiving promotions and 2 becoming team leads themselves."
-    }
-  ];
-
-  // Mock personal interests
-  const personalInterests = [
-    {
-      icon: "Camera",
-      title: "Photography",
-      description: "Capturing moments and exploring composition teaches me about visual storytelling and attention to detail."
-    },
-    {
-      icon: "Mountain",
-      title: "Hiking",
-      description: "Trail running and hiking help me think through complex problems and maintain work-life balance."
-    },
-    {
-      icon: "BookOpen",
-      title: "Teaching",
-      description: "Volunteer coding instructor at local community center, helping others discover the joy of programming."
-    },
-    {
-      icon: "Coffee",
-      title: "Coffee Roasting",
-      description: "The precision and patience required in coffee roasting mirrors the attention to detail I bring to code."
-    }
-  ];
 
   // Scroll animation effect
   useEffect(() => {
@@ -237,8 +94,8 @@ My goal is to grow as a software engineer and create impactful, innovative solut
               <div className="relative max-w-md mx-auto lg:max-w-none">
                 <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-accent-100 to-cta-100 p-2">
                   <Image
-                    src={personalInfo.profileImage}
-                    alt={personalInfo.name}
+                    src={profile?.avatar || ''}
+                    alt={profile?.full_name || 'Moataz Mohammed'}
                     className="w-full h-full object-cover rounded-xl"
                   />
                 </div>
@@ -255,25 +112,25 @@ My goal is to grow as a software engineer and create impactful, innovative solut
             <motion.div variants={itemVariants} className="space-y-6">
               <div>
                 <h1 className="text-4xl lg:text-5xl font-bold text-primary-800 mb-2">
-                  {personalInfo.name}
+                  {profile?.full_name || 'Moataz Mohammed'}
                 </h1>
                 <p className="text-xl text-cta font-semibold mb-4">
-                  {personalInfo.title}
+                  {profile?.title || 'Developer'}
                 </p>
                 <div className="flex flex-wrap gap-4 text-sm text-secondary-600 mb-6">
                   <div className="flex items-center space-x-2">
                     <Icon name="MapPin" size={16} />
-                    <span>{personalInfo.location}</span>
+                    <span>{profile?.location || 'Assiut, Egypt'}</span>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Icon name="Calendar" size={16} />
-                    <span>{personalInfo.experience}</span>
+                    <span>{profile?.experience_years || '1+'} Years Experience</span>
                   </div>
                 </div>
               </div>
 
               <div className="prose prose-lg max-w-none text-secondary-700">
-                <p className="mb-4">{personalInfo.biography}</p>
+                <p className="mb-4">{profile?.bio || ''}</p>
               </div>
 
               <div className="flex flex-wrap gap-4">
@@ -317,11 +174,11 @@ My goal is to grow as a software engineer and create impactful, innovative solut
 
             <motion.div variants={itemVariants} className="space-y-6">
               <p className="text-lg text-secondary-700 leading-relaxed">
-                {personalInfo.philosophy}
+                {philosophy || 'I believe in thoughtful digital craftsmanship.'}
               </p>
               <div className="bg-gradient-to-r from-cta-50 to-accent-50 dark:from-cta-900/30 dark:to-accent-900/30 rounded-xl p-8 border border-cta-200 dark:border-cta-800">
                 <p className="text-lg font-semibold text-primary-800 italic">
-                  "{personalInfo.mission}"
+                  "{mission || 'To create meaningful digital experiences.'}"
                 </p>
               </div>
             </motion.div>
@@ -350,7 +207,7 @@ My goal is to grow as a software engineer and create impactful, innovative solut
             </motion.div>
 
             <motion.div variants={itemVariants} className="grid md:grid-cols-2 gap-8">
-              {valuesData.map((value, index) => (
+              {careerValues.map((value, index) => (
                 <div
                   key={index}
                   className="bg-surface dark:bg-background rounded-xl p-8 shadow-sm border border-primary-200 dark:border-border-strong hover:shadow-md transition-all duration-300"
@@ -363,14 +220,16 @@ My goal is to grow as a software engineer and create impactful, innovative solut
                       <h3 className="text-xl font-bold text-primary-800 mb-3">
                         {value.title}
                       </h3>
-                      <p className="text-secondary-600 mb-4 leading-relaxed">
+                      <p className="text-secondary-600 dark:text-secondary-400 mb-4 leading-relaxed">
                         {value.description}
                       </p>
-                      <div className="bg-accent-50 dark:bg-accent-900/30 rounded-lg p-4 border-l-4 border-accent">
-                        <p className="text-sm text-accent-800 dark:text-accent-200 font-medium">
-                          Real Example: {value.example}
-                        </p>
-                      </div>
+                      {value.example && (
+                        <div className="bg-accent-50 dark:bg-accent-900/30 rounded-lg p-4 border-l-4 border-accent">
+                          <p className="text-sm text-accent-800 dark:text-accent-200 font-medium">
+                            Real Example: {value.example}
+                          </p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -405,7 +264,7 @@ My goal is to grow as a software engineer and create impactful, innovative solut
               <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-accent via-cta to-success hidden md:block"></div>
 
               <div className="space-y-8">
-                {timelineData.map((item, index) => (
+                {careerTimeline.map((item, index) => (
                   <div
                     key={item.id}
                     className={`relative flex items-start space-x-6 cursor-pointer transition-all duration-300 ${
@@ -569,7 +428,7 @@ My goal is to grow as a software engineer and create impactful, innovative solut
             </motion.div>
 
             <motion.div variants={itemVariants} className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {personalInterests.map((interest, index) => (
+              {careerInterests.map((interest, index) => (
                 <div
                   key={index}
                   className="bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/30 dark:to-accent-900/30 rounded-xl p-6 text-center hover:shadow-md transition-all duration-300 border border-primary-200 dark:border-border-strong"

@@ -8,6 +8,7 @@ import ProfileSettingsTab from './settings-tabs/ProfileSettingsTab';
 import SocialLinksTabDynamic from './settings-tabs/SocialLinksTabDynamic';
 import SiteSettingsTab from './settings-tabs/SiteSettingsTab';
 import SEOSettingsTab from './settings-tabs/SEOSettingsTab';
+import CareerDataTab from './settings-tabs/CareerDataTab';
 
 const SettingsManager = () => {
   const { settings, updateSettings } = usePortfolioSettings();
@@ -20,12 +21,14 @@ const SettingsManager = () => {
   const [socialLinks, setSocialLinks] = useState(settings.social_links);
   const [siteSettings, setSiteSettings] = useState(settings.site_settings);
   const [seoSettings, setSeoSettings] = useState(settings.seo_settings);
+  const [careerData, setCareerData] = useState(settings.career_data || { timeline: [], values: [], interests: [] });
 
   const tabs = [
     { id: 'profile', label: 'Profile Info', icon: 'User' },
     { id: 'social', label: 'Social Links', icon: 'Share2' },
     { id: 'site', label: 'Site Settings', icon: 'Settings' },
-    { id: 'seo', label: 'SEO & Analytics', icon: 'TrendingUp' }
+    { id: 'seo', label: 'SEO & Analytics', icon: 'TrendingUp' },
+    { id: 'career', label: 'Career Data', icon: 'Briefcase' }
   ];
 
   // Sync local state with context when settings load
@@ -34,6 +37,7 @@ const SettingsManager = () => {
     setSocialLinks(settings.social_links);
     setSiteSettings(settings.site_settings);
     setSeoSettings(settings.seo_settings);
+    setCareerData(settings.career_data || { timeline: [], values: [], interests: [] });
   }, [settings]);
 
   const handleSave = async () => {
@@ -45,7 +49,8 @@ const SettingsManager = () => {
         profile: profileSettings,
         social_links: socialLinks,
         site_settings: siteSettings,
-        seo_settings: seoSettings
+        seo_settings: seoSettings,
+        career_data: careerData
       };
 
       const result = await updateSettings(settingsData);
@@ -69,6 +74,7 @@ const SettingsManager = () => {
     setSocialLinks(settings.social_links);
     setSiteSettings(settings.site_settings);
     setSeoSettings(settings.seo_settings);
+    setCareerData(settings.career_data || { timeline: [], values: [], interests: [] });
     setSaveMessage({ type: 'success', text: 'Changes reset to last saved state' });
     setTimeout(() => setSaveMessage(null), 3000);
   };
@@ -149,6 +155,13 @@ const SettingsManager = () => {
             <SEOSettingsTab 
               settings={seoSettings} 
               onChange={setSeoSettings}
+            />
+          )}
+          
+          {activeTab === 'career' && (
+            <CareerDataTab
+              careerData={careerData}
+              onChange={setCareerData}
             />
           )}
         </div>

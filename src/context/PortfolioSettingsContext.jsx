@@ -60,6 +60,11 @@ const defaultSettings = {
     twitter_handle: '',
     google_analytics_id: '',
     google_site_verification: ''
+  },
+  career_data: {
+    timeline: [],
+    values: [],
+    interests: []
   }
 };
 
@@ -87,7 +92,8 @@ export const PortfolioSettingsProvider = ({ children }) => {
           profile: data[0].profile || defaultSettings.profile,
           social_links: data[0].social_links || defaultSettings.social_links,
           site_settings: data[0].site_settings || defaultSettings.site_settings,
-          seo_settings: data[0].seo_settings || defaultSettings.seo_settings
+          seo_settings: data[0].seo_settings || defaultSettings.seo_settings,
+          career_data: data[0].career_data || defaultSettings.career_data
         });
       }
     } catch (err) {
@@ -118,6 +124,7 @@ export const PortfolioSettingsProvider = ({ children }) => {
         social_links: newSettings.social_links,
         site_settings: newSettings.site_settings,
         seo_settings: newSettings.seo_settings,
+        career_data: newSettings.career_data,
         updated_at: new Date().toISOString()
       };
 
@@ -156,7 +163,8 @@ export const PortfolioSettingsProvider = ({ children }) => {
     profile: settings.profile,
     socialLinks: settings.social_links,
     siteSettings: settings.site_settings,
-    seoSettings: settings.seo_settings
+    seoSettings: settings.seo_settings,
+    careerData: settings.career_data
   }), [settings, isLoading, error, loadSettings, updateSettings]);
 
   return (
