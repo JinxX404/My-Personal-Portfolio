@@ -106,8 +106,8 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
 
       {images.length > 0 && (
         <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {images.map(image => (
-            <div key={image.id} className="relative group">
+          {images.map((image, idx) => (
+            <div key={image.id || `img-${idx}`} className="relative group">
               <div className="aspect-square bg-secondary-100 dark:bg-primary-800 rounded-lg overflow-hidden">
                 <img src={image.preview} alt={image.name} className="w-full h-full object-cover" />
               </div>
@@ -145,10 +145,10 @@ const VisualAssets = ({ formData, setFormData }) => {
       </div>
 
       <div className="space-y-6">
-        <DropZone zone="heroImages" title="Hero Images" description="Main project showcase images" accept="image/*" maxFiles={3} formData={formData} setFormData={setFormData} dragActive={dragActive} activeDropZone={activeDropZone} setDragActive={setDragActive} setActiveDropZone={setActiveDropZone} />
-        <DropZone zone="screenshots" title="Screenshots" description="Application screenshots showing key features" accept="image/*" maxFiles={8} formData={formData} setFormData={setFormData} dragActive={dragActive} activeDropZone={activeDropZone} setDragActive={setDragActive} setActiveDropZone={setActiveDropZone} />
-        <DropZone zone="mockups" title="Mockups & Designs" description="Design mockups, wireframes, and visual prototypes" accept="image/*" maxFiles={5} formData={formData} setFormData={setFormData} dragActive={dragActive} activeDropZone={activeDropZone} setDragActive={setDragActive} setActiveDropZone={setActiveDropZone} />
-        <DropZone zone="beforeAfter" title="Before/After" description="Images showing the improvement achieved" accept="image/*" maxFiles={4} formData={formData} setFormData={setFormData} dragActive={dragActive} activeDropZone={activeDropZone} setDragActive={setDragActive} setActiveDropZone={setActiveDropZone} />
+        <DropZone key="hero" zone="heroImages" title="Hero Images" description="Main project showcase images" accept="image/*" maxFiles={3} formData={formData} setFormData={setFormData} dragActive={dragActive} activeDropZone={activeDropZone} setDragActive={setDragActive} setActiveDropZone={setActiveDropZone} />
+        <DropZone key="screenshots" zone="screenshots" title="Screenshots" description="Application screenshots showing key features" accept="image/*" maxFiles={8} formData={formData} setFormData={setFormData} dragActive={dragActive} activeDropZone={activeDropZone} setDragActive={setDragActive} setActiveDropZone={setActiveDropZone} />
+        <DropZone key="mockups" zone="mockups" title="Mockups & Designs" description="Design mockups, wireframes, and visual prototypes" accept="image/*" maxFiles={5} formData={formData} setFormData={setFormData} dragActive={dragActive} activeDropZone={activeDropZone} setDragActive={setDragActive} setActiveDropZone={setActiveDropZone} />
+        <DropZone key="beforeAfter" zone="beforeAfter" title="Before/After" description="Images showing the improvement achieved" accept="image/*" maxFiles={4} formData={formData} setFormData={setFormData} dragActive={dragActive} activeDropZone={activeDropZone} setDragActive={setDragActive} setActiveDropZone={setActiveDropZone} />
       </div>
 
       <div className="mt-6 p-4 bg-secondary-50 dark:bg-primary-900/20 rounded-lg">
