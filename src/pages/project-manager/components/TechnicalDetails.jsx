@@ -81,7 +81,7 @@ const TechnicalDetails = ({ formData, setFormData }) => {
               type="text"
               value={newTag}
               onChange={(e) => setNewTag(e.target.value)}
-              onKeyPress={(e) => {
+              onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   e.preventDefault();
                   addTechnology(newTag);

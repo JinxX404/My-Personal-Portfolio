@@ -285,37 +285,6 @@ const PublishingOptions = ({ formData, setFormData }) => {
             </div>
           </div>
         </div>
-
-        {/* Bulk Operations */}
-        <div className="p-4 bg-warning-50 border border-warning-200 rounded-lg">
-          <h3 className="text-lg font-semibold text-warning-800 mb-3 flex items-center">
-            <Icon name="Layers" size={18} className="mr-2" />
-            Bulk Operations
-          </h3>
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              className="px-4 py-2 bg-warning-600 text-white rounded-lg hover:bg-warning-700 transition-colors flex items-center"
-            >
-              <Icon name="Copy" size={16} className="mr-2" />
-              Duplicate Project
-            </button>
-            <button
-              type="button"
-              className="px-4 py-2 bg-secondary-600 text-white rounded-lg hover:bg-secondary-700 transition-colors flex items-center"
-            >
-              <Icon name="Archive" size={16} className="mr-2" />
-              Archive Project
-            </button>
-            <button
-              type="button"
-              className="px-4 py-2 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors flex items-center"
-            >
-              <Icon name="Download" size={16} className="mr-2" />
-              Export Data
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

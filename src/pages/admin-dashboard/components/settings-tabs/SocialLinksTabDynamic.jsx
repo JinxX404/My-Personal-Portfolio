@@ -129,7 +129,7 @@ const SocialLinksTabDynamic = ({ settings, onChange }) => {
                 onChange={(e) => setNewLinkUrl(e.target.value)}
                 placeholder="https://github.com/username"
                 className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
-                onKeyPress={(e) => e.key === 'Enter' && handleAddLink()}
+                onKeyDown={(e) => e.key === 'Enter' && handleAddLink()}
               />
             </div>
             
