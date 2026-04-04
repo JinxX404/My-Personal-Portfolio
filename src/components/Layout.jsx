@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import Header from "components/ui/Header";
@@ -8,6 +8,27 @@ import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
 const Layout = ({ children }) => {
   const location = useLocation();
   const { siteSettings, seoSettings, profile } = usePortfolioSettings();
+
+  // Google Analytics
+  useEffect(() => {
+    const gaId = seoSettings?.google_analytics_id;
+    if (!gaId) return;
+
+    // Load GA script
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+    document.head.appendChild(script);
+
+    // Initialize gtag
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { window.dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', gaId);
+
+    // Track page views on route changes
+    gtag('config', gaId, { page_path: location.pathname + location.search });
+  }, [seoSettings?.google_analytics_id, location.pathname]);
   
   // List of routes where Header and Footer should be hidden
   const hideLayoutRoutes = [

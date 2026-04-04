@@ -7,6 +7,7 @@ import Image from 'components/AppImage';
 import { useProjects } from 'context/ProjectsContext';
 import { SkeletonProjectCard } from 'components/ui/Skeleton';
 import { useDebounce } from 'hooks/useDebounce';
+import { useReducedMotion } from 'hooks/useReducedMotion';
 
 const fallbackImage = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop';
 
@@ -19,6 +20,7 @@ const categoryIconMap = {
 
 const PortfolioGallery = () => {
   const { getPublishedProjects, loading: projectsLoading, useSupabase } = useProjects();
+  const shouldReduceMotion = useReducedMotion();
   const [activeFilter, setActiveFilter] = useState('All');
   const [viewMode, setViewMode] = useState('grid');
   const [searchQuery, setSearchQuery] = useState('');
@@ -166,11 +168,11 @@ const PortfolioGallery = () => {
   const ProjectCard = ({ project, index }) => (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 20 }}
+      initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3, delay: index * 0.1 }}
-      className={`group relative bg-white rounded-xl shadow-sm border border-primary-200 overflow-hidden hover:shadow-lg transition-all duration-300 ${
+      exit={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+      transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.3, delay: index * 0.1 }}
+      className={`group relative bg-white dark:bg-surface rounded-xl shadow-sm border border-primary-200 dark:border-border-strong overflow-hidden hover:shadow-lg transition-all duration-300 ${
         project.featured ? 'md:col-span-2 md:row-span-2' : ''
       } ${viewMode === 'list' ? 'flex flex-row' : 'flex flex-col'}`}
     >
