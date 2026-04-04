@@ -1,5 +1,5 @@
 // src/context/ToastContext.jsx
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 
 const ToastContext = createContext();
 
@@ -21,6 +21,15 @@ const TOAST_TYPES = {
 
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
+  const timeoutIds = useRef(new Map());
+
+  // Cleanup ALL pending timeouts on unmount
+  useEffect(() => {
+    return () => {
+      timeoutIds.current.forEach((timeoutId) => clearTimeout(timeoutId));
+      timeoutIds.current.clear();
+    };
+  }, []);
 
   const addToast = useCallback((message, type = 'info', duration = 5000) => {
     const id = Date.now() + Math.random();
@@ -28,17 +37,24 @@ export const ToastProvider = ({ children }) => {
     
     setToasts(prev => [...prev, toast]);
     
-    // Auto-remove after duration
+    // Auto-remove after duration with tracked timeout
     if (duration > 0) {
-      setTimeout(() => {
+      const timeoutId = setTimeout(() => {
         removeToast(id);
       }, duration);
+      timeoutIds.current.set(id, timeoutId);
     }
     
     return id;
   }, []);
 
   const removeToast = useCallback((id) => {
+    // Clear the tracked timeout before removing
+    const timeoutId = timeoutIds.current.get(id);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutIds.current.delete(id);
+    }
     setToasts(prev => prev.filter(toast => toast.id !== id));
   }, []);
 

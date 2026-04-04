@@ -392,7 +392,7 @@ The backend API was redesigned to support the new frontend requirements, with op
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
