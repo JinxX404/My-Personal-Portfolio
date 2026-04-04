@@ -209,7 +209,7 @@ const AboutStory = () => {
             <motion.div variants={itemVariants} className="grid md:grid-cols-2 gap-8">
               {careerValues.map((value, index) => (
                 <div
-                  key={index}
+                  key={value.title || `value-${index}`}
                   className="bg-surface dark:bg-background rounded-xl p-8 shadow-sm border border-primary-200 dark:border-border-strong hover:shadow-md transition-all duration-300"
                 >
                   <div className="flex items-start space-x-4">
@@ -266,11 +266,11 @@ const AboutStory = () => {
               <div className="space-y-8">
                 {careerTimeline.map((item, index) => (
                   <div
-                    key={item.id}
+                    key={item.id || `timeline-${index}`}
                     className={`relative flex items-start space-x-6 cursor-pointer transition-all duration-300 ${
-                      activeTimelineItem === item.id ? 'transform scale-105' : ''
+                      activeTimelineItem === (item.id || index) ? 'transform scale-105' : ''
                     }`}
-                    onClick={() => setActiveTimelineItem(activeTimelineItem === item.id ? null : item.id)}
+                    onClick={() => setActiveTimelineItem(activeTimelineItem === (item.id || index) ? null : (item.id || index))}
                   >
                     {/* Timeline Dot */}
                     <div className="flex-shrink-0 relative">
@@ -310,7 +310,7 @@ const AboutStory = () => {
 
                       <p className="text-secondary-600 mb-4">{item.description}</p>
 
-                      {activeTimelineItem === item.id && (
+                      {activeTimelineItem === (item.id || index) && (
                         <motion.div
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: 'auto' }}
@@ -318,30 +318,34 @@ const AboutStory = () => {
                           transition={{ duration: 0.3 }}
                           className="space-y-4"
                         >
-                          <div>
-                            <h4 className="font-semibold text-primary-800 mb-2">Key Achievements:</h4>
-                            <ul className="space-y-1">
-                              {item.achievements.map((achievement, idx) => (
-                                <li key={idx} className="flex items-center space-x-2 text-secondary-600">
-                                  <Icon name="CheckCircle" size={16} className="text-success" />
-                                  <span>{achievement}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                          <div>
-                            <h4 className="font-semibold text-primary-800 mb-2">Technologies:</h4>
-                            <div className="flex flex-wrap gap-2">
-                              {item.technologies.map((tech, idx) => (
-                                <span
-                                  key={idx}
-                                  className="px-3 py-1 bg-accent-100 text-accent-800 rounded-full text-sm font-medium"
-                                >
-                                  {tech}
-                                </span>
-                              ))}
+                          {item.achievements && item.achievements.length > 0 && (
+                            <div>
+                              <h4 className="font-semibold text-primary-800 mb-2">Key Achievements:</h4>
+                              <ul className="space-y-1">
+                                {item.achievements.map((achievement, idx) => (
+                                  <li key={idx} className="flex items-center space-x-2 text-secondary-600">
+                                    <Icon name="CheckCircle" size={16} className="text-success" />
+                                    <span>{achievement}</span>
+                                  </li>
+                                ))}
+                              </ul>
                             </div>
-                          </div>
+                          )}
+                          {item.technologies && item.technologies.length > 0 && (
+                            <div>
+                              <h4 className="font-semibold text-primary-800 mb-2">Technologies:</h4>
+                              <div className="flex flex-wrap gap-2">
+                                {item.technologies.map((tech, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="px-3 py-1 bg-accent-100 dark:bg-accent-900/30 text-accent-800 dark:text-accent-200 rounded-full text-sm font-medium"
+                                  >
+                                    {tech}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </motion.div>
                       )}
                     </div>
@@ -375,13 +379,13 @@ const AboutStory = () => {
 
             <motion.div variants={itemVariants} className="grid lg:grid-cols-3 gap-8">
               {skillsData.map((category, index) => (
-                <div key={index} className="bg-surface dark:bg-background rounded-xl p-8 shadow-sm border border-primary-200 dark:border-border-strong">
+                <div key={category.category || `skill-cat-${index}`} className="bg-surface dark:bg-background rounded-xl p-8 shadow-sm border border-primary-200 dark:border-border-strong">
                   <h3 className="text-xl font-bold text-primary-800 mb-6 text-center">
                     {category.category}
                   </h3>
                   <div className="space-y-6">
-                    {category.skills.map((skill, skillIndex) => (
-                      <div key={skillIndex}>
+                    {(category.skills || []).map((skill, skillIndex) => (
+                      <div key={skill.name || `skill-${skillIndex}`}>
                         <div className="flex justify-between items-center mb-2">
                           <span className="font-medium text-secondary-700">{skill.name}</span>
                           <span className="text-sm text-secondary-500">{skill.years}y</span>
@@ -430,7 +434,7 @@ const AboutStory = () => {
             <motion.div variants={itemVariants} className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {careerInterests.map((interest, index) => (
                 <div
-                  key={index}
+                  key={interest.name || `interest-${index}`}
                   className="bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/30 dark:to-accent-900/30 rounded-xl p-6 text-center hover:shadow-md transition-all duration-300 border border-primary-200 dark:border-border-strong"
                 >
                   <div className="w-16 h-16 bg-gradient-to-br from-accent to-cta rounded-full flex items-center justify-center mx-auto mb-4">
