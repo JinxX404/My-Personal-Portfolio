@@ -7,7 +7,6 @@ import Image from 'components/AppImage';
 import { useProjects } from 'context/ProjectsContext';
 import { SkeletonProjectCard } from 'components/ui/Skeleton';
 import { useDebounce } from 'hooks/useDebounce';
-import { useReducedMotion } from 'hooks/useReducedMotion';
 
 const fallbackImage = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop';
 
@@ -20,7 +19,6 @@ const categoryIconMap = {
 
 const PortfolioGallery = () => {
   const { getPublishedProjects, loading: projectsLoading, useSupabase } = useProjects();
-  const shouldReduceMotion = useReducedMotion();
   const [activeFilter, setActiveFilter] = useState('All');
   const [viewMode, setViewMode] = useState('grid');
   const [searchQuery, setSearchQuery] = useState('');
@@ -166,10 +164,7 @@ const PortfolioGallery = () => {
   }, [activeFilter, debouncedSearch, displayProjects]);
 
   const ProjectCard = ({ project, index }) => (
-    <motion.div
-      initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.3, delay: Math.min(index * 0.05, 0.5) }}
+    <div
       className={`group relative bg-white dark:bg-surface rounded-xl shadow-sm border border-primary-200 dark:border-border-strong overflow-hidden hover:shadow-lg transition-all duration-300 ${
         project.featured ? 'md:col-span-2 md:row-span-2' : ''
       } ${viewMode === 'list' ? 'flex flex-row' : 'flex flex-col'}`}
@@ -267,7 +262,7 @@ const PortfolioGallery = () => {
           <Icon name="ArrowRight" size={16} strokeWidth={2} />
         </Link>
       </div>
-    </motion.div>
+    </div>
   );
 
   return (
@@ -424,10 +419,7 @@ const PortfolioGallery = () => {
               </motion.div>
             ) : filteredProjects.length > 0 ? (
               <>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.2 }}
+              <div
                 className={
                   viewMode === 'grid' ?'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-max' :'space-y-6'
                 }
@@ -435,7 +427,7 @@ const PortfolioGallery = () => {
                 {filteredProjects.map((project, index) => (
                   <ProjectCard key={project.id} project={project} index={index} />
                 ))}
-              </motion.div>
+              </div>
 
               {/* Load More Button */}
               {hasMore && !isFetching && (
