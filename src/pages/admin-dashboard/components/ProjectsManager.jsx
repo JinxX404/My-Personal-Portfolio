@@ -30,7 +30,7 @@ const ProjectsManager = () => {
   });
 
   const handleDelete = async (projectId, projectTitle) => {
-    if (window.confirm(`Are you sure you want to delete "${projectTitle}"?`)) {
+    if (window.confirm(`Delete project "${projectTitle}"?\n\nThis action cannot be undone. All project data, including images and case study content, will be permanently removed.`)) {
       console.log('🗑️ Delete project clicked:', { projectId, projectTitle });
       const result = await removeProject(projectId);
       console.log('📊 Delete project result:', result);

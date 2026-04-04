@@ -2,9 +2,14 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Icon from 'components/AppIcon';
+import { useProjects } from 'context/ProjectsContext';
 
 const Sidebar = ({ isOpen, onClose }) => {
   const location = useLocation();
+  const { projects } = useProjects();
+
+  const publishedCount = projects.filter(p => p.publishing_status === 'published').length;
+  const draftCount = projects.filter(p => p.publishing_status === 'draft').length;
 
   const navigationItems = [
     {
@@ -112,16 +117,16 @@ const Sidebar = ({ isOpen, onClose }) => {
 
         {/* Quick Stats */}
         <div className="p-4 mt-8 border-t border-primary-100">
-          <div className="bg-primary-50 rounded-lg p-4">
-            <h3 className="text-sm font-semibold text-primary-800 mb-3">Quick Stats</h3>
+          <div className="bg-primary-50 dark:bg-primary-900/30 rounded-lg p-4">
+            <h3 className="text-sm font-semibold text-primary-800 dark:text-primary-200 mb-3">Quick Stats</h3>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span className="text-secondary-600">Pending Comments</span>
-                <span className="font-medium text-warning-600">7</span>
+                <span className="text-secondary-600">Published</span>
+                <span className="font-medium text-success-600">{publishedCount}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-secondary-600">Active Projects</span>
-                <span className="font-medium text-success-600">5</span>
+                <span className="text-secondary-600">Drafts</span>
+                <span className="font-medium text-warning-600">{draftCount}</span>
               </div>
             </div>
           </div>

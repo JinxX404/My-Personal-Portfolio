@@ -14,6 +14,7 @@ const CaseStudyDetail = lazy(() => import("pages/case-study-detail"));
 const AboutStory = lazy(() => import("pages/about-story"));
 const ContactHub = lazy(() => import("pages/contact-hub"));
 const Login = lazy(() => import("pages/login"));
+const ForgotPassword = lazy(() => import("pages/forgot-password"));
 const NotFound = lazy(() => import("pages/not-found"));
 
 // Admin pages (protected)
@@ -49,6 +50,7 @@ const Routes = () => {
               <Route path="/about-story" element={<AboutStory />} />
               <Route path="/contact-hub" element={<ContactHub />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
               
               {/* Protected admin routes */}
               <Route path="/admin-dashboard" element={

@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
+import { useProjects } from 'context/ProjectsContext';
 
 const HeroSection = ({ shouldReduceMotion }) => {
   const { profile } = usePortfolioSettings();
+  const { projects } = useProjects();
   const [currentCodeIndex, setCurrentCodeIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(true);
 
@@ -180,11 +182,11 @@ console.log(createAmazingExperience());`,
             {/* Quick Stats */}
             <div className="grid grid-cols-3 gap-6 max-w-md mx-auto lg:mx-0">
               <div className="text-center lg:text-left">
-                <div className="text-2xl font-bold text-accent-500">2+</div>
+                <div className="text-2xl font-bold text-accent-500">{profile?.experience_years || '1+'}</div>
                 <div className="text-sm text-text-secondary">Years Experience</div>
               </div>
               <div className="text-center lg:text-left">
-                <div className="text-2xl font-bold text-accent-500">2+</div>
+                <div className="text-2xl font-bold text-accent-500">{projects?.length || 0}+</div>
                 <div className="text-sm text-text-secondary">Projects Delivered</div>
               </div>
               {/* <div className="text-center lg:text-left">

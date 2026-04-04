@@ -168,6 +168,16 @@ const Login = () => {
               )}
             </button>
           </form>
+
+          {/* Forgot Password Link */}
+          <div className="text-center mt-4">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-accent hover:text-accent-700 transition-colors"
+            >
+              Forgot your password?
+            </Link>
+          </div>
         </div>
 
         {/* Back to Home */}
