@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 import { useProjects } from 'context/ProjectsContext';
+import { useToast } from 'context/ToastContext';
 import { uploadImage } from 'services/storageService';
 
 // Import components
@@ -14,6 +15,7 @@ import PublishingOptions from './components/PublishingOptions';
 
 const ProjectManager = () => {
   const { addProject, editProject, getProjectById } = useProjects();
+  const { success, error: showError } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get('id');
@@ -113,11 +115,12 @@ const ProjectManager = () => {
             metaDescription: p.meta_description || '',
           });
         } else {
-          setSaveStatus('Error: Project not found. Redirecting...');
+          showError('Project not found. Redirecting...');
           setTimeout(() => navigate('/projects-manager'), 2000);
         }
       } catch (err) {
-        setSaveStatus(`Error loading project: ${err.message}`);
+        showError(`Failed to load project: ${err.message}`);
+        setTimeout(() => navigate('/projects-manager'), 2000);
       } finally {
         setIsLoadingProject(false);
       }
@@ -219,7 +222,7 @@ const ProjectManager = () => {
       
       if (result.success) {
         setIsSaving(false);
-        setSaveStatus(isEditing
+        success(isEditing
           ? (isDraft ? 'Draft updated successfully!' : 'Project updated successfully!')
           : (isDraft ? 'Draft saved successfully!' : 'Project saved successfully!'));
         
@@ -229,11 +232,12 @@ const ProjectManager = () => {
         }, 1000);
       } else {
         setIsSaving(false);
-        setSaveStatus(`Error: ${result.error}`);
+        const msg = result.error || 'Failed to save project';
+        showError(typeof msg === 'string' ? msg : JSON.stringify(msg));
       }
     } catch (error) {
       setIsSaving(false);
-      setSaveStatus(`Error: ${error.message}`);
+      showError(error.message || 'An unexpected error occurred');
     }
   }, [formData, addProject, editProject, editId, isEditing, navigate]);
 
@@ -325,15 +329,9 @@ const ProjectManager = () => {
               </div>
               
               {/* Save Status */}
-              {saveStatus && (
-                <div className={`flex items-center space-x-2 px-3 py-1 rounded-full text-sm ${
-                  saveStatus.includes('error') || saveStatus.includes('fix')
-                    ? 'bg-error-100 text-error-700' :'bg-success-100 text-success-700'
-                }`}>
-                  <Icon 
-                    name={saveStatus.includes('error') || saveStatus.includes('fix') ? 'AlertCircle' : 'CheckCircle'} 
-                    size={16} 
-                  />
+              {saveStatus && !saveStatus.toLowerCase().includes('error') && (
+                <div className="flex items-center space-x-2 px-3 py-1 rounded-full text-sm bg-success-100 text-success-700">
+                  <Icon name="CheckCircle" size={16} />
                   <span>{saveStatus}</span>
                 </div>
               )}
