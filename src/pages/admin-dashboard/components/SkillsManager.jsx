@@ -89,7 +89,7 @@ const SkillsManager = () => {
   };
 
   const handleDeleteCategory = (categoryKey) => {
-    if (window.confirm(`Are you sure you want to delete "${skillCategories[categoryKey].title}"?`)) {
+    if (window.confirm(`Delete category "${skillCategories[categoryKey].title}"?\n\nThis will also delete all skills within this category. This action cannot be undone.`)) {
       deleteCategory(categoryKey);
     }
   };
@@ -125,7 +125,7 @@ const SkillsManager = () => {
   };
 
   const handleDeleteSkill = (categoryKey, skillId) => {
-    if (window.confirm('Are you sure you want to delete this skill?')) {
+    if (window.confirm(`Delete skill "${skill.name}"?\n\nThis action cannot be undone.`)) {
       deleteSkill(categoryKey, skillId);
     }
   };
@@ -167,7 +167,7 @@ const SkillsManager = () => {
   };
 
   const handleDeleteTech = (index) => {
-    if (window.confirm('Are you sure you want to delete this technology?')) {
+    if (window.confirm(`Delete technology "${tech.name}"?\n\nThis action cannot be undone.`)) {
       deleteTech(index);
     }
   };

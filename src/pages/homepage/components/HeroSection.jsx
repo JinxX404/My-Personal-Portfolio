@@ -186,7 +186,7 @@ console.log(createAmazingExperience());`,
                 <div className="text-sm text-text-secondary">Years Experience</div>
               </div>
               <div className="text-center lg:text-left">
-                <div className="text-2xl font-bold text-accent-500">{projects?.length || 0}+</div>
+                <div className="text-2xl font-bold text-accent-500">{projects?.filter(p => p.publishing_status === 'published').length || 0}+</div>
                 <div className="text-sm text-text-secondary">Projects Delivered</div>
               </div>
               {/* <div className="text-center lg:text-left">
