@@ -2,12 +2,9 @@
 node_modules
 .idea
 package-lock.json
+# Build output
 /build
-.vscode/
-.idea/
-vite.config.*s.*
-database/*
-Docx/*
+/dist
 
 # Environment variables
 .env
