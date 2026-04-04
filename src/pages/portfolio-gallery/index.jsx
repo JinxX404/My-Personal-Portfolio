@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
@@ -425,11 +425,9 @@ const PortfolioGallery = () => {
             ) : filteredProjects.length > 0 ? (
               <>
               <motion.div
-                key={`${activeFilter}-${viewMode}-${searchQuery}`}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.2 }}
                 className={
                   viewMode === 'grid' ?'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-max' :'space-y-6'
                 }

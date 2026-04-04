@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
 import { useProjects } from 'context/ProjectsContext';

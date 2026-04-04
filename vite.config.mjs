@@ -12,7 +12,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom', 'react-helmet'],
+          'react-vendor': ['react', 'react-dom', 'react-router-dom', 'react-helmet-async'],
           'framer-motion': ['framer-motion'],
           'supabase': ['@supabase/supabase-js'],
           'charts': ['recharts'],

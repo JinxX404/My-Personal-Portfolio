@@ -1,4 +1,5 @@
 import React from "react";
+import { HelmetProvider } from 'react-helmet-async';
 import Routes from "./Routes";
 import { SkillsProvider } from "./context/SkillsContext";
 import { ProjectsProvider } from "./context/ProjectsContext";
@@ -9,18 +10,20 @@ import Toast from "./components/Toast";
 
 function App() {
   return (
-    <AuthProvider>
-      <ToastProvider>
-        <PortfolioSettingsProvider>
-          <SkillsProvider>
-            <ProjectsProvider>
-                <Routes />
-                <Toast />
-            </ProjectsProvider>
-          </SkillsProvider>
-        </PortfolioSettingsProvider>
-      </ToastProvider>
-    </AuthProvider>
+    <HelmetProvider>
+      <AuthProvider>
+        <ToastProvider>
+          <PortfolioSettingsProvider>
+            <SkillsProvider>
+              <ProjectsProvider>
+                  <Routes />
+                  <Toast />
+              </ProjectsProvider>
+            </SkillsProvider>
+          </PortfolioSettingsProvider>
+        </ToastProvider>
+      </AuthProvider>
+    </HelmetProvider>
   );
 }
 
