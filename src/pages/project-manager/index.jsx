@@ -3,6 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 import { useProjects } from 'context/ProjectsContext';
+import { uploadImage } from 'services/storageService';
 
 // Import components
 import BasicInformation from './components/BasicInformation';
@@ -155,7 +156,6 @@ const ProjectManager = () => {
     setIsSaving(true);
     setSaveStatus('');
     
-    // Validate form if not saving as draft
     if (!isDraft && !validateForm()) {
       setIsSaving(false);
       setSaveStatus('Please fix the validation errors before saving.');
@@ -163,7 +163,28 @@ const ProjectManager = () => {
     }
     
     try {
-      // Prepare project data for Supabase
+      // Upload images to Supabase Storage first
+      const uploadImages = async (images, folder) => {
+        const urls = [];
+        for (const img of images) {
+          if (img.file) {
+            const result = await uploadImage(img.file, editId || 'draft', folder);
+            if (result.success) {
+              urls.push(result.data);
+            }
+          } else if (img.preview) {
+            urls.push(img.preview);
+          }
+        }
+        return urls;
+      };
+
+      const [heroImages, screenshots, mockups] = await Promise.all([
+        uploadImages(formData.heroImages || [], 'hero'),
+        uploadImages(formData.screenshots || [], 'screenshots'),
+        uploadImages(formData.mockups || [], 'mockups'),
+      ]);
+
       const projectData = {
         title: formData.title,
         description: formData.description,
@@ -187,9 +208,9 @@ const ProjectManager = () => {
         tags: formData.tags?.length > 0 ? formData.tags : [],
         meta_title: formData.metaTitle || null,
         meta_description: formData.metaDescription || null,
-        hero_images: (formData.heroImages || []).map(img => img.preview || ''),
-        screenshots: (formData.screenshots || []).map(img => img.preview || ''),
-        mockups: (formData.mockups || []).map(img => img.preview || ''),
+        hero_images: heroImages,
+        screenshots: screenshots,
+        mockups: mockups,
       };
       
       const result = isEditing
