@@ -35,11 +35,14 @@ const PortfolioGallery = () => {
       }
 
       setIsFetching(true);
-      const { fetchProjects } = await import('../../services/projectsService.js');
-      const result = await fetchProjects();
+      const { fetchPublishedProjects } = await import('../../services/projectsService.js');
+      const result = await fetchPublishedProjects();
 
       if (result.success && Array.isArray(result.data) && result.data.length) {
-        const transformedProjects = result.data.map((project) => {
+        // Safety filter: only show published projects
+        const publishedProjects = result.data.filter(p => p.publishing_status === 'published');
+
+        const transformedProjects = publishedProjects.map((project) => {
           const technologies = Array.isArray(project.technologies) ? project.technologies : [];
           const tags = Array.isArray(project.tags) ? project.tags : [];
           const heroImages = Array.isArray(project.hero_images) ? project.hero_images : [];
