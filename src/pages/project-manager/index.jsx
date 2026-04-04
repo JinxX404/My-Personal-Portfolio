@@ -1,6 +1,6 @@
 // src/pages/project-manager/index.jsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 import { useProjects } from 'context/ProjectsContext';
 
@@ -12,8 +12,11 @@ import CaseStudyContent from './components/CaseStudyContent';
 import PublishingOptions from './components/PublishingOptions';
 
 const ProjectManager = () => {
-  const { addProject } = useProjects();
+  const { addProject, editProject, getProjectById } = useProjects();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get('id');
+  const isEditing = !!editId;
   
   const [formData, setFormData] = useState({
     // Basic Information
@@ -63,6 +66,62 @@ const ProjectManager = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState('');
   const [formErrors, setFormErrors] = useState({});
+  const [isLoadingProject, setIsLoadingProject] = useState(isEditing);
+
+  useEffect(() => {
+    const loadExisting = async () => {
+      if (!editId) return;
+      setIsLoadingProject(true);
+      try {
+        const result = await getProjectById(editId);
+        if (result.success && result.data) {
+          const p = result.data;
+          setFormData({
+            title: p.title || '',
+            client: p.client || '',
+            projectType: p.project_type || '',
+            startDate: p.start_date || '',
+            endDate: p.end_date || '',
+            status: p.status || 'draft',
+            description: p.description || '',
+            heroImages: p.hero_images || [],
+            screenshots: p.screenshots || [],
+            mockups: p.mockups || [],
+            beforeAfter: [],
+            autoOptimize: true,
+            generateWebP: true,
+            responsiveImages: true,
+            technologies: p.technologies || [],
+            complexity: p.complexity || '',
+            metrics: [],
+            repositoryUrl: p.repository_url || '',
+            demoUrl: p.demo_url || '',
+            problem: p.problem || '',
+            solution: p.solution || '',
+            results: p.results || '',
+            prototypeUrl: '',
+            testimonials: p.testimonials || [],
+            publishingStatus: p.publishing_status || 'draft',
+            visibility: p.visibility || 'public',
+            password: '',
+            category: p.category || '',
+            featured: p.featured || false,
+            tags: p.tags || [],
+            metaTitle: p.meta_title || '',
+            metaDescription: p.meta_description || '',
+          });
+        } else {
+          setSaveStatus('Error: Project not found. Redirecting...');
+          setTimeout(() => navigate('/projects-manager'), 2000);
+        }
+      } catch (err) {
+        setSaveStatus(`Error loading project: ${err.message}`);
+      } finally {
+        setIsLoadingProject(false);
+      }
+    };
+    loadExisting();
+  }, [editId, getProjectById, navigate]);
 
   const sections = [
     { id: 'basic', label: 'Basic Information', icon: 'Info', color: 'accent' },
@@ -103,7 +162,7 @@ const ProjectManager = () => {
     }
     
     try {
-      // Prepare project data for Supabase - all fields optional except title, description, category
+      // Prepare project data for Supabase
       const projectData = {
         title: formData.title,
         description: formData.description,
@@ -129,11 +188,15 @@ const ProjectManager = () => {
         meta_description: formData.metaDescription || null,
       };
       
-      const result = await addProject(projectData);
+      const result = isEditing
+        ? await editProject(editId, projectData)
+        : await addProject(projectData);
       
       if (result.success) {
         setIsSaving(false);
-        setSaveStatus(isDraft ? 'Draft saved successfully!' : 'Project saved successfully!');
+        setSaveStatus(isEditing
+          ? (isDraft ? 'Draft updated successfully!' : 'Project updated successfully!')
+          : (isDraft ? 'Draft saved successfully!' : 'Project saved successfully!'));
         
         // Redirect to projects manager after 1 second
         setTimeout(() => {
@@ -147,7 +210,7 @@ const ProjectManager = () => {
       setIsSaving(false);
       setSaveStatus(`Error: ${error.message}`);
     }
-  }, [formData, addProject, navigate]);
+  }, [formData, addProject, editProject, editId, isEditing, navigate]);
 
   // Auto-save function
   useEffect(() => {
@@ -194,6 +257,17 @@ const ProjectManager = () => {
 
   const completionPercentage = getCompletionStatus();
 
+  if (isLoadingProject) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Icon name="Loader" size={32} className="animate-spin mx-auto mb-4 text-accent" />
+          <p className="text-secondary-600">Loading project data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -202,13 +276,15 @@ const ProjectManager = () => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
               <Link
-                to="/admin-dashboard"
+                to="/projects-manager"
                 className="flex items-center text-secondary-600 hover:text-secondary-800 transition-colors mr-4"
               >
                 <Icon name="ArrowLeft" size={20} className="mr-2" />
-                Back to Dashboard
+                Back to Projects
               </Link>
-              <h1 className="text-2xl font-bold text-primary-800">Project Manager</h1>
+              <h1 className="text-2xl font-bold text-primary-800">
+                {isEditing ? `Edit: ${formData.title || 'Untitled'}` : 'Create Project'}
+              </h1>
             </div>
             
             <div className="flex items-center space-x-4">
@@ -237,6 +313,15 @@ const ProjectManager = () => {
                 </div>
               )}
               
+              {/* Cancel Button */}
+              <button
+                onClick={() => navigate('/projects-manager')}
+                className="btn-secondary flex items-center space-x-2"
+              >
+                <Icon name="X" size={16} />
+                <span>Cancel</span>
+              </button>
+              
               {/* Action Buttons */}
               <button
                 onClick={() => handleSave(true)}
@@ -261,7 +346,7 @@ const ProjectManager = () => {
                 ) : (
                   <Icon name="Upload" size={16} />
                 )}
-                <span>Publish Project</span>
+                <span>{isEditing ? 'Update Project' : 'Publish Project'}</span>
               </button>
             </div>
           </div>
