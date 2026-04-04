@@ -167,11 +167,9 @@ const PortfolioGallery = () => {
 
   const ProjectCard = ({ project, index }) => (
     <motion.div
-      layout
       initial={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={shouldReduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
-      transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.3, delay: index * 0.1 }}
+      transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.3, delay: Math.min(index * 0.05, 0.5) }}
       className={`group relative bg-white dark:bg-surface rounded-xl shadow-sm border border-primary-200 dark:border-border-strong overflow-hidden hover:shadow-lg transition-all duration-300 ${
         project.featured ? 'md:col-span-2 md:row-span-2' : ''
       } ${viewMode === 'list' ? 'flex flex-row' : 'flex flex-col'}`}
