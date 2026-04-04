@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
 import Icon from 'components/AppIcon';
 
@@ -68,6 +69,12 @@ const ContactHub = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50">
+      <Helmet>
+        <title>Contact — Get in Touch</title>
+        <meta name="description" content="Get in touch for project inquiries, collaborations, speaking requests, or general questions. Response within 24 hours." />
+        <meta property="og:title" content="Contact — Get in Touch" />
+        <meta property="og:description" content="Get in touch for project inquiries, collaborations, or general questions." />
+      </Helmet>
       {/* Hero Section */}
       <section className="pt-24 lg:pt-32 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">

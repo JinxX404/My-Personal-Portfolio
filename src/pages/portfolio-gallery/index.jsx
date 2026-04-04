@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import { motion, AnimatePresence } from 'framer-motion';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
@@ -238,6 +239,12 @@ const PortfolioGallery = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-accent-50 pt-20">
+      <Helmet>
+        <title>Portfolio Gallery — Projects & Case Studies</title>
+        <meta name="description" content="Browse my portfolio of web development projects, including web apps, mobile apps, and open source work." />
+        <meta property="og:title" content="Portfolio Gallery — Projects & Case Studies" />
+        <meta property="og:description" content="Browse my portfolio of web development projects." />
+      </Helmet>
       {/* Hero Section */}
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto text-center">

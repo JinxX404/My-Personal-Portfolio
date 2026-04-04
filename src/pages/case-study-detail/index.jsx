@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
 import { useProjects } from 'context/ProjectsContext';
@@ -447,6 +448,13 @@ The backend API was redesigned to support the new frontend requirements, with op
 
   return (
     <div className="min-h-screen bg-primary-50">
+      <Helmet>
+        <title>{caseStudy.title} — Case Study</title>
+        <meta name="description" content={caseStudy.description} />
+        <meta property="og:title" content={`${caseStudy.title} — Case Study`} />
+        <meta property="og:description" content={caseStudy.description} />
+        {caseStudy.heroImage && <meta property="og:image" content={caseStudy.heroImage} />}
+      </Helmet>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary-800 to-primary-900 text-white pt-20 pb-16">
         <div className="absolute inset-0 bg-black/20"></div>

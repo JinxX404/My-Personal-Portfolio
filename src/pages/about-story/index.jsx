@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import { motion } from 'framer-motion';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
@@ -216,6 +217,12 @@ My goal is to grow as a software engineer and create impactful, innovative solut
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50">
+      <Helmet>
+        <title>About Me — Moataz Mohammed, Backend Engineer</title>
+        <meta name="description" content="Learn about my background, education, skills, and the values that drive my work as a software engineer." />
+        <meta property="og:title" content="About Me — Moataz Mohammed" />
+        <meta property="og:description" content="Learn about my background, education, skills, and values." />
+      </Helmet>
       {/* Hero Section */}
       <section className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">

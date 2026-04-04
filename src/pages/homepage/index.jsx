@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
 import Icon from 'components/AppIcon';
 
 import HeroSection from './components/HeroSection';
@@ -25,6 +26,12 @@ const Homepage = () => {
 
   return (
     <div className="min-h-screen bg-background text-text-primary transition-theme">
+      <Helmet>
+        <title>Home — Full Stack Developer Portfolio</title>
+        <meta name="description" content="Explore my portfolio of web development projects, skills, and experience in building modern digital solutions." />
+        <meta property="og:title" content="Home — Full Stack Developer Portfolio" />
+        <meta property="og:description" content="Explore my portfolio of web development projects, skills, and experience." />
+      </Helmet>
       {/* Progress Bar */}
       <div className="fixed top-0 left-0 w-full h-1 bg-primary-100 dark:bg-primary-200/30 z-50 transition-theme">
         <div 
