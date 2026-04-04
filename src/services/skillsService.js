@@ -275,25 +275,22 @@ export const fetchAllSkillsData = async () => {
   }
 
   try {
-    // Fetch categories
-    const categoriesResult = await fetchSkillCategories();
+    const [categoriesResult, skillsResult, techStackResult] = await Promise.all([
+      fetchSkillCategories(),
+      fetchSkills(),
+      fetchTechStack(),
+    ]);
+
     if (!categoriesResult.success) {
       return categoriesResult;
     }
-
-    // Fetch all skills
-    const skillsResult = await fetchSkills();
     if (!skillsResult.success) {
       return skillsResult;
     }
-
-    // Fetch tech stack
-    const techStackResult = await fetchTechStack();
     if (!techStackResult.success) {
       return techStackResult;
     }
 
-    // Group skills by category
     const categoriesWithSkills = categoriesResult.data.map((category) => ({
       ...category,
       skills: skillsResult.data.filter(

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import {
   fetchAllSkillsData,
   createSkillCategory,
@@ -271,7 +271,7 @@ export const SkillsProvider = ({ children }) => {
     await loadData();
   };
 
-  const value = {
+  const value = useMemo(() => ({
     skillCategories,
     techStack,
     loading,
@@ -288,7 +288,7 @@ export const SkillsProvider = ({ children }) => {
     deleteTech,
     resetToDefaults,
     resyncFromDatabase
-  };
+  }), [skillCategories, techStack, loading, error, useSupabase, addCategory, updateCategory, deleteCategory, addSkill, updateSkill, deleteSkill, addTech, updateTech, deleteTech, resetToDefaults, resyncFromDatabase]);
 
   return (
     <SkillsContext.Provider value={value}>

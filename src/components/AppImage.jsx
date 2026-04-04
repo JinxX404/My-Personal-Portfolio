@@ -4,6 +4,7 @@ function Image({
   src,
   alt = "Image Name",
   className = "",
+  loading = "lazy",
   ...props
 }) {
 

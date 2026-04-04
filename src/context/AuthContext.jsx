@@ -1,5 +1,5 @@
 // src/context/AuthContext.jsx
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 const AuthContext = createContext();
@@ -119,7 +119,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [isConfigured]);
 
-  const value = {
+  const value = useMemo(() => ({
     user,
     session,
     loading,
@@ -128,7 +128,7 @@ export const AuthProvider = ({ children }) => {
     signIn,
     signOut,
     signUp,
-  };
+  }), [user, session, loading, isConfigured, signIn, signOut, signUp]);
 
   return (
     <AuthContext.Provider value={value}>

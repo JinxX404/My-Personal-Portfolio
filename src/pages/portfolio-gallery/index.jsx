@@ -6,6 +6,7 @@ import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
 import { useProjects } from 'context/ProjectsContext';
 import { SkeletonProjectCard } from 'components/ui/Skeleton';
+import { useDebounce } from 'hooks/useDebounce';
 
 const fallbackImage = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop';
 
@@ -21,6 +22,7 @@ const PortfolioGallery = () => {
   const [activeFilter, setActiveFilter] = useState('All');
   const [viewMode, setViewMode] = useState('grid');
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearch = useDebounce(searchQuery, 300);
   const [selectedProject, setSelectedProject] = useState(null);
   const [portfolioProjects, setPortfolioProjects] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
@@ -125,16 +127,16 @@ const PortfolioGallery = () => {
     }
 
     // Search filter
-    if (searchQuery) {
+    if (debouncedSearch) {
       filtered = filtered.filter(project =>
-        project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        project.technologies.some(tech => tech.toLowerCase().includes(searchQuery.toLowerCase()))
+        project.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        project.description.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        project.technologies.some(tech => tech.toLowerCase().includes(debouncedSearch.toLowerCase()))
       );
     }
 
     return filtered;
-  }, [activeFilter, searchQuery, displayProjects]);
+  }, [activeFilter, debouncedSearch, displayProjects]);
 
   const ProjectCard = ({ project, index }) => (
     <motion.div

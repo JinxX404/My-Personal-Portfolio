@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext, useCallback } from 'react';
+import React, { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import { supabase } from '../lib/supabase';
 
 const PortfolioSettingsContext = createContext();
@@ -147,18 +147,17 @@ export const PortfolioSettingsProvider = ({ children }) => {
     }
   };
 
-  const value = {
+  const value = useMemo(() => ({
     settings,
     isLoading,
     error,
     loadSettings,
     updateSettings,
-    // Convenience getters
     profile: settings.profile,
     socialLinks: settings.social_links,
     siteSettings: settings.site_settings,
     seoSettings: settings.seo_settings
-  };
+  }), [settings, isLoading, error, loadSettings, updateSettings]);
 
   return (
     <PortfolioSettingsContext.Provider value={value}>

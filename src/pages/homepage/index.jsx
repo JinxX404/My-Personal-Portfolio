@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import Icon from 'components/AppIcon';
+import { useReducedMotion } from 'hooks/useReducedMotion';
 
 import HeroSection from './components/HeroSection';
 import FeaturedWork from './components/FeaturedWork';
@@ -11,6 +12,7 @@ import FloatingCTA from './components/FloatingCTA';
 
 const Homepage = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,7 +43,7 @@ const Homepage = () => {
       </div>
 
       {/* Hero Section */}
-      <HeroSection />
+      <HeroSection shouldReduceMotion={shouldReduceMotion} />
 
       {/* Featured Work Section
       <section className="py-20 bg-surface">
@@ -69,7 +71,7 @@ const Homepage = () => {
               A comprehensive toolkit built through years of hands-on experience and continuous learning.
             </p>
           </div>
-          <SkillsVisualization />
+          <SkillsVisualization shouldReduceMotion={shouldReduceMotion} />
         </div>
       </section>
 

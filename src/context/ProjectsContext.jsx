@@ -1,5 +1,5 @@
 // src/context/ProjectsContext.jsx
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import {
   fetchProjects,
   fetchPublishedProjects,
@@ -161,7 +161,7 @@ export const ProjectsProvider = ({ children }) => {
     return await getProjectStats();
   };
 
-  const value = {
+  const value = useMemo(() => ({
     projects,
     loading,
     error,
@@ -176,7 +176,7 @@ export const ProjectsProvider = ({ children }) => {
     togglePublish,
     toggleFeatured,
     getStats,
-  };
+  }), [projects, loading, error, useSupabase, loadProjects, getPublishedProjects, getFeaturedProjects, getProjectById, addProject, editProject, removeProject, togglePublish, toggleFeatured, getStats]);
 
   return (
     <ProjectsContext.Provider value={value}>

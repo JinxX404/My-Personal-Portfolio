@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
 
-const HeroSection = () => {
+const HeroSection = ({ shouldReduceMotion }) => {
   const { profile } = usePortfolioSettings();
   const [currentCodeIndex, setCurrentCodeIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(true);
@@ -59,6 +59,7 @@ console.log(createAmazingExperience());`,
   ];
 
   useEffect(() => {
+    if (shouldReduceMotion) return;
     const interval = setInterval(() => {
       setIsTyping(false);
       setTimeout(() => {
@@ -68,7 +69,7 @@ console.log(createAmazingExperience());`,
     }, 6000);
 
     return () => clearInterval(interval);
-  }, [codeSnippets]);
+  }, [codeSnippets, shouldReduceMotion]);
 
   const currentSnippet = codeSnippets[currentCodeIndex];
 

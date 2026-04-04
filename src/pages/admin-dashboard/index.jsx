@@ -1,13 +1,13 @@
 // src/pages/admin-dashboard/index.jsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import Icon from 'components/AppIcon';
 import { useProjects } from 'context/ProjectsContext';
 
 import MetricCard from './components/MetricCard';
 import QuickActions from './components/QuickActions';
 import RecentActivity from './components/RecentActivity';
-import PerformanceCharts from './components/PerformanceCharts';
 import Sidebar from './components/Sidebar';
+const PerformanceCharts = lazy(() => import('./components/PerformanceCharts'));
 
 const AdminDashboard = () => {
     // Removed blog context
@@ -161,7 +161,9 @@ const AdminDashboard = () => {
            {/* Performance Charts */}
             <div>
             {/* Disabled chart prop passing for now as we removed some data */}
-            <PerformanceCharts data={chartData} />
+            <Suspense fallback={<div>Loading chart...</div>}>
+              <PerformanceCharts data={chartData} />
+            </Suspense>
             </div>
         </div>
       </main>

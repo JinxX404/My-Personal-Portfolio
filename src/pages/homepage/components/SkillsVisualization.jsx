@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Icon from 'components/AppIcon';
 import { useSkills } from 'context/SkillsContext';
 
-const SkillsVisualization = () => {
+const SkillsVisualization = ({ shouldReduceMotion }) => {
   const { skillCategories, techStack } = useSkills();
   const [activeCategory, setActiveCategory] = useState(() => {
     // Get first category key dynamically
