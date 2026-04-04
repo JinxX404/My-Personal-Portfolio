@@ -187,6 +187,9 @@ const ProjectManager = () => {
         tags: formData.tags?.length > 0 ? formData.tags : [],
         meta_title: formData.metaTitle || null,
         meta_description: formData.metaDescription || null,
+        hero_images: (formData.heroImages || []).map(img => img.preview || ''),
+        screenshots: (formData.screenshots || []).map(img => img.preview || ''),
+        mockups: (formData.mockups || []).map(img => img.preview || ''),
       };
       
       const result = isEditing
