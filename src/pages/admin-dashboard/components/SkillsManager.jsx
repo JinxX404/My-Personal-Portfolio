@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Icon from 'components/AppIcon';
 import Modal from 'components/ui/Modal';
+import EmptyState from 'components/ui/EmptyState';
+import Breadcrumb from 'components/ui/Breadcrumb';
 import { useSkills } from 'context/SkillsContext';
 
 const SkillsManager = () => {
@@ -179,6 +181,10 @@ const SkillsManager = () => {
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
+        <Breadcrumb items={[
+          { href: '/admin-dashboard', label: 'Dashboard' },
+          { label: 'Skills Management' }
+        ]} />
         {/* Header */}
         <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
@@ -256,7 +262,19 @@ const SkillsManager = () => {
               </button>
             </div>
 
-            {/* Categories List */}
+            {Object.keys(skillCategories).length === 0 ? (
+              <EmptyState
+                icon="Folder"
+                title="No skill categories yet"
+                description="Start organizing your skills by creating your first category."
+                actionLabel="Add Category"
+                onAction={() => {
+                  setCategoryForm({ key: '', title: '', icon: 'Code', color: 'accent' });
+                  setEditingCategory(null);
+                  setShowCategoryModal(true);
+                }}
+              />
+            ) : (
             <div className="grid gap-6">
               {Object.entries(skillCategories).map(([key, category]) => (
                 <div key={key} className="bg-white rounded-xl shadow-sm p-6">
@@ -274,6 +292,7 @@ const SkillsManager = () => {
                       <button
                         onClick={() => openAddSkill(key)}
                         className="p-2 text-success-600 hover:bg-success-50 rounded-lg transition-colors"
+                        aria-label={`Add skill to ${category.title}`}
                         title="Add Skill"
                       >
                         <Icon name="Plus" size={18} strokeWidth={2} />
@@ -281,6 +300,7 @@ const SkillsManager = () => {
                       <button
                         onClick={() => openEditCategory(key)}
                         className="p-2 text-accent hover:bg-accent-50 rounded-lg transition-colors"
+                        aria-label={`Edit ${category.title}`}
                         title="Edit Category"
                       >
                         <Icon name="Edit" size={18} strokeWidth={2} />
@@ -288,6 +308,7 @@ const SkillsManager = () => {
                       <button
                         onClick={() => handleDeleteCategory(key)}
                         className="p-2 text-error-600 hover:bg-error-50 rounded-lg transition-colors"
+                        aria-label={`Delete ${category.title}`}
                         title="Delete Category"
                       >
                         <Icon name="Trash2" size={18} strokeWidth={2} />
@@ -320,12 +341,16 @@ const SkillsManager = () => {
                             <button
                               onClick={() => openEditSkill(key, skill)}
                               className="p-1.5 text-accent hover:bg-accent-50 rounded transition-colors"
+                              aria-label={`Edit ${skill.name}`}
+                              title={`Edit ${skill.name}`}
                             >
                               <Icon name="Edit" size={16} strokeWidth={2} />
                             </button>
                             <button
                               onClick={() => handleDeleteSkill(key, skill.id)}
                               className="p-1.5 text-error-600 hover:bg-error-50 rounded transition-colors"
+                              aria-label={`Delete ${skill.name}`}
+                              title={`Delete ${skill.name}`}
                             >
                               <Icon name="Trash2" size={16} strokeWidth={2} />
                             </button>
@@ -339,6 +364,7 @@ const SkillsManager = () => {
                 </div>
               ))}
             </div>
+            )}
           </div>
         )}
 
@@ -361,6 +387,19 @@ const SkillsManager = () => {
 
             <div className="bg-white rounded-xl shadow-sm p-6">
               <h3 className="text-xl font-bold text-primary-800 mb-4">Technologies I Work With</h3>
+              {techStack.length === 0 ? (
+                <EmptyState
+                  icon="Code"
+                  title="No technologies yet"
+                  description="Add the technologies you work with to showcase your tech stack."
+                  actionLabel="Add Technology"
+                  onAction={() => {
+                    setTechForm('');
+                    setEditingTech(null);
+                    setShowTechModal(true);
+                  }}
+                />
+              ) : (
               <div className="flex flex-wrap gap-3">
                 {techStack.map((tech, index) => (
                   <div
@@ -372,12 +411,16 @@ const SkillsManager = () => {
                       <button
                         onClick={() => openEditTech(index, tech)}
                         className="p-1 hover:bg-accent-100 rounded-full transition-colors"
+                        aria-label={`Edit ${tech}`}
+                        title={`Edit ${tech}`}
                       >
                         <Icon name="Edit" size={14} strokeWidth={2} />
                       </button>
                       <button
                         onClick={() => handleDeleteTech(index)}
                         className="p-1 hover:bg-error-100 rounded-full transition-colors text-error-600"
+                        aria-label={`Remove ${tech}`}
+                        title={`Remove ${tech}`}
                       >
                         <Icon name="X" size={14} strokeWidth={2} />
                       </button>
@@ -385,6 +428,7 @@ const SkillsManager = () => {
                   </div>
                 ))}
               </div>
+              )}
             </div>
           </div>
         )}

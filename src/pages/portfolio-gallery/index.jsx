@@ -166,18 +166,24 @@ const PortfolioGallery = () => {
             <button
               onClick={() => setSelectedProject(project)}
               className="bg-white/90 hover:bg-white text-primary-800 p-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
+              aria-label={`Preview ${project.title}`}
+              title={`Preview ${project.title}`}
             >
               <Icon name="Eye" size={20} strokeWidth={2} />
             </button>
             <a
               href={project.liveUrl}
               className="bg-accent/90 hover:bg-accent text-white p-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
+              aria-label={`View live demo of ${project.title}`}
+              title={`View live demo of ${project.title}`}
             >
               <Icon name="ExternalLink" size={20} strokeWidth={2} />
             </a>
             <a
               href={project.githubUrl}
               className="bg-primary-800/90 hover:bg-primary-800 text-white p-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
+              aria-label={`View source code of ${project.title} on GitHub`}
+              title={`View source code of ${project.title} on GitHub`}
             >
               <Icon name="Github" size={20} strokeWidth={2} />
             </a>
@@ -354,6 +360,8 @@ const PortfolioGallery = () => {
                     className={`p-2 rounded-md transition-all duration-200 ${
                       viewMode === 'grid' ?'bg-white text-accent shadow-sm' :'text-secondary-500 hover:text-secondary-700'
                     }`}
+                    aria-label="Grid view"
+                    title="Grid view"
                   >
                     <Icon name="Grid3X3" size={16} strokeWidth={2} />
                   </button>
@@ -362,6 +370,8 @@ const PortfolioGallery = () => {
                     className={`p-2 rounded-md transition-all duration-200 ${
                       viewMode === 'list' ?'bg-white text-accent shadow-sm' :'text-secondary-500 hover:text-secondary-700'
                     }`}
+                    aria-label="List view"
+                    title="List view"
                   >
                     <Icon name="List" size={16} strokeWidth={2} />
                   </button>
@@ -456,6 +466,8 @@ const PortfolioGallery = () => {
                 <button
                   onClick={() => setSelectedProject(null)}
                   className="absolute top-4 right-4 bg-white/90 hover:bg-white text-primary-800 p-2 rounded-full shadow-lg transition-all duration-200"
+                  aria-label="Close preview"
+                  title="Close preview"
                 >
                   <Icon name="X" size={20} strokeWidth={2} />
                 </button>

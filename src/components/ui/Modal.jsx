@@ -1,9 +1,20 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Icon from 'components/AppIcon';
+import { useFocusTrap } from 'hooks/useFocusTrap';
 
 const Modal = ({ isOpen, onClose, title, children, footer }) => {
   const modalRef = useRef(null);
+  const focusTrapRef = useFocusTrap(isOpen);
+
+  const combinedRef = useCallback((node) => {
+    modalRef.current = node;
+    if (typeof focusTrapRef === 'function') {
+      focusTrapRef(node);
+    } else if (focusTrapRef) {
+      focusTrapRef.current = node;
+    }
+  }, [focusTrapRef]);
 
   // Close on Escape
   useEffect(() => {
@@ -37,7 +48,7 @@ const Modal = ({ isOpen, onClose, title, children, footer }) => {
           exit={{ scale: 0.9, opacity: 0 }}
           className="bg-white dark:bg-surface rounded-xl shadow-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
-          ref={modalRef}
+          ref={combinedRef}
         >
           {/* Header */}
           <div className="flex items-center justify-between mb-4">

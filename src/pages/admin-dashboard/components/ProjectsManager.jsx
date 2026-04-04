@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from 'components/AppIcon';
+import Breadcrumb from 'components/ui/Breadcrumb';
 import { useProjects } from 'context/ProjectsContext';
 
 const ProjectsManager = () => {
@@ -85,6 +86,10 @@ const ProjectsManager = () => {
   return (
     <div className="p-4 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
+        <Breadcrumb items={[
+          { href: '/admin-dashboard', label: 'Dashboard' },
+          { label: 'Projects Management' }
+        ]} />
         {/* Header */}
         <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
           <div className="flex items-center justify-between mb-4">

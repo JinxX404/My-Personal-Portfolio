@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Icon from 'components/AppIcon';
+import Breadcrumb from 'components/ui/Breadcrumb';
 import Image from 'components/AppImage';
 import { usePortfolioSettings } from '../../../context/PortfolioSettingsContext';
 import ProfileSettingsTab from './settings-tabs/ProfileSettingsTab';
@@ -75,6 +76,10 @@ const SettingsManager = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-accent-50 p-6">
       <div className="max-w-7xl mx-auto">
+        <Breadcrumb items={[
+          { href: '/admin-dashboard', label: 'Dashboard' },
+          { label: 'Portfolio Settings' }
+        ]} />
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-primary-800 mb-2">Portfolio Settings</h1>

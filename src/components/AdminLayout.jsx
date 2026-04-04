@@ -29,6 +29,8 @@ const AdminLayout = ({ children }) => {
             <button
             onClick={toggleSidebar}
             className="p-2 rounded-lg text-primary-600 hover:bg-primary-50 transition-colors duration-200"
+            aria-label="Open sidebar navigation"
+            title="Open sidebar navigation"
             >
             <Icon name="Menu" size={24} strokeWidth={2} />
             </button>

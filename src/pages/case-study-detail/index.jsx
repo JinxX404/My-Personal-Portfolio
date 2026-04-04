@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
 import { useProjects } from 'context/ProjectsContext';
+import { SkeletonCard, SkeletonText } from 'components/ui/Skeleton';
 
 const CaseStudyDetail = () => {
   const { id } = useParams();
@@ -421,10 +422,64 @@ The backend API was redesigned to support the new frontend requirements, with op
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-primary-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-accent mx-auto mb-4"></div>
-          <p className="text-primary-600">Loading project details...</p>
+      <div className="min-h-screen bg-primary-50">
+        {/* Skeleton Hero */}
+        <section className="relative bg-primary-800 pt-20 pb-16">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              <div className="space-y-6">
+                <SkeletonText width="w-40" height="h-4" />
+                <SkeletonText width="w-3/4" height="h-10" />
+                <SkeletonText width="w-1/2" height="h-6" />
+                <div className="grid grid-cols-2 gap-6">
+                  <SkeletonText width="w-full" height="h-16" />
+                  <SkeletonText width="w-full" height="h-16" />
+                </div>
+                <div className="flex gap-2">
+                  <SkeletonText width="w-20" height="h-8" />
+                  <SkeletonText width="w-20" height="h-8" />
+                  <SkeletonText width="w-20" height="h-8" />
+                </div>
+              </div>
+              <div className="relative">
+                <SkeletonCard />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Skeleton Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="lg:grid lg:grid-cols-4 lg:gap-8">
+            <div className="lg:col-span-1">
+              <div className="sticky top-24 bg-white rounded-lg shadow-sm border border-primary-200 p-6 mb-8 lg:mb-0">
+                <SkeletonText width="w-24" height="h-5" />
+                <div className="space-y-2 mt-4">
+                  <SkeletonText width="w-full" height="h-10" />
+                  <SkeletonText width="w-full" height="h-10" />
+                  <SkeletonText width="w-full" height="h-10" />
+                </div>
+              </div>
+            </div>
+            <div className="lg:col-span-3 space-y-16">
+              <div className="bg-white rounded-lg shadow-sm border border-primary-200 p-8">
+                <SkeletonText width="w-48" height="h-8" />
+                <div className="space-y-4 mt-6">
+                  <SkeletonText width="w-full" height="h-4" />
+                  <SkeletonText width="w-5/6" height="h-4" />
+                  <SkeletonText width="w-4/6" height="h-4" />
+                </div>
+              </div>
+              <div className="bg-white rounded-lg shadow-sm border border-primary-200 p-8">
+                <SkeletonText width="w-36" height="h-8" />
+                <div className="space-y-4 mt-6">
+                  <SkeletonText width="w-full" height="h-4" />
+                  <SkeletonText width="w-5/6" height="h-4" />
+                  <SkeletonText width="w-4/6" height="h-4" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );

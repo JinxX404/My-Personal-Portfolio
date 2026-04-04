@@ -58,6 +58,23 @@ export const ToastProvider = ({ children }) => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
   }, []);
 
+  const pauseToast = useCallback((id) => {
+    const timeoutId = timeoutIds.current.get(id);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutIds.current.delete(id);
+    }
+  }, []);
+
+  const resumeToast = useCallback((id, duration = 5000) => {
+    const toast = toasts.find(t => t.id === id);
+    if (!toast) return;
+    const timeoutId = setTimeout(() => {
+      removeToast(id);
+    }, duration);
+    timeoutIds.current.set(id, timeoutId);
+  }, [toasts, removeToast]);
+
   // Convenience methods
   const success = useCallback((message, duration = 5000) => addToast(message, 'success', duration), [addToast]);
   const error = useCallback((message, duration = 7000) => addToast(message, 'error', duration), [addToast]);
@@ -68,11 +85,13 @@ export const ToastProvider = ({ children }) => {
     toasts,
     addToast,
     removeToast,
+    pauseToast,
+    resumeToast,
     success,
     error,
     warning,
     info,
-  }), [toasts, addToast, removeToast, success, error, warning, info]);
+  }), [toasts, addToast, removeToast, pauseToast, resumeToast, success, error, warning, info]);
 
   return (
     <ToastContext.Provider value={value}>

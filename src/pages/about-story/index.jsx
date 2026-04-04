@@ -216,7 +216,7 @@ My goal is to grow as a software engineer and create impactful, innovative solut
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-background dark:via-surface dark:to-background">
       <Helmet>
         <title>About Me — Moataz Mohammed, Backend Engineer</title>
         <meta name="description" content="Learn about my background, education, skills, and the values that drive my work as a software engineer." />
@@ -242,7 +242,7 @@ My goal is to grow as a software engineer and create impactful, innovative solut
                     className="w-full h-full object-cover rounded-xl"
                   />
                 </div>
-                <div className="absolute -bottom-4 -right-4 bg-white rounded-xl p-4 shadow-lg border border-primary-200">
+                <div className="absolute -bottom-4 -right-4 bg-surface dark:bg-background rounded-xl p-4 shadow-lg border border-primary-200 dark:border-border-strong">
                   <div className="flex items-center space-x-2">
                     <div className="w-3 h-3 bg-success rounded-full animate-pulse"></div>
                     <span className="text-sm font-medium text-primary-700">Available for projects</span>
@@ -298,7 +298,7 @@ My goal is to grow as a software engineer and create impactful, innovative solut
       </section>
 
       {/* Philosophy Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-surface dark:bg-background">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             id="philosophy"
@@ -319,7 +319,7 @@ My goal is to grow as a software engineer and create impactful, innovative solut
               <p className="text-lg text-secondary-700 leading-relaxed">
                 {personalInfo.philosophy}
               </p>
-              <div className="bg-gradient-to-r from-cta-50 to-accent-50 rounded-xl p-8 border border-cta-200">
+              <div className="bg-gradient-to-r from-cta-50 to-accent-50 dark:from-cta-900/30 dark:to-accent-900/30 rounded-xl p-8 border border-cta-200 dark:border-cta-800">
                 <p className="text-lg font-semibold text-primary-800 italic">
                   "{personalInfo.mission}"
                 </p>
@@ -330,7 +330,7 @@ My goal is to grow as a software engineer and create impactful, innovative solut
       </section>
 
       {/* Values Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-primary-50">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-primary-50 dark:bg-primary-900/30">
         <div className="max-w-7xl mx-auto">
           <motion.div
             id="values"
@@ -353,7 +353,7 @@ My goal is to grow as a software engineer and create impactful, innovative solut
               {valuesData.map((value, index) => (
                 <div
                   key={index}
-                  className="bg-white rounded-xl p-8 shadow-sm border border-primary-200 hover:shadow-md transition-all duration-300"
+                  className="bg-surface dark:bg-background rounded-xl p-8 shadow-sm border border-primary-200 dark:border-border-strong hover:shadow-md transition-all duration-300"
                 >
                   <div className="flex items-start space-x-4">
                     <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-accent to-cta rounded-lg flex items-center justify-center">
@@ -366,8 +366,8 @@ My goal is to grow as a software engineer and create impactful, innovative solut
                       <p className="text-secondary-600 mb-4 leading-relaxed">
                         {value.description}
                       </p>
-                      <div className="bg-accent-50 rounded-lg p-4 border-l-4 border-accent">
-                        <p className="text-sm text-accent-800 font-medium">
+                      <div className="bg-accent-50 dark:bg-accent-900/30 rounded-lg p-4 border-l-4 border-accent">
+                        <p className="text-sm text-accent-800 dark:text-accent-200 font-medium">
                           Real Example: {value.example}
                         </p>
                       </div>
@@ -381,7 +381,7 @@ My goal is to grow as a software engineer and create impactful, innovative solut
       </section>
 
       {/* Timeline Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-surface dark:bg-background">
         <div className="max-w-6xl mx-auto">
           <motion.div
             id="timeline"
@@ -428,13 +428,13 @@ My goal is to grow as a software engineer and create impactful, innovative solut
                           color="white" 
                         />
                       </div>
-                      <div className="absolute -top-2 -right-2 bg-white rounded-full px-2 py-1 text-xs font-bold text-primary-800 border border-primary-200">
+                      <div className="absolute -top-2 -right-2 bg-surface dark:bg-background rounded-full px-2 py-1 text-xs font-bold text-primary-800 dark:text-primary-200 border border-primary-200 dark:border-border-strong">
                         {item.year}
                       </div>
                     </div>
 
                     {/* Timeline Content */}
-                    <div className="flex-1 bg-white rounded-xl p-6 shadow-sm border border-primary-200 hover:shadow-md transition-all duration-300">
+                    <div className="flex-1 bg-surface dark:bg-background rounded-xl p-6 shadow-sm border border-primary-200 dark:border-border-strong hover:shadow-md transition-all duration-300">
                       <div className="flex items-start justify-between mb-4">
                         <div>
                           <h3 className="text-xl font-bold text-primary-800 mb-1">
@@ -495,7 +495,7 @@ My goal is to grow as a software engineer and create impactful, innovative solut
       </section>
 
       {/* Skills Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-primary-50">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-primary-50 dark:bg-primary-900/30">
         <div className="max-w-6xl mx-auto">
           <motion.div
             id="skills"
@@ -516,7 +516,7 @@ My goal is to grow as a software engineer and create impactful, innovative solut
 
             <motion.div variants={itemVariants} className="grid lg:grid-cols-3 gap-8">
               {skillsData.map((category, index) => (
-                <div key={index} className="bg-white rounded-xl p-8 shadow-sm border border-primary-200">
+                <div key={index} className="bg-surface dark:bg-background rounded-xl p-8 shadow-sm border border-primary-200 dark:border-border-strong">
                   <h3 className="text-xl font-bold text-primary-800 mb-6 text-center">
                     {category.category}
                   </h3>
@@ -549,7 +549,7 @@ My goal is to grow as a software engineer and create impactful, innovative solut
       </section>
 
       {/* Personal Interests */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-surface dark:bg-background">
         <div className="max-w-6xl mx-auto">
           <motion.div
             id="interests"
@@ -572,7 +572,7 @@ My goal is to grow as a software engineer and create impactful, innovative solut
               {personalInterests.map((interest, index) => (
                 <div
                   key={index}
-                  className="bg-gradient-to-br from-primary-50 to-accent-50 rounded-xl p-6 text-center hover:shadow-md transition-all duration-300 border border-primary-200"
+                  className="bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/30 dark:to-accent-900/30 rounded-xl p-6 text-center hover:shadow-md transition-all duration-300 border border-primary-200 dark:border-border-strong"
                 >
                   <div className="w-16 h-16 bg-gradient-to-br from-accent to-cta rounded-full flex items-center justify-center mx-auto mb-4">
                     <Icon name={interest.icon} size={28} color="white" />
