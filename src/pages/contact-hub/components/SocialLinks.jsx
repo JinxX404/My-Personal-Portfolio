@@ -14,7 +14,7 @@ const SocialLinks = () => {
     behance: { name: 'Behance', icon: 'Box', description: 'Creative showcase', color: 'blue-500' },
     instagram: { name: 'Instagram', icon: 'Instagram', description: 'Visual content', color: 'pink-600' },
     youtube: { name: 'YouTube', icon: 'Youtube', description: 'Video content', color: 'red-600' },
-    medium: { name: 'Medium', icon: 'FileText', description: 'Blog articles', color: 'gray-700' }
+    medium: { name: 'Medium', icon: 'FileText', description: 'Articles', color: 'gray-700' }
   };
 
   const socialPlatforms = Object.entries(socialLinks || {})

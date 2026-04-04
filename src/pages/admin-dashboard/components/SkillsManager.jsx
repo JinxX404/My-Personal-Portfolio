@@ -4,8 +4,10 @@ import Modal from 'components/ui/Modal';
 import EmptyState from 'components/ui/EmptyState';
 import Breadcrumb from 'components/ui/Breadcrumb';
 import { useSkills } from 'context/SkillsContext';
+import { useToast } from 'context/ToastContext';
 
 const SkillsManager = () => {
+  const { success, error: showError } = useToast();
   const {
     skillCategories,
     techStack,
@@ -48,7 +50,7 @@ const SkillsManager = () => {
   const [techForm, setTechForm] = useState('');
 
   const colorOptions = [
-    'accent', 'success', 'cta', 'primary', 'warning', 'info',
+    'accent', 'success', 'cta', 'primary', 'warning', 'error',
     'violet', 'indigo', 'blue', 'teal', 'emerald', 'lime',
     'amber', 'orange', 'rose', 'pink', 'fuchsia', 'purple', 'cyan'
   ];
@@ -200,7 +202,7 @@ const SkillsManager = () => {
                 onClick={async () => {
                   if (window.confirm('Resync all data from database? This will clear cached data and reload from Supabase.')) {
                     await resyncFromDatabase();
-                    alert('Data resynced successfully!');
+                    success('Data resynced successfully!');
                   }
                 }}
                 className="flex items-center space-x-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"

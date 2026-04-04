@@ -58,12 +58,6 @@ const NotFound = () => {
               About
             </Link>
             <Link 
-              to="/blog-insights" 
-              className="text-accent hover:text-accent-700 transition-colors duration-200"
-            >
-              Blog
-            </Link>
-            <Link 
               to="/contact-hub" 
               className="text-accent hover:text-accent-700 transition-colors duration-200"
             >

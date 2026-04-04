@@ -143,7 +143,6 @@ const SiteSettingsTab = ({ settings, onChange }) => {
             {[
               { key: 'show_theme_toggle', label: 'Show Theme Toggle', description: 'Allow visitors to switch between dark and light mode', icon: 'Moon' },
               { key: 'enable_animations', label: 'Enable Page Animations', description: 'Smooth transitions and entrance animations', icon: 'Zap' },
-              { key: 'enable_blog_comments', label: 'Enable Blog Comments', description: 'Allow visitors to comment on blog posts', icon: 'MessageCircle' },
               { key: 'enable_contact_form', label: 'Enable Contact Form', description: 'Show the contact form on the contact page', icon: 'Mail' }
             ].map((feature) => (
               <label 

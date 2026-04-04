@@ -50,7 +50,6 @@ const defaultSettings = {
     accent_color: '#8B5CF6',
     show_theme_toggle: true,
     enable_animations: true,
-    enable_blog_comments: false,
     enable_contact_form: true
   },
   seo_settings: {

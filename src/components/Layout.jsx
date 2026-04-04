@@ -33,11 +33,9 @@ const Layout = ({ children }) => {
   // List of routes where Header and Footer should be hidden
   const hideLayoutRoutes = [
     '/admin-dashboard',
-    '/blog-editor',
     '/project-manager',
     '/skills-manager',
     '/projects-manager',
-    '/blogs-manager',
     '/settings-manager'
   ];
 

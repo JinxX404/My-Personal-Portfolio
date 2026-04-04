@@ -73,7 +73,7 @@ const SocialLinksTab = ({ links, onChange }) => {
       icon: 'FileText', 
       color: '#000000', 
       placeholder: 'https://medium.com/@username',
-      description: 'Blog articles'
+      description: 'Articles'
     },
     { 
       key: 'dev_to', 

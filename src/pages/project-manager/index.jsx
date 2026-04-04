@@ -241,16 +241,48 @@ const ProjectManager = () => {
     }
   }, [formData, addProject, editProject, editId, isEditing, navigate]);
 
-  // Auto-save function
+  // Auto-save function — uses ref to avoid interval recreation on every keystroke
+  const formDataRef = React.useRef(formData);
+  useEffect(() => { formDataRef.current = formData; }, [formData]);
+
   useEffect(() => {
     const autoSaveInterval = setInterval(() => {
-      if (formData.title && formData.title.trim()) {
-        handleSave(true);
+      const currentData = formDataRef.current;
+      if (currentData.title && currentData.title.trim()) {
+        const projectData = {
+          title: currentData.title,
+          description: currentData.description,
+          category: currentData.category || 'Uncategorized',
+          technologies: currentData.technologies?.length > 0 ? currentData.technologies : [],
+          publishing_status: 'draft',
+          featured: currentData.featured || false,
+          status: currentData.status || 'draft',
+          client: currentData.client || null,
+          project_type: currentData.projectType || null,
+          start_date: currentData.startDate || null,
+          end_date: currentData.endDate || null,
+          repository_url: currentData.repositoryUrl || null,
+          demo_url: currentData.demoUrl || null,
+          complexity: currentData.complexity || null,
+          enable_case_study: currentData.enableCaseStudy || false,
+          problem: currentData.enableCaseStudy ? (currentData.problem || null) : null,
+          solution: currentData.enableCaseStudy ? (currentData.solution || null) : null,
+          results: currentData.enableCaseStudy ? (currentData.results || null) : null,
+          visibility: currentData.visibility || 'public',
+          tags: currentData.tags?.length > 0 ? currentData.tags : [],
+          meta_title: currentData.metaTitle || null,
+          meta_description: currentData.metaDescription || null,
+        };
+        if (editId) {
+          editProject(editId, projectData);
+        } else {
+          addProject(projectData);
+        }
       }
-    }, 30000); // Auto-save every 30 seconds
+    }, 30000);
     
     return () => clearInterval(autoSaveInterval);
-  }, [handleSave]);
+  }, [addProject, editProject, editId]);
 
   const renderSectionContent = () => {
     switch (activeSection) {
