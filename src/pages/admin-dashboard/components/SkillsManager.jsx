@@ -125,7 +125,9 @@ const SkillsManager = () => {
   };
 
   const handleDeleteSkill = (categoryKey, skillId) => {
-    if (window.confirm(`Delete skill "${skill.name}"?\n\nThis action cannot be undone.`)) {
+    const category = skillCategories[categoryKey];
+    const skill = category?.skills?.find(s => s.id === skillId);
+    if (window.confirm(`Delete skill "${skill?.name || 'this skill'}"?\n\nThis action cannot be undone.`)) {
       deleteSkill(categoryKey, skillId);
     }
   };
@@ -167,7 +169,8 @@ const SkillsManager = () => {
   };
 
   const handleDeleteTech = (index) => {
-    if (window.confirm(`Delete technology "${tech.name}"?\n\nThis action cannot be undone.`)) {
+    const tech = techStack[index];
+    if (window.confirm(`Delete technology "${tech}"?\n\nThis action cannot be undone.`)) {
       deleteTech(index);
     }
   };

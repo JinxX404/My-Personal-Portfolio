@@ -50,6 +50,7 @@ const ProjectManager = () => {
     results: '',
     prototypeUrl: '',
     testimonials: [],
+    enableCaseStudy: false,
     
     // Publishing Options
     publishingStatus: 'draft',

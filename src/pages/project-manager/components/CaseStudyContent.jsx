@@ -115,57 +115,16 @@ const CaseStudyContent = ({ formData, setFormData }) => {
     }));
   };
 
-  const TextAreaWithTemplate = ({ field, label, placeholder, templateKey }) => {
-    return (
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
-          <label className="text-sm font-semibold text-secondary-700">
-            {label}
-          </label>
-          <button
-            type="button"
-            onClick={() => setActiveTemplate(activeTemplate === templateKey ? null : templateKey)}
-            className="text-sm text-accent-600 hover:text-accent-700 transition-colors flex items-center"
-          >
-            <Icon name="Template" size={14} className="mr-1" />
-            Use Template
-          </button>
-        </div>
-        
-        {activeTemplate === templateKey && (
-          <div className="mb-3 p-3 bg-accent-50 border border-accent-200 rounded-lg">
-            <p className="text-sm text-accent-800 mb-2">{templates[templateKey].title}</p>
-            <button
-              type="button"
-              onClick={() => insertTemplate(templateKey)}
-              className="text-sm bg-accent-600 text-white px-3 py-1 rounded hover:bg-accent-700 transition-colors"
-            >
-              Insert Template
-            </button>
-          </div>
-        )}
-        
-        <textarea
-          value={formData?.[field] || ''}
-          onChange={(e) => setFormData(prev => ({ ...prev, [field]: e.target.value }))}
-          className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none"
-          rows={8}
-          placeholder={placeholder}
-        />
-      </div>
-    );
-  };
-
   const isCaseStudyEnabled = formData?.enableCaseStudy ?? false;
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+    <div className="bg-white dark:bg-surface rounded-xl shadow-md p-6 mb-6">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
-          <div className="p-2 bg-primary-100 rounded-lg mr-3">
+          <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-lg mr-3">
             <Icon name="FileText" size={20} className="text-primary-600" />
           </div>
-          <h2 className="text-2xl font-bold text-primary-800">Case Study Content</h2>
+          <h2 className="text-2xl font-bold text-primary-800 dark:text-primary-200">Case Study Content</h2>
         </div>
         
         {/* Toggle Case Study */}
@@ -208,28 +167,46 @@ const CaseStudyContent = ({ formData, setFormData }) => {
       {isCaseStudyEnabled && (
         <div className="space-y-6">
           {/* Problem Definition */}
-          <TextAreaWithTemplate
-            field="problem"
-            label="Problem Definition"
-            placeholder="Describe the problem or challenge this project aimed to solve..."
-            templateKey="problem"
-          />
+          <div className="mb-6">
+            <label className="text-sm font-semibold text-secondary-700 dark:text-secondary-300 mb-2 block">
+              Problem Definition
+            </label>
+            <textarea
+              value={formData?.problem || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, problem: e.target.value }))}
+              className="w-full px-4 py-3 border border-secondary-300 dark:border-primary-700 dark:bg-background dark:text-primary-200 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none"
+              rows={8}
+              placeholder="Describe the problem or challenge this project aimed to solve..."
+            />
+          </div>
 
           {/* Solution Approach */}
-          <TextAreaWithTemplate
-            field="solution"
-            label="Solution Approach"
-            placeholder="Explain your approach to solving the problem..."
-            templateKey="solution"
-          />
+          <div className="mb-6">
+            <label className="text-sm font-semibold text-secondary-700 dark:text-secondary-300 mb-2 block">
+              Solution Approach
+            </label>
+            <textarea
+              value={formData?.solution || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, solution: e.target.value }))}
+              className="w-full px-4 py-3 border border-secondary-300 dark:border-primary-700 dark:bg-background dark:text-primary-200 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none"
+              rows={8}
+              placeholder="Explain your approach to solving the problem..."
+            />
+          </div>
 
           {/* Results */}
-          <TextAreaWithTemplate
-            field="results"
-            label="Results & Impact"
-            placeholder="Document the results and impact of your solution..."
-            templateKey="results"
-          />
+          <div className="mb-6">
+            <label className="text-sm font-semibold text-secondary-700 dark:text-secondary-300 mb-2 block">
+              Results & Impact
+            </label>
+            <textarea
+              value={formData?.results || ''}
+              onChange={(e) => setFormData(prev => ({ ...prev, results: e.target.value }))}
+              className="w-full px-4 py-3 border border-secondary-300 dark:border-primary-700 dark:bg-background dark:text-primary-200 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none"
+              rows={8}
+              placeholder="Document the results and impact of your solution..."
+            />
+          </div>
 
           {/* Prototype Embedding */}
           <div>

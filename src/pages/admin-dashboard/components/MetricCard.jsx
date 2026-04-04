@@ -43,12 +43,12 @@ const MetricCard = ({
       <div className="card-content">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-accent-50 rounded-lg flex items-center justify-center">
+            <div className="w-12 h-12 bg-accent-50 dark:bg-accent-900/30 rounded-lg flex items-center justify-center">
               <Icon 
                 name={icon} 
                 size={24} 
                 strokeWidth={2} 
-                color="#3182ce"
+                className="text-accent"
               />
             </div>
             <div>

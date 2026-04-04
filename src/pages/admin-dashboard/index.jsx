@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
 import Icon from 'components/AppIcon';
 import { useProjects } from 'context/ProjectsContext';
+import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
 
 import MetricCard from './components/MetricCard';
 import QuickActions from './components/QuickActions';
@@ -10,11 +11,10 @@ import Sidebar from './components/Sidebar';
 const PerformanceCharts = lazy(() => import('./components/PerformanceCharts'));
 
 const AdminDashboard = () => {
-    // Removed blog context
   const { projects, getStats: getProjectStats, loading: projectsLoading } = useProjects();
+  const { profile } = usePortfolioSettings();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [selectedTimeframe, setSelectedTimeframe] = useState('7d');
   const [metrics, setMetrics] = useState({
     publishedProjects: 0,
     drafts: 0
@@ -86,36 +86,16 @@ const AdminDashboard = () => {
     }
   }, [projectsLoading, loadMetrics]);
 
-  const handleTimeframeChange = (timeframe) => {
-    setSelectedTimeframe(timeframe);
-  };
-
   const isLoading = projectsLoading || isLoadingMetrics;
 
   return (
     <>
       {/* Top Header */}
-      <header className="bg-white shadow-sm border-b border-primary-100">
+      <header className="bg-white dark:bg-surface shadow-sm border-b border-primary-100 dark:border-primary-800">
         <div className="flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center space-x-4">
-            <div>
-              <h1 className="text-2xl font-bold text-primary-800">Admin Dashboard</h1>
-              <p className="text-sm text-secondary-600 mt-1">Welcome back! Here's what's happening with your portfolio.</p>
-            </div>
-          </div>
-          
-          {/* Timeframe Selector */}
-          <div className="flex items-center space-x-2">
-            <select
-              value={selectedTimeframe}
-              onChange={(e) => handleTimeframeChange(e.target.value)}
-              className="select-field text-sm py-2 px-3"
-            >
-              <option value="24h">Last 24 hours</option>
-              <option value="7d">Last 7 days</option>
-              <option value="30d">Last 30 days</option>
-              <option value="90d">Last 90 days</option>
-            </select>
+          <div>
+            <h1 className="text-2xl font-bold text-primary-800 dark:text-primary-200">Admin Dashboard</h1>
+            <p className="text-sm text-secondary-600 dark:text-secondary-400 mt-1">Welcome back, {profile?.full_name || 'Admin'}! Here's what's happening with your portfolio.</p>
           </div>
         </div>
       </header>
@@ -154,7 +134,6 @@ const AdminDashboard = () => {
           <div>
             <RecentActivity 
               activities={recentActivities}
-              setActivities={() => {}}
             />
           </div>
 

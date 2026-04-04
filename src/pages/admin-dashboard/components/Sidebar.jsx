@@ -30,23 +30,12 @@ const Sidebar = ({ isOpen, onClose }) => {
       icon: 'Code2',
       description: 'Manage skills & tech'
     },
-    // {
-    //   name: 'New Project',
-    //   path: '/project-manager',
-    //   icon: 'Plus',
-    //   description: 'Create new project'
-    // },
-    // {
-    //   name: 'New Blog Post',
-    //   path: '/blog-editor',
-    //   icon: 'PenTool',
-    //   description: 'Write new post'
-    // },
-    // {
-    //   name: 'Analytics',
-    //   path: '#analytics',
-    //   icon: 'BarChart3',
-    //   description: 'Traffic & engagement'
+    {
+      name: 'New Project',
+      path: '/project-manager',
+      icon: 'Plus',
+      description: 'Create new project'
+    },
     // },
     {
       name: 'Settings',
