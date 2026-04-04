@@ -2,8 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 import Icon from 'components/AppIcon';
+import { useToast } from 'context/ToastContext';
+import { submitContactForm } from 'services/contactService';
 
 const ContactForm = ({ selectedInquiryType }) => {
+  const { error: showError } = useToast();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -59,29 +62,40 @@ const ContactForm = ({ selectedInquiryType }) => {
     
     setIsSubmitting(true);
     
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    
-    // Reset form after 3 seconds with proper cleanup
-    timeoutRef.current = setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        company: '',
-        phone: '',
-        subject: '',
-        message: '',
-        budget: '',
-        timeline: '',
-        eventDate: '',
-        eventLocation: '',
-        audienceSize: ''
+    try {
+      const result = await submitContactForm({
+        ...formData,
+        inquiryType: selectedInquiryType,
       });
-    }, 3000);
+      
+      if (result.success) {
+        setIsSubmitting(false);
+        setIsSubmitted(true);
+        
+        timeoutRef.current = setTimeout(() => {
+          setIsSubmitted(false);
+          setFormData({
+            name: '',
+            email: '',
+            company: '',
+            phone: '',
+            subject: '',
+            message: '',
+            budget: '',
+            timeline: '',
+            eventDate: '',
+            eventLocation: '',
+            audienceSize: ''
+          });
+        }, 3000);
+      } else {
+        setIsSubmitting(false);
+        showError(result.error || 'Failed to send message. Please try again.');
+      }
+    } catch (error) {
+      setIsSubmitting(false);
+      showError('An unexpected error occurred. Please try again.');
+    }
   };
 
   // Cleanup timeout on component unmount
