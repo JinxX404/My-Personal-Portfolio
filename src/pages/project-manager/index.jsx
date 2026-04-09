@@ -136,6 +136,14 @@ const ProjectManager = () => {
     { id: 'publishing', label: 'Publishing Options', icon: 'Settings', color: 'warning' }
   ];
 
+  const sectionColorMap = {
+    accent:  { bg: 'bg-accent-100',  text: 'text-accent-800',  border: 'border-accent-600',  iconBg: 'bg-accent-200',  iconText: 'text-accent-600' },
+    cta:     { bg: 'bg-cta-100',     text: 'text-cta-800',     border: 'border-cta-600',     iconBg: 'bg-cta-200',     iconText: 'text-cta-600' },
+    success: { bg: 'bg-success-100', text: 'text-success-800', border: 'border-success-600', iconBg: 'bg-success-200', iconText: 'text-success-600' },
+    primary: { bg: 'bg-primary-100', text: 'text-primary-800', border: 'border-primary-600', iconBg: 'bg-primary-200', iconText: 'text-primary-600' },
+    warning: { bg: 'bg-warning-100', text: 'text-warning-800', border: 'border-warning-600', iconBg: 'bg-warning-200', iconText: 'text-warning-600' },
+  };
+
   // Validation function - MINIMAL REQUIREMENTS ONLY
   const validateForm = () => {
     const errors = {};
@@ -431,25 +439,26 @@ const ProjectManager = () => {
               <nav className="space-y-2">
                 {sections.map(section => {
                   const isActive = activeSection === section.id;
+                  const colors = sectionColorMap[section.color] || sectionColorMap.accent;
                   return (
                     <button
                       key={section.id}
                       onClick={() => setActiveSection(section.id)}
                       className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-all duration-200 ${
                         isActive
-                          ? `bg-${section.color}-100 text-${section.color}-800 border-l-4 border-${section.color}-600`
+                          ? `${colors.bg} ${colors.text} border-l-4 ${colors.border}`
                           : 'text-secondary-600 hover:bg-secondary-50 hover:text-secondary-800'
                       }`}
                     >
                       <div className={`p-1 rounded mr-3 ${
                         isActive 
-                          ? `bg-${section.color}-200` 
+                          ? colors.iconBg 
                           : 'bg-secondary-100'
                       }`}>
                         <Icon 
                           name={section.icon} 
                           size={16} 
-                          className={isActive ? `text-${section.color}-600` : 'text-secondary-600'}
+                          className={isActive ? colors.iconText : 'text-secondary-600'}
                         />
                       </div>
                       <span className="font-medium">{section.label}</span>

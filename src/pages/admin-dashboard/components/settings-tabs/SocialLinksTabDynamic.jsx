@@ -1,6 +1,28 @@
 import React, { useState } from 'react';
 import Icon from 'components/AppIcon';
 
+const platformColorMap = {
+  'primary-600': { bg10: 'bg-primary-600/10', text: 'text-primary-600' },
+  'gray-700':    { bg10: 'bg-gray-700/10',    text: 'text-gray-700' },
+  'blue-600':    { bg10: 'bg-blue-600/10',    text: 'text-blue-600' },
+  'gray-900':    { bg10: 'bg-gray-900/10',    text: 'text-gray-900' },
+  'pink-500':    { bg10: 'bg-pink-500/10',    text: 'text-pink-500' },
+  'blue-500':    { bg10: 'bg-blue-500/10',    text: 'text-blue-500' },
+  'pink-600':    { bg10: 'bg-pink-600/10',    text: 'text-pink-600' },
+  'blue-700':    { bg10: 'bg-blue-700/10',    text: 'text-blue-700' },
+  'red-600':     { bg10: 'bg-red-600/10',     text: 'text-red-600' },
+  'gray-800':    { bg10: 'bg-gray-800/10',    text: 'text-gray-800' },
+  'orange-500':  { bg10: 'bg-orange-500/10',  text: 'text-orange-500' },
+  'green-600':   { bg10: 'bg-green-600/10',   text: 'text-green-600' },
+  'green-500':   { bg10: 'bg-green-500/10',   text: 'text-green-500' },
+  'purple-500':  { bg10: 'bg-purple-500/10',  text: 'text-purple-500' },
+  'red-500':     { bg10: 'bg-red-500/10',     text: 'text-red-500' },
+  'indigo-500':  { bg10: 'bg-indigo-500/10',  text: 'text-indigo-500' },
+  'purple-600':  { bg10: 'bg-purple-600/10',  text: 'text-purple-600' },
+  'orange-600':  { bg10: 'bg-orange-600/10',  text: 'text-orange-600' },
+  'yellow-400':  { bg10: 'bg-yellow-400/10',  text: 'text-yellow-400' },
+};
+
 const SocialLinksTabDynamic = ({ settings, onChange }) => {
   const [newLinkLabel, setNewLinkLabel] = useState('');
   const [newLinkUrl, setNewLinkUrl] = useState('');
@@ -175,9 +197,14 @@ const SocialLinksTabDynamic = ({ settings, onChange }) => {
                   className="bg-white border-2 border-primary-200 rounded-xl p-4 hover:border-accent hover:shadow-md transition-all group"
                 >
                   <div className="flex items-start space-x-4">
-                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center bg-${platform.color}/10 flex-shrink-0`}>
-                      <Icon name={platform.icon} size={20} className={`text-${platform.color}`} />
-                    </div>
+                    {(() => {
+                      const colors = platformColorMap[platform.color] || platformColorMap['primary-600'];
+                      return (
+                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${colors.bg10}`}>
+                          <Icon name={platform.icon} size={20} className={colors.text} />
+                        </div>
+                      );
+                    })()}
                     
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-2">

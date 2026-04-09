@@ -3,16 +3,20 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Icon from 'components/AppIcon';
 import { useReducedMotion } from 'hooks/useReducedMotion';
+import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
 
 import HeroSection from './components/HeroSection';
 import FeaturedWork from './components/FeaturedWork';
 import SkillsVisualization from './components/SkillsVisualization';
 import SocialProof from './components/SocialProof';
 import FloatingCTA from './components/FloatingCTA';
+import WhoAmI from './components/WhoAmI';
 
 const Homepage = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const shouldReduceMotion = useReducedMotion();
+  const { profile } = usePortfolioSettings();
+  const cvUrl = profile?.cv_url || profile?.resume_url;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,6 +49,9 @@ const Homepage = () => {
       {/* Hero Section */}
       <HeroSection shouldReduceMotion={shouldReduceMotion} />
 
+      {/* Who Am I Section */}
+      <WhoAmI />
+
       {/* Featured Work Section
       <section className="py-20 bg-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -61,10 +68,10 @@ const Homepage = () => {
       </section> */}
 
       {/* Skills Visualization Section */}
-      <section className="py-20 bg-background dark:bg-background/60 transition-theme">
+      <section className="py-20 bg-surface dark:bg-surface transition-theme">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-text-primary dark:text-primary-100 mb-6 transition-theme">
+            <h2 className="text-4xl md:text-5xl font-bold text-text-primary mb-6 transition-theme">
               Technical Expertise
             </h2>
             <p className="text-xl text-text-secondary max-w-3xl mx-auto">
@@ -85,12 +92,12 @@ const Homepage = () => {
       </section> */}
 
       {/* Call to Action Section */}
-      <section className="py-20 bg-gradient-to-br from-accent-500 via-accent-600 to-accent-700 text-white dark:from-primary-900 dark:via-primary-800 dark:to-secondary-800 transition-theme">
+      <section className="py-20 bg-background dark:bg-background border-t border-border dark:border-border-strong transition-theme">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-text-primary">
             Ready to Build Something Amazing?
           </h2>
-          <p className="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-text-secondary mb-8 max-w-2xl mx-auto">
             Let's collaborate to turn your ideas into exceptional digital experiences that users love and businesses depend on.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -103,11 +110,22 @@ const Homepage = () => {
             </Link>
             <Link
               to="/portfolio-gallery"
-              className="inline-flex items-center justify-center space-x-2 border border-white/70 hover:border-white hover:bg-white/10 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300"
+              className="inline-flex items-center justify-center space-x-2 border border-border dark:border-border-strong hover:border-accent hover:bg-accent/5 text-text-primary dark:text-text-primary font-semibold py-4 px-8 rounded-xl transition-all duration-300"
             >
               <Icon name="Eye" size={20} strokeWidth={2} />
               <span>Explore My Work</span>
             </Link>
+            {cvUrl && (
+              <a
+                href={cvUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center space-x-2 border border-accent text-accent hover:bg-accent hover:text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300"
+              >
+                <Icon name="Download" size={20} strokeWidth={2} />
+                <span>Download CV</span>
+              </a>
+            )}
           </div>
         </div>
       </section>

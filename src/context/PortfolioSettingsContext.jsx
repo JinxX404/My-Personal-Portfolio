@@ -26,6 +26,7 @@ const defaultSettings = {
     location: '',
     availability: 'available'
   },
+  freelance_projects: 0,
   social_links: {
     github: '',
     linkedin: '',
@@ -89,6 +90,7 @@ export const PortfolioSettingsProvider = ({ children }) => {
       if (data && data.length > 0) {
         setSettings({
           profile: data[0].profile || defaultSettings.profile,
+          freelance_projects: data[0].freelance_projects || defaultSettings.freelance_projects,
           social_links: data[0].social_links || defaultSettings.social_links,
           site_settings: data[0].site_settings || defaultSettings.site_settings,
           seo_settings: data[0].seo_settings || defaultSettings.seo_settings,
@@ -120,6 +122,7 @@ export const PortfolioSettingsProvider = ({ children }) => {
 
       const settingsData = {
         profile: newSettings.profile,
+        freelance_projects: newSettings.freelance_projects,
         social_links: newSettings.social_links,
         site_settings: newSettings.site_settings,
         seo_settings: newSettings.seo_settings,
@@ -160,6 +163,7 @@ export const PortfolioSettingsProvider = ({ children }) => {
     loadSettings,
     updateSettings,
     profile: settings.profile,
+    freelanceProjects: settings.freelance_projects,
     socialLinks: settings.social_links,
     siteSettings: settings.site_settings,
     seoSettings: settings.seo_settings,

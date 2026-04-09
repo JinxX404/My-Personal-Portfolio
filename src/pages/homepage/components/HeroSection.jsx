@@ -5,10 +5,12 @@ import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
 import { useProjects } from 'context/ProjectsContext';
 
 const HeroSection = ({ shouldReduceMotion }) => {
-  const { profile } = usePortfolioSettings();
+  const { profile, freelanceProjects } = usePortfolioSettings();
   const { projects } = useProjects();
   const [currentCodeIndex, setCurrentCodeIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(true);
+  
+  const cvUrl = profile?.cv_url || profile?.resume_url;
 
   const codeSnippets = [
     {
@@ -76,7 +78,7 @@ console.log(createAmazingExperience());`,
   const currentSnippet = codeSnippets[currentCodeIndex];
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-surface dark:from-primary-900 dark:via-primary-800 dark:to-secondary-800 text-text-primary transition-theme overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center bg-background dark:bg-background text-text-primary transition-theme overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-70 dark:opacity-60">
         <div className="absolute top-20 left-10 w-72 h-72 bg-accent-500/20 dark:bg-accent-500/25 rounded-full mix-blend-screen filter blur-3xl animate-pulse"></div>
@@ -144,6 +146,7 @@ console.log(createAmazingExperience());`,
                 {profile?.availability === 'available' ? 'Available for new opportunities' : 
                  profile?.availability === 'busy' ? 'Limited availability' : 'Currently unavailable'}
               </div>
+              
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 text-text-primary dark:text-primary-100">
                 {profile?.title ? (
                   profile.title.split(' ').map((word, index) => (
@@ -162,25 +165,36 @@ console.log(createAmazingExperience());`,
             </div>
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-4 justify-center lg:justify-start mb-8">
               <Link
                 to="/portfolio-gallery"
-                className="btn-primary text-lg px-8 py-4 inline-flex items-center justify-center space-x-2"
+                className="btn-primary text-base px-6 py-3 inline-flex items-center justify-center space-x-2"
               >
-                <Icon name="Eye" size={20} strokeWidth={2} />
+                <Icon name="Eye" size={18} strokeWidth={2} />
                 <span>View My Work</span>
               </Link>
               <Link
                 to="/contact-hub"
-                className="btn-secondary text-lg px-8 py-4 inline-flex items-center justify-center space-x-2"
+                className="btn-secondary text-base px-6 py-3 inline-flex items-center justify-center space-x-2"
               >
-                <Icon name="MessageCircle" size={20} strokeWidth={2} />
+                <Icon name="MessageCircle" size={18} strokeWidth={2} />
                 <span>Let's Connect</span>
               </Link>
+              {cvUrl && (
+                <a
+                  href={cvUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-secondary text-base px-6 py-3 inline-flex items-center justify-center space-x-2"
+                >
+                  <Icon name="Download" size={18} strokeWidth={2} />
+                  <span>Download CV</span>
+                </a>
+              )}
             </div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-3 gap-6 max-w-md mx-auto lg:mx-0">
+            <div className="grid grid-cols-3 gap-6 max-w-xl mx-auto lg:mx-0">
               <div className="text-center lg:text-left">
                 <div className="text-2xl font-bold text-accent-500">{profile?.experience_years || '1+'}</div>
                 <div className="text-sm text-text-secondary">Years Experience</div>
@@ -189,10 +203,10 @@ console.log(createAmazingExperience());`,
                 <div className="text-2xl font-bold text-accent-500">{projects?.filter(p => p.publishing_status === 'published').length || 0}+</div>
                 <div className="text-sm text-text-secondary">Projects Delivered</div>
               </div>
-              {/* <div className="text-center lg:text-left">
-                <div className="text-2xl font-bold text-cta">100%</div>
-                <div className="text-sm text-primary-200">Client Satisfaction</div>
-              </div> */}
+              <div className="text-center lg:text-left">
+                <div className="text-2xl font-bold text-success">{freelanceProjects}+</div>
+                <div className="text-sm text-text-secondary">Freelance</div>
+              </div>
             </div>
           </div>
         </div>

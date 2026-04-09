@@ -15,10 +15,7 @@ const ContactForm = ({ selectedInquiryType }) => {
     subject: '',
     message: '',
     budget: '',
-    timeline: '',
-    eventDate: '',
-    eventLocation: '',
-    audienceSize: ''
+    timeline: ''
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,11 +39,6 @@ const ContactForm = ({ selectedInquiryType }) => {
     if (selectedInquiryType === 'project') {
       if (!formData.budget) newErrors.budget = 'Budget range is required';
       if (!formData.timeline) newErrors.timeline = 'Timeline is required';
-    }
-    
-    if (selectedInquiryType === 'speaking') {
-      if (!formData.eventDate) newErrors.eventDate = 'Event date is required';
-      if (!formData.eventLocation.trim()) newErrors.eventLocation = 'Event location is required';
     }
     
     setErrors(newErrors);
@@ -82,10 +74,7 @@ const ContactForm = ({ selectedInquiryType }) => {
             subject: '',
             message: '',
             budget: '',
-            timeline: '',
-            eventDate: '',
-            eventLocation: '',
-            audienceSize: ''
+            timeline: ''
           });
         }, 3000);
       } else {
@@ -150,16 +139,16 @@ const ContactForm = ({ selectedInquiryType }) => {
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white rounded-2xl shadow-lg p-8 text-center"
+        className="bg-surface dark:bg-surface rounded-2xl shadow-lg p-8 text-center border border-border dark:border-border-strong"
       >
         <div className="w-16 h-16 bg-success rounded-full flex items-center justify-center mx-auto mb-6">
           <Icon name="CheckCircle" size={32} color="white" strokeWidth={2} />
         </div>
-        <h3 className="text-2xl font-bold text-primary-800 mb-4">Message Sent!</h3>
-        <p className="text-secondary-600 mb-6">
+        <h3 className="text-2xl font-bold text-text-primary mb-4">Message Sent!</h3>
+        <p className="text-text-secondary mb-6">
           Thank you for reaching out. I'll get back to you within 24 hours.
         </p>
-        <div className="flex items-center justify-center space-x-2 text-sm text-secondary-500">
+        <div className="flex items-center justify-center space-x-2 text-sm text-muted">
           <Icon name="Clock" size={16} strokeWidth={2} />
           <span>Expected response time: 24 hours</span>
         </div>
@@ -172,11 +161,11 @@ const ContactForm = ({ selectedInquiryType }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-white rounded-2xl shadow-lg p-8"
+      className="bg-surface dark:bg-surface rounded-2xl shadow-lg p-8 border border-border dark:border-border-strong"
     >
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-primary-800 mb-2">{getFormTitle()}</h2>
-        <p className="text-secondary-600">
+        <h2 className="text-2xl font-bold text-text-primary mb-2">{getFormTitle()}</h2>
+        <p className="text-text-secondary">
           Fill out the form below and I'll get back to you as soon as possible.
         </p>
       </div>
@@ -185,7 +174,7 @@ const ContactForm = ({ selectedInquiryType }) => {
         {/* Basic Information */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-primary-700 mb-2">
+            <label htmlFor="name" className="block text-sm font-medium text-text-primary mb-2">
               Full Name *
             </label>
             <input
@@ -194,8 +183,8 @@ const ContactForm = ({ selectedInquiryType }) => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors ${
-                errors.name ? 'border-error' : 'border-primary-300'
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors bg-background dark:bg-background ${
+                errors.name ? 'border-error' : 'border-border dark:border-border-strong'
               }`}
               placeholder="Your full name"
             />
@@ -208,7 +197,7 @@ const ContactForm = ({ selectedInquiryType }) => {
           </div>
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-primary-700 mb-2">
+            <label htmlFor="email" className="block text-sm font-medium text-text-primary mb-2">
               Email Address *
             </label>
             <input
@@ -217,8 +206,8 @@ const ContactForm = ({ selectedInquiryType }) => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors ${
-                errors.email ? 'border-error' : 'border-primary-300'
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors bg-background dark:bg-background ${
+                errors.email ? 'border-error' : 'border-border dark:border-border-strong'
               }`}
               placeholder="your@email.com"
             />
@@ -233,7 +222,7 @@ const ContactForm = ({ selectedInquiryType }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label htmlFor="company" className="block text-sm font-medium text-primary-700 mb-2">
+            <label htmlFor="company" className="block text-sm font-medium text-text-primary mb-2">
               Company/Organization
             </label>
             <input
@@ -242,13 +231,13 @@ const ContactForm = ({ selectedInquiryType }) => {
               name="company"
               value={formData.company}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-primary-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
+              className="w-full px-4 py-3 border border-border dark:border-border-strong rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors bg-background dark:bg-background"
               placeholder="Your company name"
             />
           </div>
 
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-primary-700 mb-2">
+            <label htmlFor="phone" className="block text-sm font-medium text-text-primary mb-2">
               Phone Number
             </label>
             <input
@@ -257,7 +246,7 @@ const ContactForm = ({ selectedInquiryType }) => {
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              className="w-full px-4 py-3 border border-primary-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
+              className="w-full px-4 py-3 border border-border dark:border-border-strong rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors bg-background dark:bg-background"
               placeholder="+1 (555) 123-4567"
             />
           </div>
@@ -267,7 +256,7 @@ const ContactForm = ({ selectedInquiryType }) => {
         {selectedInquiryType === 'project' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="budget" className="block text-sm font-medium text-primary-700 mb-2">
+              <label htmlFor="budget" className="block text-sm font-medium text-text-primary mb-2">
                 Budget Range *
               </label>
               <select
@@ -275,8 +264,8 @@ const ContactForm = ({ selectedInquiryType }) => {
                 name="budget"
                 value={formData.budget}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors ${
-                  errors.budget ? 'border-error' : 'border-primary-300'
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors bg-background dark:bg-background ${
+                  errors.budget ? 'border-error' : 'border-border dark:border-border-strong'
                 }`}
               >
                 {budgetOptions.map(option => (
@@ -294,7 +283,7 @@ const ContactForm = ({ selectedInquiryType }) => {
             </div>
 
             <div>
-              <label htmlFor="timeline" className="block text-sm font-medium text-primary-700 mb-2">
+              <label htmlFor="timeline" className="block text-sm font-medium text-text-primary mb-2">
                 Project Timeline *
               </label>
               <select
@@ -302,8 +291,8 @@ const ContactForm = ({ selectedInquiryType }) => {
                 name="timeline"
                 value={formData.timeline}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors ${
-                  errors.timeline ? 'border-error' : 'border-primary-300'
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors bg-background dark:bg-background ${
+                  errors.timeline ? 'border-error' : 'border-border dark:border-border-strong'
                 }`}
               >
                 {timelineOptions.map(option => (
@@ -322,74 +311,9 @@ const ContactForm = ({ selectedInquiryType }) => {
           </div>
         )}
 
-        {/* Speaking-specific fields */}
-        {selectedInquiryType === 'speaking' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="eventDate" className="block text-sm font-medium text-primary-700 mb-2">
-                Event Date *
-              </label>
-              <input
-                type="date"
-                id="eventDate"
-                name="eventDate"
-                value={formData.eventDate}
-                onChange={handleChange}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors ${
-                  errors.eventDate ? 'border-error' : 'border-primary-300'
-                }`}
-              />
-              {errors.eventDate && (
-                <p className="mt-1 text-sm text-error flex items-center">
-                  <Icon name="AlertCircle" size={14} className="mr-1" strokeWidth={2} />
-                  {errors.eventDate}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="eventLocation" className="block text-sm font-medium text-primary-700 mb-2">
-                Event Location *
-              </label>
-              <input
-                type="text"
-                id="eventLocation"
-                name="eventLocation"
-                value={formData.eventLocation}
-                onChange={handleChange}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors ${
-                  errors.eventLocation ? 'border-error' : 'border-primary-300'
-                }`}
-                placeholder="City, State or Virtual"
-              />
-              {errors.eventLocation && (
-                <p className="mt-1 text-sm text-error flex items-center">
-                  <Icon name="AlertCircle" size={14} className="mr-1" strokeWidth={2} />
-                  {errors.eventLocation}
-                </p>
-              )}
-            </div>
-
-            <div className="md:col-span-2">
-              <label htmlFor="audienceSize" className="block text-sm font-medium text-primary-700 mb-2">
-                Expected Audience Size
-              </label>
-              <input
-                type="text"
-                id="audienceSize"
-                name="audienceSize"
-                value={formData.audienceSize}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-primary-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors"
-                placeholder="e.g., 50-100 people"
-              />
-            </div>
-          </div>
-        )}
-
         {/* Subject and Message */}
         <div>
-          <label htmlFor="subject" className="block text-sm font-medium text-primary-700 mb-2">
+          <label htmlFor="subject" className="block text-sm font-medium text-text-primary mb-2">
             Subject *
           </label>
           <input
@@ -398,8 +322,8 @@ const ContactForm = ({ selectedInquiryType }) => {
             name="subject"
             value={formData.subject}
             onChange={handleChange}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors ${
-              errors.subject ? 'border-error' : 'border-primary-300'
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors bg-background dark:bg-background ${
+              errors.subject ? 'border-error' : 'border-border dark:border-border-strong'
             }`}
             placeholder="Brief subject line"
           />
@@ -412,7 +336,7 @@ const ContactForm = ({ selectedInquiryType }) => {
         </div>
 
         <div>
-          <label htmlFor="message" className="block text-sm font-medium text-primary-700 mb-2">
+          <label htmlFor="message" className="block text-sm font-medium text-text-primary mb-2">
             Message *
           </label>
           <textarea
@@ -421,8 +345,8 @@ const ContactForm = ({ selectedInquiryType }) => {
             rows={6}
             value={formData.message}
             onChange={handleChange}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors resize-vertical ${
-              errors.message ? 'border-error' : 'border-primary-300'
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors resize-vertical bg-background dark:bg-background ${
+              errors.message ? 'border-error' : 'border-border dark:border-border-strong'
             }`}
             placeholder="Tell me more about your project, goals, or questions..."
           />
@@ -432,7 +356,7 @@ const ContactForm = ({ selectedInquiryType }) => {
               {errors.message}
             </p>
           )}
-          <p className="mt-2 text-sm text-secondary-500">
+          <p className="mt-2 text-sm text-muted">
             {formData.message.length}/1000 characters
           </p>
         </div>
@@ -442,7 +366,7 @@ const ContactForm = ({ selectedInquiryType }) => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-cta hover:bg-cta-600 disabled:bg-secondary-400 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2"
+            className="w-full bg-accent hover:bg-accent-600 disabled:bg-secondary-400 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2"
           >
             {isSubmitting ? (
               <>
@@ -459,10 +383,10 @@ const ContactForm = ({ selectedInquiryType }) => {
         </div>
 
         {/* Privacy Notice */}
-        <div className="text-sm text-secondary-500 text-center">
+        <div className="text-sm text-muted text-center">
           <p>
             By submitting this form, you agree to our{' '}
-            <a href="#" className="text-accent hover:text-accent-700 underline">
+            <a href="#" className="text-accent hover:text-accent-600 underline">
               Privacy Policy
             </a>
             . Your information is secure and will never be shared.

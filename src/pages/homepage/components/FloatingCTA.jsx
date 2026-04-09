@@ -1,26 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import Icon from 'components/AppIcon';
-import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import Icon from "components/AppIcon";
+import { usePortfolioSettings } from "context/PortfolioSettingsContext";
 
 const FloatingCTA = ({ scrollProgress }) => {
   const { profile, socialLinks } = usePortfolioSettings();
-  const [isVisible, setIsVisible] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-
-  useEffect(() => {
-    setIsVisible(scrollProgress > 30);
-  }, [scrollProgress]);
+  const cvUrl = profile?.cv_url || profile?.resume_url;
 
   const toggleExpanded = () => {
     setIsExpanded(!isExpanded);
   };
 
-  if (!isVisible) return null;
-
   return (
     <div className="fixed bottom-6 right-6 z-40">
-      <div className={`transition-all duration-300 ${isExpanded ? 'w-80' : 'w-auto'}`}>
+      <div
+        className={`transition-all duration-300 ${isExpanded ? "w-80" : "w-auto"}`}
+      >
         {/* Expanded CTA Card */}
         {isExpanded && (
           <div className="bg-white rounded-lg shadow-2xl p-6 mb-4 border border-primary-100 animate-fade-in">
@@ -59,6 +55,18 @@ const FloatingCTA = ({ scrollProgress }) => {
                 <Icon name="Eye" size={18} strokeWidth={2} />
                 <span>View Portfolio</span>
               </Link>
+
+              {cvUrl && (
+                <a
+                  href={cvUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-transparent border border-success text-success hover:bg-success hover:text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2"
+                >
+                  <Icon name="Download" size={18} strokeWidth={2} />
+                  <span>Download CV</span>
+                </a>
+              )}
             </div>
 
             {/* Quick Contact Options */}
@@ -71,7 +79,12 @@ const FloatingCTA = ({ scrollProgress }) => {
                     className="flex-1 bg-primary-50 hover:bg-primary-100 text-primary-600 p-2 rounded text-center transition-colors duration-200"
                     title="Email"
                   >
-                    <Icon name="Mail" size={16} strokeWidth={2} className="mx-auto" />
+                    <Icon
+                      name="Mail"
+                      size={16}
+                      strokeWidth={2}
+                      className="mx-auto"
+                    />
                   </a>
                 )}
                 {socialLinks?.linkedin && (
@@ -82,7 +95,12 @@ const FloatingCTA = ({ scrollProgress }) => {
                     className="flex-1 bg-primary-50 hover:bg-primary-100 text-primary-600 p-2 rounded text-center transition-colors duration-200"
                     title="LinkedIn"
                   >
-                    <Icon name="Linkedin" size={16} strokeWidth={2} className="mx-auto" />
+                    <Icon
+                      name="Linkedin"
+                      size={16}
+                      strokeWidth={2}
+                      className="mx-auto"
+                    />
                   </a>
                 )}
                 {socialLinks?.github && (
@@ -93,7 +111,12 @@ const FloatingCTA = ({ scrollProgress }) => {
                     className="flex-1 bg-primary-50 hover:bg-primary-100 text-primary-600 p-2 rounded text-center transition-colors duration-200"
                     title="GitHub"
                   >
-                    <Icon name="Github" size={16} strokeWidth={2} className="mx-auto" />
+                    <Icon
+                      name="Github"
+                      size={16}
+                      strokeWidth={2}
+                      className="mx-auto"
+                    />
                   </a>
                 )}
               </div>
@@ -106,11 +129,11 @@ const FloatingCTA = ({ scrollProgress }) => {
           <button
             onClick={toggleExpanded}
             className={`group relative bg-gradient-to-r from-cta to-cta-600 hover:from-cta-600 hover:to-cta-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${
-              isExpanded ? 'w-12 h-12' : 'w-14 h-14'
+              isExpanded ? "w-12 h-12" : "w-14 h-14"
             }`}
           >
             <div className="absolute inset-0 bg-gradient-to-r from-cta-400 to-cta-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            
+
             <div className="relative flex items-center justify-center h-full">
               {isExpanded ? (
                 <Icon name="X" size={20} strokeWidth={2} />

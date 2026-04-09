@@ -18,6 +18,7 @@ const SettingsManager = () => {
   
   // All Settings State - initialized from context
   const [profileSettings, setProfileSettings] = useState(settings.profile);
+  const [freelanceProjects, setFreelanceProjects] = useState(settings.freelance_projects || 0);
   const [socialLinks, setSocialLinks] = useState(settings.social_links);
   const [siteSettings, setSiteSettings] = useState(settings.site_settings);
   const [seoSettings, setSeoSettings] = useState(settings.seo_settings);
@@ -34,6 +35,7 @@ const SettingsManager = () => {
   // Sync local state with context when settings load
   useEffect(() => {
     setProfileSettings(settings.profile);
+    setFreelanceProjects(settings.freelance_projects || 0);
     setSocialLinks(settings.social_links);
     setSiteSettings(settings.site_settings);
     setSeoSettings(settings.seo_settings);
@@ -47,6 +49,7 @@ const SettingsManager = () => {
     try {
       const settingsData = {
         profile: profileSettings,
+        freelance_projects: freelanceProjects,
         social_links: socialLinks,
         site_settings: siteSettings,
         seo_settings: seoSettings,
@@ -71,6 +74,7 @@ const SettingsManager = () => {
 
   const handleReset = () => {
     setProfileSettings(settings.profile);
+    setFreelanceProjects(settings.freelance_projects || 0);
     setSocialLinks(settings.social_links);
     setSiteSettings(settings.site_settings);
     setSeoSettings(settings.seo_settings);
@@ -132,7 +136,9 @@ const SettingsManager = () => {
         <div className="bg-white rounded-xl shadow-lg p-8">
           {activeTab === 'profile' && (
             <ProfileSettingsTab 
-              settings={profileSettings} 
+              settings={profileSettings}
+              freelanceProjects={freelanceProjects}
+              onFreelanceProjectsChange={setFreelanceProjects}
               onChange={setProfileSettings}
             />
           )}

@@ -16,7 +16,6 @@ const Modal = ({ isOpen, onClose, title, children, footer }) => {
     }
   }, [focusTrapRef]);
 
-  // Close on Escape
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') onClose();
@@ -39,23 +38,23 @@ const Modal = ({ isOpen, onClose, title, children, footer }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+        className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50 p-4"
         onClick={onClose}
       >
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-white dark:bg-surface rounded-xl shadow-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto"
+          className="bg-surface dark:bg-surface rounded-xl shadow-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto border border-border dark:border-border-strong"
           onClick={(e) => e.stopPropagation()}
           ref={combinedRef}
         >
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-primary-800 dark:text-primary-200">{title}</h2>
+            <h2 className="text-2xl font-bold text-text-primary">{title}</h2>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-primary-100 dark:hover:bg-primary-800 rounded-lg transition-colors"
+              className="p-2 hover:bg-primary-100 dark:hover:bg-primary-800 rounded-lg transition-colors text-text-secondary hover:text-text-primary"
               aria-label="Close modal"
             >
               <Icon name="X" size={20} />

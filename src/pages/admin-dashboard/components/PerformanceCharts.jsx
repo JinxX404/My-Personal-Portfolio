@@ -1,14 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   BarChart, Bar, Cell, 
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
 } from 'recharts';
 import Icon from 'components/AppIcon';
-
-const COLORS = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+import { useTheme } from 'context/ThemeContext';
+import { COLORS as CHART_COLORS } from 'lib/colors';
 
 const PerformanceCharts = ({ data }) => {
   const [activeChart, setActiveChart] = useState('composition');
+  const { isDark } = useTheme();
+
+  const chartColors = useMemo(() => ({
+    grid: isDark ? CHART_COLORS.chart.gridDark : CHART_COLORS.chart.gridLight,
+    text: isDark ? CHART_COLORS.chart.textDark : CHART_COLORS.chart.textLight,
+    cursor: isDark ? 'rgba(100, 116, 139, 0.2)' : 'rgba(241, 245, 249, 0.8)',
+    published: CHART_COLORS.chart.secondary,
+    draft: isDark ? '#4a5568' : '#e2e8f0',
+    tooltipBg: isDark ? '#1e293b' : '#ffffff',
+    tooltipBorder: isDark ? '#334155' : '#e2e8f0'
+  }), [isDark]);
 
   const composition = data?.composition || [];
 
@@ -24,16 +35,21 @@ const PerformanceCharts = ({ data }) => {
     return (
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={composition} margin={{ top: 20, bottom: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-            <XAxis dataKey="name" stroke="#64748b" fontSize={12} />
-            <YAxis stroke="#64748b" fontSize={12} />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={chartColors.grid} />
+            <XAxis dataKey="name" stroke={chartColors.text} fontSize={12} />
+            <YAxis stroke={chartColors.text} fontSize={12} />
             <Tooltip 
-                cursor={{ fill: '#f1f5f9' }}
-                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                cursor={{ fill: chartColors.cursor }}
+                contentStyle={{ 
+                  borderRadius: '8px', 
+                  border: 'none', 
+                  backgroundColor: chartColors.tooltipBg,
+                  boxShadow: isDark ? '0 4px 6px -1px rgba(0, 0, 0, 0.4)' : '0 4px 6px -1px rgba(0, 0, 0, 0.1)' 
+                }}
             />
             <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={40}>
                 {composition.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.name === 'Drafts' ? '#e2e8f0' : '#38a169'} />
+                    <Cell key={`cell-${index}`} fill={entry.name === 'Drafts' ? chartColors.draft : chartColors.published} />
                 ))}
             </Bar>
         </BarChart>

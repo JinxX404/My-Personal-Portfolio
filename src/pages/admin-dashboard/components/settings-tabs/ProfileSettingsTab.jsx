@@ -1,15 +1,58 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
 import { uploadImage } from 'services/storageService';
+import { supabase, isSupabaseConfigured } from 'lib/supabase';
 
-const ProfileSettingsTab = ({ settings, onChange }) => {
+const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelanceProjectsChange }) => {
+  const [uploadingCv, setUploadingCv] = useState(false);
+
   const handleImageUpload = async (file, field) => {
     const result = await uploadImage(file, 'profile', field);
     if (!result.success) {
       console.error('Error uploading image:', result.error);
     }
     return result.data;
+  };
+
+  const handleCvUpload = async (file) => {
+    if (!file || !isSupabaseConfigured()) return;
+    
+    const allowedTypes = ['application/pdf'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('Please upload a PDF file');
+      return;
+    }
+    
+    if (file.size > 10 * 1024 * 1024) {
+      alert('File size must be less than 10MB');
+      return;
+    }
+    
+    setUploadingCv(true);
+    
+    try {
+      const fileName = `cv/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+      const { data, error } = await supabase.storage
+        .from('portfolio-assets')
+        .upload(fileName, file, {
+          contentType: file.type,
+          upsert: true
+        });
+      
+      if (error) throw error;
+      
+      const { data: urlData } = supabase.storage
+        .from('portfolio-assets')
+        .getPublicUrl(fileName);
+      
+      onChange({ ...settings, cv_url: urlData.publicUrl });
+    } catch (error) {
+      console.error('Error uploading CV:', error);
+      alert('Failed to upload CV. Please try again.');
+    } finally {
+      setUploadingCv(false);
+    }
   };
 
   return (
@@ -187,42 +230,96 @@ const ProfileSettingsTab = ({ settings, onChange }) => {
             </select>
           </div>
 
-          {/* Resume/CV URLs */}
-          <div className="md:col-span-2 bg-gradient-to-br from-accent-50 to-cta-50 border-2 border-dashed border-accent-300 rounded-xl p-6">
-            <h3 className="text-lg font-bold text-primary-800 mb-4 flex items-center space-x-2">
-              <Icon name="FileText" size={20} className="text-accent" />
-              <span>Documents & Files</span>
-            </h3>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-semibold text-primary-700 mb-2">
-                  Resume URL
-                </label>
-                <input
-                  type="url"
-                  value={settings.resume_url}
-                  onChange={(e) => onChange({ ...settings, resume_url: e.target.value })}
-                  placeholder="https://example.com/resume.pdf"
-                  className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent bg-white"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-primary-700 mb-2">
-                  CV URL
-                </label>
-                <input
-                  type="url"
-                  value={settings.cv_url}
-                  onChange={(e) => onChange({ ...settings, cv_url: e.target.value })}
-                  placeholder="https://example.com/cv.pdf"
-                  className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent bg-white"
-                />
-              </div>
+          {/* Freelance Projects Count */}
+          <div>
+            <label className="block text-sm font-semibold text-primary-700 mb-2">
+              Freelance Projects Count
+            </label>
+            <div className="relative">
+              <input
+                type="number"
+                min="0"
+                value={freelanceProjects || 0}
+                onChange={(e) => onFreelanceProjectsChange(parseInt(e.target.value) || 0)}
+                placeholder="e.g., 10"
+                className="w-full pl-12 pr-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              />
+              <Icon name="Briefcase" size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary-400" />
             </div>
-            <p className="text-xs text-secondary-600 mt-3 flex items-center space-x-1">
-              <Icon name="Info" size={14} />
-              <span>Upload your documents to cloud storage and paste the public URLs here</span>
-            </p>
+            <p className="text-xs text-secondary-500 mt-1">Displayed in hero section stats</p>
+          </div>
+
+          {/* Resume/CV URLs */}
+          <div className="md:col-span-2 bg-gradient-to-br from-accent-50 to-cta-50 dark:from-accent-900/20 dark:to-cta-900/20 border-2 border-dashed border-accent-300 dark:border-accent/30 rounded-xl p-6">
+            <h3 className="text-lg font-bold text-primary-800 dark:text-white mb-4 flex items-center space-x-2">
+              <Icon name="FileText" size={20} className="text-accent" />
+              <span>CV / Resume</span>
+            </h3>
+            
+            {/* CV Upload */}
+            <div className="mb-6">
+              <label className="block text-sm font-semibold text-primary-700 dark:text-white mb-2">
+                Upload CV (PDF)
+              </label>
+              <div className="flex items-center space-x-4">
+                <label className="flex-1 cursor-pointer">
+                  <div className={`flex items-center justify-center px-6 py-4 border-2 border-dashed border-accent-300 dark:border-accent/50 rounded-lg bg-white dark:bg-white/5 hover:bg-accent-50 dark:hover:bg-accent-900/20 transition-colors ${uploadingCv ? 'opacity-50' : ''}`}>
+                    {uploadingCv ? (
+                      <div className="flex items-center space-x-2">
+                        <Icon name="Loader" size={20} className="animate-spin text-accent" />
+                        <span className="text-sm text-secondary-600">Uploading...</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center space-x-2">
+                        <Icon name="Upload" size={20} className="text-accent" />
+                        <span className="text-sm text-secondary-600">
+                          {settings.cv_url ? 'Replace CV' : 'Choose PDF file'}
+                        </span>
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      className="hidden"
+                      onChange={(e) => handleCvUpload(e.target.files[0])}
+                      disabled={uploadingCv}
+                    />
+                  </div>
+                </label>
+                {settings.cv_url && (
+                  <a
+                    href={settings.cv_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center w-12 h-12 bg-accent text-white rounded-lg hover:bg-accent-700 transition-colors shadow-md"
+                    title="View current CV"
+                  >
+                    <Icon name="ExternalLink" size={20} />
+                  </a>
+                )}
+              </div>
+              {settings.cv_url && (
+                <div className="mt-3 flex items-center space-x-2 p-3 bg-success-50 dark:bg-success-900/20 rounded-lg">
+                  <Icon name="CheckCircle" size={16} className="text-success" />
+                  <span className="text-sm text-success-700 dark:text-success-400">CV uploaded successfully</span>
+                </div>
+              )}
+              <p className="text-xs text-secondary-600 mt-2">PDF only, max 10MB</p>
+            </div>
+            
+            {/* Manual URL input as fallback */}
+            <div className="border-t border-accent/20 pt-4 mt-4">
+              <label className="block text-sm font-semibold text-primary-700 dark:text-white mb-2">
+                Or paste CV URL manually
+              </label>
+              <input
+                type="url"
+                value={settings.cv_url}
+                onChange={(e) => onChange({ ...settings, cv_url: e.target.value })}
+                placeholder="https://example.com/cv.pdf"
+                className="w-full px-4 py-3 border border-primary-200 dark:border-white/20 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent bg-white dark:bg-white/5 text-text-primary dark:text-white"
+              />
+            </div>
           </div>
         </div>
       </div>

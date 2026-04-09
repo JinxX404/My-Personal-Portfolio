@@ -1,5 +1,6 @@
 import React from 'react';
 import Icon from 'components/AppIcon';
+import { COLORS } from 'lib/colors';
 
 const SocialLinksTab = ({ links, onChange }) => {
   const socialPlatforms = [
@@ -7,7 +8,7 @@ const SocialLinksTab = ({ links, onChange }) => {
       key: 'github', 
       label: 'GitHub', 
       icon: 'Github', 
-      color: '#181717', 
+      color: COLORS.social.github, 
       placeholder: 'https://github.com/username',
       description: 'Your GitHub profile'
     },
@@ -15,7 +16,7 @@ const SocialLinksTab = ({ links, onChange }) => {
       key: 'linkedin', 
       label: 'LinkedIn', 
       icon: 'Linkedin', 
-      color: '#0A66C2', 
+      color: COLORS.social.linkedin, 
       placeholder: 'https://linkedin.com/in/username',
       description: 'Professional network'
     },
@@ -23,7 +24,7 @@ const SocialLinksTab = ({ links, onChange }) => {
       key: 'twitter', 
       label: 'Twitter / X', 
       icon: 'Twitter', 
-      color: '#1DA1F2', 
+      color: COLORS.social.twitter, 
       placeholder: 'https://twitter.com/username',
       description: 'Social media presence'
     },
@@ -31,7 +32,7 @@ const SocialLinksTab = ({ links, onChange }) => {
       key: 'dribbble', 
       label: 'Dribbble', 
       icon: 'Dribbble', 
-      color: '#EA4C89', 
+      color: COLORS.social.dribbble, 
       placeholder: 'https://dribbble.com/username',
       description: 'Design portfolio'
     },
@@ -39,7 +40,7 @@ const SocialLinksTab = ({ links, onChange }) => {
       key: 'behance', 
       label: 'Behance', 
       icon: 'Box', 
-      color: '#1769FF', 
+      color: COLORS.social.behance, 
       placeholder: 'https://behance.net/username',
       description: 'Creative showcase'
     },
@@ -47,7 +48,7 @@ const SocialLinksTab = ({ links, onChange }) => {
       key: 'instagram', 
       label: 'Instagram', 
       icon: 'Instagram', 
-      color: '#E4405F', 
+      color: COLORS.social.instagram, 
       placeholder: 'https://instagram.com/username',
       description: 'Visual content'
     },
@@ -55,7 +56,7 @@ const SocialLinksTab = ({ links, onChange }) => {
       key: 'facebook', 
       label: 'Facebook', 
       icon: 'Facebook', 
-      color: '#1877F2', 
+      color: COLORS.social.facebook, 
       placeholder: 'https://facebook.com/username',
       description: 'Social profile'
     },
@@ -63,7 +64,7 @@ const SocialLinksTab = ({ links, onChange }) => {
       key: 'youtube', 
       label: 'YouTube', 
       icon: 'Youtube', 
-      color: '#FF0000', 
+      color: COLORS.social.youtube, 
       placeholder: 'https://youtube.com/@username',
       description: 'Video content'
     },
@@ -71,7 +72,7 @@ const SocialLinksTab = ({ links, onChange }) => {
       key: 'medium', 
       label: 'Medium', 
       icon: 'FileText', 
-      color: '#000000', 
+      color: COLORS.social.snapchat, 
       placeholder: 'https://medium.com/@username',
       description: 'Articles'
     },
@@ -79,7 +80,7 @@ const SocialLinksTab = ({ links, onChange }) => {
       key: 'dev_to', 
       label: 'DEV.to', 
       icon: 'Code', 
-      color: '#0A0A0A', 
+      color: '#000000', 
       placeholder: 'https://dev.to/username',
       description: 'Developer community'
     },
@@ -87,7 +88,7 @@ const SocialLinksTab = ({ links, onChange }) => {
       key: 'stackoverflow', 
       label: 'Stack Overflow', 
       icon: 'HelpCircle', 
-      color: '#F58025', 
+      color: COLORS.social.stackoverflow, 
       placeholder: 'https://stackoverflow.com/users/id',
       description: 'Q&A profile'
     },

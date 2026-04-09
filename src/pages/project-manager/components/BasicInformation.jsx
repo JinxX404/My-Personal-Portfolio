@@ -33,19 +33,26 @@ const BasicInformation = ({ formData, setFormData }) => {
     { value: 'on-hold', label: 'On Hold', color: 'secondary' }
   ];
 
+  const statusColorMap = {
+    success:   { border: 'border-success-500',   bg: 'bg-success-50',   dot: 'bg-success-500' },
+    warning:   { border: 'border-warning-500',   bg: 'bg-warning-50',   dot: 'bg-warning-500' },
+    accent:    { border: 'border-accent-500',    bg: 'bg-accent-50',    dot: 'bg-accent-500' },
+    secondary: { border: 'border-secondary-500', bg: 'bg-secondary-50', dot: 'bg-secondary-500' },
+  };
+
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+    <div className="bg-surface dark:bg-surface rounded-xl shadow-md p-6 mb-6 border border-border dark:border-border-strong">
       <div className="flex items-center mb-6">
-        <div className="p-2 bg-accent-100 rounded-lg mr-3">
-          <Icon name="Info" size={20} className="text-accent-600" />
+        <div className="p-2 bg-success-100 dark:bg-success-50 rounded-lg mr-3">
+          <Icon name="Info" size={20} className="text-success-600 dark:text-success-500" />
         </div>
-        <h2 className="text-2xl font-bold text-primary-800">Basic Information</h2>
+        <h2 className="text-2xl font-bold text-text-primary dark:text-primary-800">Basic Information</h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Project Title */}
         <div className="md:col-span-2">
-          <label className="block text-sm font-semibold text-secondary-700 mb-2">
+          <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
             Project Title *
           </label>
           <div className="relative">
@@ -65,7 +72,7 @@ const BasicInformation = ({ formData, setFormData }) => {
 
         {/* Client */}
         <div>
-          <label className="block text-sm font-semibold text-secondary-700 mb-2">
+          <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
             Client/Company
           </label>
           <input
@@ -79,7 +86,7 @@ const BasicInformation = ({ formData, setFormData }) => {
 
         {/* Project Type */}
         <div>
-          <label className="block text-sm font-semibold text-secondary-700 mb-2">
+          <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
             Project Type <span className="text-secondary-400 font-normal">(optional)</span>
           </label>
           <select
@@ -96,7 +103,7 @@ const BasicInformation = ({ formData, setFormData }) => {
 
         {/* Start Date */}
         <div>
-          <label className="block text-sm font-semibold text-secondary-700 mb-2">
+          <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
             Start Date
           </label>
           <input
@@ -109,7 +116,7 @@ const BasicInformation = ({ formData, setFormData }) => {
 
         {/* End Date */}
         <div>
-          <label className="block text-sm font-semibold text-secondary-700 mb-2">
+          <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
             End Date
           </label>
           <input
@@ -122,35 +129,34 @@ const BasicInformation = ({ formData, setFormData }) => {
 
         {/* Project Status */}
         <div className="md:col-span-2">
-          <label className="block text-sm font-semibold text-secondary-700 mb-2">
+          <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
             Project Status <span className="text-secondary-400 font-normal">(optional)</span>
           </label>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {statusOptions.map(status => (
+            {statusOptions.map(status => {
+              const colors = statusColorMap[status.color] || statusColorMap.secondary;
+              return (
               <button
                 key={status.value}
                 type="button"
                 onClick={() => handleInputChange('status', status.value)}
                 className={`p-3 rounded-lg border-2 transition-all duration-200 ${
                   formData?.status === status.value
-                    ? `border-${status.color}-500 bg-${status.color}-50`
+                    ? `${colors.border} ${colors.bg}`
                     : 'border-secondary-200 hover:border-secondary-300'
                 }`}
               >
-                <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${
-                  status.color === 'success' ? 'bg-success-500' :
-                  status.color === 'warning' ? 'bg-warning-500' :
-                  status.color === 'accent'? 'bg-accent-500' : 'bg-secondary-500'
-                }`}></div>
-                <span className="text-sm font-medium text-secondary-700">{status.label}</span>
+                <div className={`w-3 h-3 rounded-full mx-auto mb-2 ${colors.dot}`}></div>
+                <span className="text-sm font-medium text-text-secondary dark:text-text-secondary">{status.label}</span>
               </button>
-            ))}
+              );
+            })}
           </div>
         </div>
 
         {/* Description */}
         <div className="md:col-span-2">
-          <label className="block text-sm font-semibold text-secondary-700 mb-2">
+          <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
             Project Description *
           </label>
           <div className="relative">

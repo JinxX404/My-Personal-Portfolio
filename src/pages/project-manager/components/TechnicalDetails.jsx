@@ -59,19 +59,26 @@ const TechnicalDetails = ({ formData, setFormData }) => {
     { value: 'expert', label: 'Expert', color: 'primary', description: 'Highly complex/innovative' }
   ];
 
+  const complexityColorMap = {
+    success: { border: 'border-success-500', bg: 'bg-success-50', dot: 'bg-success-500' },
+    warning: { border: 'border-warning-500', bg: 'bg-warning-50', dot: 'bg-warning-500' },
+    error:   { border: 'border-error-500',   bg: 'bg-error-50',   dot: 'bg-error-500' },
+    primary: { border: 'border-primary-500',  bg: 'bg-primary-50',  dot: 'bg-primary-500' },
+  };
+
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+    <div className="bg-surface dark:bg-surface rounded-xl shadow-md p-6 mb-6 border border-border dark:border-border-strong">
       <div className="flex items-center mb-6">
-        <div className="p-2 bg-success-100 rounded-lg mr-3">
-          <Icon name="Code" size={20} className="text-success-600" />
+        <div className="p-2 bg-success-100 dark:bg-success-50 rounded-lg mr-3">
+          <Icon name="Code" size={20} className="text-success-600 dark:text-success-500" />
         </div>
-        <h2 className="text-2xl font-bold text-primary-800">Technical Details</h2>
+        <h2 className="text-2xl font-bold text-text-primary dark:text-primary-800">Technical Details</h2>
       </div>
 
       <div className="space-y-6">
         {/* Technologies Used */}
         <div>
-          <label className="block text-sm font-semibold text-secondary-700 mb-3">
+          <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-3">
             Technologies Used *
           </label>
           
@@ -147,36 +154,35 @@ const TechnicalDetails = ({ formData, setFormData }) => {
 
         {/* Project Complexity */}
         <div>
-          <label className="block text-sm font-semibold text-secondary-700 mb-3">
+          <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-3">
             Project Complexity *
           </label>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-            {complexityLevels.map(level => (
+            {complexityLevels.map(level => {
+              const colors = complexityColorMap[level.color] || complexityColorMap.primary;
+              return (
               <button
                 key={level.value}
                 type="button"
                 onClick={() => setFormData(prev => ({ ...prev, complexity: level.value }))}
                 className={`p-4 rounded-lg border-2 text-left transition-all duration-200 ${
                   formData?.complexity === level.value
-                    ? `border-${level.color}-500 bg-${level.color}-50`
+                    ? `${colors.border} ${colors.bg}`
                     : 'border-secondary-200 hover:border-secondary-300'
                 }`}
               >
-                <div className={`w-4 h-4 rounded-full mb-2 ${
-                  level.color === 'success' ? 'bg-success-500' :
-                  level.color === 'warning' ? 'bg-warning-500' :
-                  level.color === 'error'? 'bg-error-500' : 'bg-primary-500'
-                }`}></div>
-                <p className="font-semibold text-secondary-800 mb-1">{level.label}</p>
+                <div className={`w-4 h-4 rounded-full mb-2 ${colors.dot}`}></div>
+                <p className="font-semibold text-text-primary dark:text-primary-700 mb-1">{level.label}</p>
                 <p className="text-xs text-secondary-600">{level.description}</p>
               </button>
-            ))}
+              );
+            })}
           </div>
         </div>
 
         {/* Performance Metrics */}
         <div>
-          <label className="block text-sm font-semibold text-secondary-700 mb-3">
+          <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-3">
             Performance Metrics
           </label>
           
@@ -221,8 +227,8 @@ const TechnicalDetails = ({ formData, setFormData }) => {
               {metrics.map(metric => (
                 <div key={metric.id} className="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
                   <div>
-                    <span className="font-medium text-secondary-800">{metric.name}:</span>
-                    <span className="ml-2 text-secondary-700">{metric.value}</span>
+                    <span className="font-medium text-text-primary dark:text-primary-700">{metric.name}:</span>
+                    <span className="ml-2 text-text-secondary dark:text-text-secondary">{metric.value}</span>
                     {metric.unit && <span className="ml-1 text-secondary-600">{metric.unit}</span>}
                   </div>
                   <button
@@ -242,7 +248,7 @@ const TechnicalDetails = ({ formData, setFormData }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Repository URL */}
           <div>
-            <label className="block text-sm font-semibold text-secondary-700 mb-2">
+            <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
               Repository URL
             </label>
             <input
@@ -256,7 +262,7 @@ const TechnicalDetails = ({ formData, setFormData }) => {
 
           {/* Live Demo URL */}
           <div>
-            <label className="block text-sm font-semibold text-secondary-700 mb-2">
+            <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
               Live Demo URL
             </label>
             <input

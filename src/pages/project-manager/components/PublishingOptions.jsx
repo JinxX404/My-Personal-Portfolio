@@ -12,6 +12,13 @@ const PublishingOptions = ({ formData, setFormData }) => {
     { id: 'published', label: 'Published', icon: 'Globe', color: 'accent' }
   ];
 
+  const workflowColorMap = {
+    secondary: { border: 'border-secondary-500', bg: 'bg-secondary-50', iconBg: 'bg-secondary-100', iconText: 'text-secondary-600' },
+    warning:   { border: 'border-warning-500',   bg: 'bg-warning-50',   iconBg: 'bg-warning-100',   iconText: 'text-warning-600' },
+    success:   { border: 'border-success-500',   bg: 'bg-success-50',   iconBg: 'bg-success-100',   iconText: 'text-success-600' },
+    accent:    { border: 'border-accent-500',    bg: 'bg-accent-50',    iconBg: 'bg-accent-100',    iconText: 'text-accent-600' },
+  };
+
   const visibilityOptions = [
     { value: 'public', label: 'Public', description: 'Visible to everyone', icon: 'Globe' },
     { value: 'private', label: 'Private', description: 'Only visible to you', icon: 'Lock' },
@@ -50,58 +57,53 @@ const PublishingOptions = ({ formData, setFormData }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-md p-6 mb-6">
+    <div className="bg-surface dark:bg-surface rounded-xl shadow-md p-6 mb-6 border border-border dark:border-border-strong">
       <div className="flex items-center mb-6">
-        <div className="p-2 bg-success-100 rounded-lg mr-3">
-          <Icon name="Settings" size={20} className="text-success-600" />
+        <div className="p-2 bg-success-100 dark:bg-success-50 rounded-lg mr-3">
+          <Icon name="Settings" size={20} className="text-success-600 dark:text-success-500" />
         </div>
-        <h2 className="text-2xl font-bold text-primary-800">Publishing Options</h2>
+        <h2 className="text-2xl font-bold text-text-primary dark:text-primary-800">Publishing Options</h2>
       </div>
 
       <div className="space-y-6">
         {/* Workflow Status */}
         <div>
-          <label className="block text-sm font-semibold text-secondary-700 mb-3">
+          <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-3">
             Workflow Status <span className="text-secondary-400 font-normal">(optional)</span>
           </label>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {workflowStages.map(stage => (
+            {workflowStages.map(stage => {
+              const colors = workflowColorMap[stage.color] || workflowColorMap.accent;
+              return (
               <button
                 key={stage.id}
                 type="button"
                 onClick={() => handlePublishingStatusChange(stage.id)}
                 className={`p-4 rounded-lg border-2 transition-all duration-200 ${
                   formData?.publishingStatus === stage.id
-                    ? `border-${stage.color}-500 bg-${stage.color}-50`
+                    ? `${colors.border} ${colors.bg}`
                     : 'border-secondary-200 hover:border-secondary-300'
                 }`}
               >
                 <div className="flex flex-col items-center">
-                  <div className={`p-2 rounded-full mb-2 ${
-                    stage.color === 'secondary' ? 'bg-secondary-100' :
-                    stage.color === 'warning' ? 'bg-warning-100' :
-                    stage.color === 'success'? 'bg-success-100' : 'bg-accent-100'
-                  }`}>
+                  <div className={`p-2 rounded-full mb-2 ${colors.iconBg}`}>
                     <Icon 
                       name={stage.icon} 
                       size={16} 
-                      className={`${
-                        stage.color === 'secondary' ? 'text-secondary-600' :
-                        stage.color === 'warning' ? 'text-warning-600' :
-                        stage.color === 'success'? 'text-success-600' : 'text-accent-600'
-                      }`}
+                      className={colors.iconText}
                     />
                   </div>
-                  <span className="text-sm font-medium text-secondary-800">{stage.label}</span>
+                  <span className="text-sm font-medium text-text-primary dark:text-primary-700">{stage.label}</span>
                 </div>
               </button>
-            ))}
+              );
+            })}
           </div>
         </div>
 
         {/* Visibility Settings */}
         <div>
-          <label className="block text-sm font-semibold text-secondary-700 mb-3">
+          <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-3">
             Visibility Settings <span className="text-secondary-400 font-normal">(optional, defaults to Public)</span>
           </label>
           <div className="space-y-3">
@@ -120,7 +122,7 @@ const PublishingOptions = ({ formData, setFormData }) => {
                     <Icon name={option.icon} size={16} className="text-accent-600" />
                   </div>
                   <div>
-                    <p className="font-medium text-secondary-800">{option.label}</p>
+                    <p className="font-medium text-text-primary dark:text-primary-700">{option.label}</p>
                     <p className="text-sm text-secondary-600">{option.description}</p>
                   </div>
                 </div>
@@ -146,7 +148,7 @@ const PublishingOptions = ({ formData, setFormData }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Category */}
           <div>
-            <label className="block text-sm font-semibold text-secondary-700 mb-2">
+            <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
               Category *
             </label>
             <select
@@ -163,7 +165,7 @@ const PublishingOptions = ({ formData, setFormData }) => {
 
           {/* Featured */}
           <div>
-            <label className="block text-sm font-semibold text-secondary-700 mb-2">
+            <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
               Featured Project
             </label>
             <label className="flex items-center p-3 border border-secondary-200 rounded-lg cursor-pointer hover:bg-secondary-50 transition-colors">
@@ -175,7 +177,7 @@ const PublishingOptions = ({ formData, setFormData }) => {
               />
               <div className="flex items-center">
                 <Icon name="Star" size={16} className="text-warning-500 mr-2" />
-                <span className="text-secondary-700">Mark as featured project</span>
+                <span className="text-text-secondary dark:text-text-secondary">Mark as featured project</span>
               </div>
             </label>
           </div>
@@ -183,7 +185,7 @@ const PublishingOptions = ({ formData, setFormData }) => {
 
         {/* Tags */}
         <div>
-          <label className="block text-sm font-semibold text-secondary-700 mb-3">
+          <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-3">
             Tags
           </label>
           <div className="flex flex-wrap gap-2">
@@ -208,13 +210,13 @@ const PublishingOptions = ({ formData, setFormData }) => {
 
         {/* SEO Settings */}
         <div className="p-4 bg-secondary-50 rounded-lg">
-          <h3 className="text-lg font-semibold text-secondary-800 mb-4 flex items-center">
+          <h3 className="text-lg font-semibold text-text-primary dark:text-primary-700 mb-4 flex items-center">
             <Icon name="Search" size={18} className="mr-2" />
             SEO Settings
           </h3>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-secondary-700 mb-2">
+              <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
                 Meta Title
               </label>
               <input
@@ -227,7 +229,7 @@ const PublishingOptions = ({ formData, setFormData }) => {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-secondary-700 mb-2">
+              <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
                 Meta Description
               </label>
               <textarea
@@ -245,7 +247,7 @@ const PublishingOptions = ({ formData, setFormData }) => {
         {/* Preview Section */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-secondary-800 flex items-center">
+            <h3 className="text-lg font-semibold text-text-primary dark:text-primary-700 flex items-center">
               <Icon name="Eye" size={18} className="mr-2" />
               Preview
             </h3>

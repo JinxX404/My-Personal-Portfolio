@@ -8,7 +8,7 @@ const FAQ = () => {
   const faqs = [
     {
       question: 'What is your typical response time?',
-      answer: `I aim to respond to all inquiries within 24 hours during business days. For urgent matters, I typically respond within 4 hours. Phone calls are usually returned the same day if received during business hours (9 AM - 6 PM EST).`
+      answer: `I aim to respond to all inquiries within 24 hours during business days. For urgent matters, I typically respond within 4 hours. Phone calls are usually returned the same day if received during business hours (9 AM - 6 PM EET).`
     },
     {
       question: 'What types of projects do you work on?',
@@ -35,7 +35,7 @@ const FAQ = () => {
       answer: `To provide an accurate quote, I need to understand your project goals, target audience, required features, design preferences, timeline, and budget range. The more details you can provide, the more accurate my estimate will be. We can discuss everything during a free consultation call.`
     },
     {
-      question: 'Do you work with international clients?',answer: `Yes, I work with clients worldwide. I'm based in EST (UTC-5) but am flexible with meeting times for international clients. All communication is in English, and I'm experienced with remote collaboration tools and processes.`
+      question: 'Do you work with international clients?',answer: `Yes, I work with clients worldwide. I'm based in EET (UTC+2) but am flexible with meeting times for international clients. All communication is in English, and I'm experienced with remote collaboration tools and processes.`
     }
   ];
 
@@ -50,8 +50,8 @@ const FAQ = () => {
       transition={{ duration: 0.5, delay: 0.6 }}
     >
       <div className="text-center mb-12">
-        <h2 className="text-3xl font-bold text-primary-800 mb-4">Frequently Asked Questions</h2>
-        <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
+        <h2 className="text-3xl font-bold text-text-primary mb-4">Frequently Asked Questions</h2>
+        <p className="text-lg text-text-secondary max-w-2xl mx-auto">
           Find answers to common questions about working together, project processes, and what to expect.
         </p>
       </div>
@@ -63,17 +63,17 @@ const FAQ = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: index * 0.05 }}
-            className="bg-white rounded-lg shadow-sm border border-primary-200 overflow-hidden"
+            className="bg-surface dark:bg-surface rounded-lg shadow-sm border border-border dark:border-border-strong overflow-hidden"
           >
             <button
               onClick={() => toggleFAQ(index)}
-              className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-primary-50 transition-colors duration-200"
+              className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors duration-200"
             >
-              <h3 className="font-semibold text-primary-800 pr-4">{faq.question}</h3>
+              <h3 className="font-semibold text-text-primary pr-4">{faq.question}</h3>
               <div className={`transform transition-transform duration-200 ${
                 openIndex === index ? 'rotate-180' : ''
               }`}>
-                <Icon name="ChevronDown" size={20} className="text-secondary-500" strokeWidth={2} />
+                <Icon name="ChevronDown" size={20} className="text-muted" strokeWidth={2} />
               </div>
             </button>
             
@@ -86,8 +86,8 @@ const FAQ = () => {
                   transition={{ duration: 0.3 }}
                   className="overflow-hidden"
                 >
-                  <div className="px-6 pb-4 pt-2 border-t border-primary-100">
-                    <p className="text-secondary-600 leading-relaxed">{faq.answer}</p>
+                  <div className="px-6 pb-4 pt-2 border-t border-border dark:border-border-strong">
+                    <p className="text-text-secondary leading-relaxed">{faq.answer}</p>
                   </div>
                 </motion.div>
               )}
@@ -98,23 +98,23 @@ const FAQ = () => {
 
       {/* Still have questions CTA */}
       <div className="mt-12 text-center">
-        <div className="bg-gradient-to-r from-accent-50 to-cta-50 rounded-2xl p-8 border border-accent-200">
+        <div className="bg-accent/5 dark:bg-accent/10 rounded-2xl p-8 border border-border dark:border-border-strong">
           <div className="mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-accent to-cta rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4">
               <Icon name="MessageCircle" size={24} color="white" strokeWidth={2} />
             </div>
-            <h3 className="text-xl font-bold text-primary-800 mb-2">Still Have Questions?</h3>
-            <p className="text-secondary-600 mb-6">
+            <h3 className="text-xl font-bold text-text-primary mb-2">Still Have Questions?</h3>
+            <p className="text-text-secondary mb-6">
               Don't see your question here? I'm happy to answer any specific questions about your project or working together.
             </p>
           </div>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-accent hover:bg-accent-700 text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2">
+            <button className="bg-accent hover:bg-accent-600 text-white font-semibold px-6 py-3 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2">
               <Icon name="Mail" size={16} strokeWidth={2} />
               <span>Send a Message</span>
             </button>
-            <button className="bg-white border-2 border-accent text-accent hover:bg-accent hover:text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2">
+            <button className="bg-surface dark:bg-surface border-2 border-accent text-accent hover:bg-accent hover:text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2">
               <Icon name="Calendar" size={16} strokeWidth={2} />
               <span>Schedule a Call</span>
             </button>

@@ -123,6 +123,7 @@ CREATE POLICY "Authenticated users can manage tech stack"
 CREATE TABLE IF NOT EXISTS portfolio_settings (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   profile jsonb DEFAULT '{}',
+  freelance_projects integer DEFAULT 0,
   social_links jsonb DEFAULT '{}',
   site_settings jsonb DEFAULT '{}',
   seo_settings jsonb DEFAULT '{}',
@@ -186,3 +187,16 @@ CREATE POLICY "Authenticated users can delete submissions"
   ON contact_submissions FOR DELETE
   TO authenticated
   USING (true);
+
+-- ==================== STORAGE BUCKETS ====================
+-- Note: Run these in Supabase Dashboard > Storage, or execute via SQL below
+
+-- Insert storage buckets (if not using dashboard)
+-- 1. Create 'project-images' bucket for project images (already exists or create via dashboard)
+-- 2. Create 'portfolio-assets' bucket for CV/resume files
+
+-- For Supabase Storage, you need to create buckets via Dashboard:
+-- 1. Go to Storage in Supabase Dashboard
+-- 2. Create bucket named 'portfolio-assets' (public)
+-- 3. Create bucket named 'project-images' (public)
+-- 4. Add RLS policies as needed

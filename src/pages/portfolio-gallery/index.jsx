@@ -165,7 +165,7 @@ const PortfolioGallery = () => {
 
   const ProjectCard = ({ project, index }) => (
     <div
-      className={`group relative bg-white dark:bg-surface rounded-xl shadow-sm border border-primary-200 dark:border-border-strong overflow-hidden hover:shadow-lg transition-all duration-300 ${
+      className={`group relative bg-surface dark:bg-surface rounded-xl shadow-sm border border-border dark:border-border-strong overflow-hidden hover:shadow-lg transition-all duration-300 ${
         project.featured ? 'md:col-span-2 md:row-span-2' : ''
       } ${viewMode === 'list' ? 'flex flex-row' : 'flex flex-col'}`}
     >
@@ -185,7 +185,7 @@ const PortfolioGallery = () => {
           <div className="flex space-x-3">
             <button
               onClick={() => setSelectedProject(project)}
-              className="bg-white/90 hover:bg-white text-primary-800 p-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
+              className="bg-surface/90 dark:bg-surface hover:bg-surface dark:hover:bg-surface/80 text-text-primary p-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
               aria-label={`Preview ${project.title}`}
               title={`Preview ${project.title}`}
             >
@@ -201,7 +201,7 @@ const PortfolioGallery = () => {
             </a>
             <a
               href={project.githubUrl}
-              className="bg-primary-800/90 hover:bg-primary-800 text-white p-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
+              className="bg-primary-600/90 hover:bg-primary-600 text-white p-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
               aria-label={`View source code of ${project.title} on GitHub`}
               title={`View source code of ${project.title} on GitHub`}
             >
@@ -222,15 +222,15 @@ const PortfolioGallery = () => {
       <div className={`p-6 flex-1 ${viewMode === 'list' ? 'flex flex-col justify-between' : ''}`}>
         <div>
           <div className="flex items-start justify-between mb-3">
-            <h3 className="text-xl font-bold text-primary-800 group-hover:text-accent transition-colors duration-200">
+            <h3 className="text-xl font-bold text-text-primary group-hover:text-accent transition-colors duration-200">
               {project.title}
             </h3>
-            <span className="text-sm font-medium text-cta bg-cta-50 px-2 py-1 rounded-full">
+            <span className="text-sm font-medium text-cta bg-cta-50 dark:bg-cta-900/30 px-2 py-1 rounded-full">
               {project.category}
             </span>
           </div>
 
-          <p className="text-secondary-600 mb-4 line-clamp-3">
+          <p className="text-text-secondary mb-4 line-clamp-3">
             {project.description}
           </p>
 
@@ -245,7 +245,7 @@ const PortfolioGallery = () => {
             {project.technologies.map((tech, techIndex) => (
               <span
                 key={techIndex}
-                className="text-xs font-medium text-accent bg-accent-50 px-2 py-1 rounded-full"
+                className="text-xs font-medium text-accent bg-accent-50 dark:bg-accent-900/30 px-2 py-1 rounded-full"
               >
                 {tech}
               </span>
@@ -258,7 +258,7 @@ const PortfolioGallery = () => {
           to={`/case-study-detail/${project.id}`}
           className="inline-flex items-center space-x-2 text-accent hover:text-accent-700 font-semibold transition-colors duration-200"
         >
-          <span>View Case Study</span>
+          <span>View Project</span>
           <Icon name="ArrowRight" size={16} strokeWidth={2} />
         </Link>
       </div>
@@ -266,11 +266,11 @@ const PortfolioGallery = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-accent-50 pt-20">
+    <div className="min-h-screen bg-background dark:bg-background pt-20">
       <Helmet>
-        <title>Portfolio Gallery — Projects & Case Studies</title>
+        <title>Portfolio Gallery — Projects</title>
         <meta name="description" content="Browse my portfolio of web development projects, including web apps, mobile apps, and open source work." />
-        <meta property="og:title" content="Portfolio Gallery — Projects & Case Studies" />
+        <meta property="og:title" content="Portfolio Gallery — Projects" />
         <meta property="og:description" content="Browse my portfolio of web development projects." />
       </Helmet>
       {/* Hero Section */}
@@ -281,14 +281,14 @@ const PortfolioGallery = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-4xl md:text-6xl font-bold text-primary-800 mb-6">
+            <h1 className="text-4xl md:text-6xl font-bold text-text-primary mb-6">
               Portfolio <span className="text-gradient">Gallery</span>
             </h1>
-            <p className="text-xl text-secondary-600 max-w-3xl mx-auto mb-8">
+            <p className="text-xl text-text-secondary max-w-3xl mx-auto mb-8">
               Explore my collection of digital experiences, from web applications to mobile solutions. 
               Each project represents a unique challenge solved with creativity and technical expertise.
             </p>
-            <div className="flex items-center justify-center space-x-6 text-sm text-secondary-500">
+            <div className="flex items-center justify-center space-x-6 text-sm text-muted">
               <div className="flex items-center space-x-2">
                 <Icon name="Code2" size={16} strokeWidth={2} />
                 <span>{displayProjects.length} Projects</span>
@@ -309,13 +309,13 @@ const PortfolioGallery = () => {
       {/* Filters and Controls */}
       <section className="px-4 mb-12">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-white rounded-xl shadow-sm border border-primary-200 p-6">
+          <div className="bg-surface dark:bg-surface rounded-xl shadow-sm border border-primary-200 dark:border-border-strong p-6">
             {/* Search Bar */}
             <div className="relative mb-6">
               <Icon 
                 name="Search" 
                 size={20} 
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary-400" 
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted" 
                 strokeWidth={2}
               />
               <input
@@ -323,7 +323,7 @@ const PortfolioGallery = () => {
                 placeholder="Search projects by name, technology, or description..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent transition-all duration-200"
+                className="w-full pl-12 pr-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent transition-all duration-200 bg-surface dark:bg-surface text-text-primary"
               />
             </div>
 
@@ -336,14 +336,14 @@ const PortfolioGallery = () => {
                   className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
                     activeFilter === category.name
                       ? 'bg-accent text-white shadow-md'
-                      : 'bg-primary-50 text-primary-700 hover:bg-primary-100'
+                      : 'bg-primary-50 dark:bg-primary-900/30 text-text-secondary dark:text-text-secondary hover:bg-primary-100 dark:hover:bg-primary-800/30'
                   }`}
                 >
                   <Icon name={category.icon} size={16} strokeWidth={2} />
                   <span>{category.name}</span>
                   <span className={`text-xs px-2 py-0.5 rounded-full ${
                     activeFilter === category.name
-                      ? 'bg-white/20 text-white' :'bg-primary-200 text-primary-600'
+                      ? 'bg-white/20 text-white' : 'bg-primary-100 dark:bg-primary-800/30 text-text-secondary dark:text-muted'
                   }`}>
                     {category.count}
                   </span>
@@ -353,12 +353,12 @@ const PortfolioGallery = () => {
 
             {/* Tech Filters */}
             <div className="flex flex-wrap gap-2 mb-6">
-              <span className="text-sm font-medium text-secondary-600 mr-2">Technologies:</span>
+              <span className="text-sm font-medium text-muted mr-2">Technologies:</span>
               {techFilters.map((tech) => (
                 <button
                   key={tech}
                   onClick={() => setSearchQuery(tech)}
-                  className="text-xs font-medium text-accent bg-accent-50 hover:bg-accent-100 px-3 py-1 rounded-full transition-colors duration-200"
+                  className="text-xs font-medium text-accent bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-800/30 px-3 py-1 rounded-full transition-colors duration-200"
                 >
                   {tech}
                 </button>
@@ -368,17 +368,17 @@ const PortfolioGallery = () => {
             {/* View Controls */}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <span className="text-sm font-medium text-secondary-600">
+                <span className="text-sm font-medium text-muted">
                   {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''} found
                 </span>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="text-sm font-medium text-secondary-600">View:</span>
-                <div className="flex bg-primary-100 rounded-lg p-1">
+                <span className="text-sm font-medium text-muted">View:</span>
+                <div className="flex bg-primary-50 dark:bg-primary-900/30 rounded-lg p-1">
                   <button
                     onClick={() => setViewMode('grid')}
                     className={`p-2 rounded-md transition-all duration-200 ${
-                      viewMode === 'grid' ?'bg-white text-accent shadow-sm' :'text-secondary-500 hover:text-secondary-700'
+                      viewMode === 'grid' ? 'bg-surface dark:bg-surface text-accent shadow-sm' : 'text-text-secondary dark:text-text-secondary hover:text-text-primary dark:hover:text-text-primary'
                     }`}
                     aria-label="Grid view"
                     title="Grid view"
@@ -388,7 +388,7 @@ const PortfolioGallery = () => {
                   <button
                     onClick={() => setViewMode('list')}
                     className={`p-2 rounded-md transition-all duration-200 ${
-                      viewMode === 'list' ?'bg-white text-accent shadow-sm' :'text-secondary-500 hover:text-secondary-700'
+                      viewMode === 'list' ? 'bg-surface dark:bg-surface text-accent shadow-sm' : 'text-text-secondary dark:text-text-secondary hover:text-text-primary dark:hover:text-text-primary'
                     }`}
                     aria-label="List view"
                     title="List view"
@@ -458,11 +458,11 @@ const PortfolioGallery = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="text-center py-20"
               >
-                <div className="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Icon name="Search" size={32} color="var(--color-primary-500)" strokeWidth={2} />
+                <div className="w-24 h-24 bg-primary-50 dark:bg-primary-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Icon name="Search" size={32} color="var(--color-muted)" strokeWidth={2} />
                 </div>
-                <h3 className="text-2xl font-bold text-primary-800 mb-4">No Projects Found</h3>
-                <p className="text-secondary-600 mb-6 max-w-md mx-auto">
+                <h3 className="text-2xl font-bold text-text-primary mb-4">No Projects Found</h3>
+                <p className="text-text-secondary mb-6 max-w-md mx-auto">
                   Try adjusting your search criteria or browse all projects to discover amazing work.
                 </p>
                 <button
@@ -494,7 +494,7 @@ const PortfolioGallery = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+              className="bg-surface dark:bg-surface rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-border dark:border-border-strong"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="relative">
@@ -546,12 +546,12 @@ const PortfolioGallery = () => {
 
                 <div className="flex space-x-4">
                   <Link
-                    to="/case-study-detail"
+                    to={`/case-study-detail/${selectedProject.id}`}
                     className="btn-primary flex items-center space-x-2"
                     onClick={() => setSelectedProject(null)}
                   >
-                    <Icon name="FileText" size={18} strokeWidth={2} />
-                    <span>View Case Study</span>
+                    <Icon name="FolderOpen" size={18} strokeWidth={2} />
+                    <span>View Project</span>
                   </Link>
                   <a
                     href={selectedProject.liveUrl}
@@ -575,7 +575,7 @@ const PortfolioGallery = () => {
       </AnimatePresence>
 
       {/* CTA Section */}
-      <section className="bg-primary-800 text-white py-20">
+      <section className="bg-surface dark:bg-surface border-t border-border dark:border-border-strong py-20">
         <div className="max-w-4xl mx-auto text-center px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -583,23 +583,23 @@ const PortfolioGallery = () => {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-text-primary">
               Ready to Start Your Next Project?
             </h2>
-            <p className="text-xl text-primary-200 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-text-secondary mb-8 max-w-2xl mx-auto">
               Let's collaborate to bring your vision to life with the same attention to detail and results-driven approach you see in my portfolio.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 to="/contact-hub"
-                className="bg-cta hover:bg-cta-600 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg flex items-center justify-center space-x-2"
+                className="bg-accent hover:bg-accent-600 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg flex items-center justify-center space-x-2"
               >
                 <Icon name="MessageCircle" size={20} strokeWidth={2} />
                 <span>Start a Conversation</span>
               </Link>
               <Link
                 to="/about-story"
-                className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-primary-800 font-semibold py-4 px-8 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2"
+                className="bg-transparent border-2 border-border dark:border-border-strong text-text-primary dark:text-text-primary hover:bg-primary-50 dark:hover:bg-primary-900/30 font-semibold py-4 px-8 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2"
               >
                 <Icon name="User" size={20} strokeWidth={2} />
                 <span>Learn More About Me</span>

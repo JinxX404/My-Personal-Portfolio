@@ -25,19 +25,19 @@ const SkillsVisualization = ({ shouldReduceMotion }) => {
       secondary: 'bg-secondary text-white',
       tertiary: 'bg-tertiary text-white',
 
-      violet: 'bg-violet-600 text-white',
-      indigo: 'bg-indigo-600 text-white',
-      blue: 'bg-blue-600 text-white',
-      teal: 'bg-teal-600 text-white',
-      emerald: 'bg-emerald-600 text-white',
-      lime: 'bg-lime-600 text-white',
-      amber: 'bg-amber-600 text-white',
-      orange: 'bg-orange-600 text-white',
-      rose: 'bg-rose-600 text-white',
-      pink: 'bg-pink-600 text-white',
-      fuchsia: 'bg-fuchsia-600 text-white',
-      purple: 'bg-purple-600 text-white',
-      cyan: 'bg-cyan-600 text-white',
+      violet: 'bg-violet-600 dark:bg-violet-500 text-white',
+      indigo: 'bg-indigo-600 dark:bg-indigo-500 text-white',
+      blue: 'bg-blue-600 dark:bg-blue-500 text-white',
+      teal: 'bg-teal-600 dark:bg-teal-500 text-white',
+      emerald: 'bg-emerald-600 dark:bg-emerald-500 text-white',
+      lime: 'bg-lime-600 dark:bg-lime-500 text-white',
+      amber: 'bg-amber-600 dark:bg-amber-500 text-white',
+      orange: 'bg-orange-600 dark:bg-orange-500 text-white',
+      rose: 'bg-rose-600 dark:bg-rose-500 text-white',
+      pink: 'bg-pink-600 dark:bg-pink-500 text-white',
+      fuchsia: 'bg-fuchsia-600 dark:bg-fuchsia-500 text-white',
+      purple: 'bg-purple-600 dark:bg-purple-500 text-white',
+      cyan: 'bg-cyan-600 dark:bg-cyan-500 text-white',
       
     };
     return colorMap[color] || 'bg-accent text-white';
@@ -75,7 +75,7 @@ const SkillsVisualization = ({ shouldReduceMotion }) => {
             className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:-translate-y-1 ${
               activeCategory === key
                 ? getColorClasses(category.color)
-                : 'bg-white text-secondary-600 hover:bg-primary-50 shadow-sm'
+                : 'bg-white dark:bg-white/10 text-text-secondary dark:text-white/70 hover:bg-primary-50 dark:hover:bg-white/20 shadow-md dark:shadow-lg dark:shadow-black/20'
             }`}
           >
             <Icon name={category.icon} size={20} strokeWidth={2} />
@@ -85,12 +85,12 @@ const SkillsVisualization = ({ shouldReduceMotion }) => {
       </div>
 
       {/* Skills Grid */}
-      <div className="bg-white rounded-2xl shadow-xl p-8 lg:p-12">
+      <div className="bg-surface dark:bg-surface rounded-2xl shadow-xl dark:shadow-2xl dark:shadow-black/30 border border-border dark:border-white/10 p-8 lg:p-12">
         <div className="text-center mb-8">
           <div className={`inline-flex items-center justify-center w-16 h-16 ${getColorClasses(currentCategory.color)} rounded-full mb-4`}>
             <Icon name={currentCategory.icon} size={32} color="white" strokeWidth={2} />
           </div>
-          <h3 className="text-2xl font-bold text-primary-800">
+          <h3 className="text-2xl font-bold text-text-primary dark:text-white">
             {currentCategory.title}
           </h3>
         </div>
@@ -108,21 +108,21 @@ const SkillsVisualization = ({ shouldReduceMotion }) => {
                     name={skill.icon} 
                     size={18} 
                     strokeWidth={2} 
-                    // color={getColorClasses(currentCategory.color)}
+                    className="text-text-secondary dark:text-white/70"
                   />
-                  <span className="font-semibold text-primary-800">
+                  <span className="font-semibold text-text-primary dark:text-white">
                     {skill.name}
                   </span>
                 </div>
                 
-                <span className={`text-sm font-bold`} style={{ color: getColorClasses(currentCategory.color) }}>
+                <span className={`text-sm font-bold text-accent dark:text-accent-400`}>
                   {animatedSkills[skill.name] || 0}%
                 </span>
               </div>
               
-              <div className="w-full bg-primary-100 rounded-full h-3 overflow-hidden">
+              <div className="w-full bg-primary-100 dark:bg-primary-900/30 rounded-full h-3 overflow-hidden">
                 <div
-                  className={`h-full ${getColorClasses(currentCategory.color)} rounded-full transition-all duration-1000 ease-out transform origin-left`}
+                  className={`h-full bg-accent dark:bg-accent-400 rounded-full transition-all duration-1000 ease-out transform origin-left`}
                   style={{
                     width: `${animatedSkills[skill.name] || 0}%`,
                     transform: `scaleX(${(animatedSkills[skill.name] || 0) / 100})`
@@ -154,14 +154,14 @@ const SkillsVisualization = ({ shouldReduceMotion }) => {
 
       {/* Tech Stack Cloud */}
       <div className="mt-12 text-center">
-        <h4 className="text-xl font-bold text-primary-800 mb-6">
+        <h4 className="text-xl font-bold text-text-primary dark:text-white mb-6">
           Technologies I Work With
         </h4>
         <div className="flex flex-wrap justify-center gap-3">
           {techStack.map((tech, index) => (
             <span
               key={tech}
-              className="px-4 py-2 bg-primary-50 text-primary-700 rounded-full text-sm font-medium hover:bg-accent-50 hover:text-accent-700 transition-all duration-200 cursor-default"
+              className="px-4 py-2 bg-primary-50 dark:bg-white/10 text-primary-700 dark:text-white/80 rounded-full text-sm font-medium hover:bg-accent-50 dark:hover:bg-accent-900/30 hover:text-accent-700 dark:hover:text-accent-400 shadow-sm dark:shadow-md dark:shadow-black/20 transition-all duration-200 cursor-default"
               style={{ animationDelay: `${index * 50}ms` }}
             >
               {tech}

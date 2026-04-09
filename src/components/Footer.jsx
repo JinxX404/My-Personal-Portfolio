@@ -71,38 +71,40 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-primary-900 text-white">
+    <footer className="bg-surface dark:bg-surface border-t border-border dark:border-border-strong">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* About Section */}
           <div>
-            <h3 className="text-xl font-bold mb-4">{profile?.full_name || siteSettings?.site_title || 'Portfolio'}</h3>
-            <p className="text-primary-200 mb-4">
+            <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">{profile?.full_name || siteSettings?.site_title || 'Portfolio'}</h3>
+            <p className="text-gray-600 dark:text-white/70 mb-4">
               {profile?.tagline || 'Crafting digital experiences that matter.'}
             </p>
             {profile?.email && (
               <a 
                 href={`mailto:${profile.email}`}
-                className="text-accent-400 hover:text-accent-300 transition-colors flex items-center space-x-2"
+                className="hover:text-accent-500 dark:hover:text-accent-400 transition-colors flex items-center space-x-2"
               >
-                <Icon name="Mail" size={16} />
-                <span>{profile.email}</span>
+                <Icon name="Mail" size={16} className="text-accent-500 dark:text-accent-400 flex-shrink-0" />
+                <span className="text-gray-600 dark:text-white/80">{profile.email}</span>
               </a>
             )}
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-bold mb-4">Quick Links</h3>
-            <ul className="space-y-2">
+            <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">Quick Links</h3>
+            <ul className="space-y-3">
               {footerLinks.map((link) => (
                 <li key={link.path}>
                   <Link 
                     to={link.path}
-                    className="text-primary-200 hover:text-white transition-colors flex items-center space-x-2"
+                    className="group flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-white/10 dark:hover:bg-white/5 transition-all duration-200"
                   >
-                    <Icon name="ChevronRight" size={14} />
-                    <span>{link.name}</span>
+                    <Icon name="ChevronRight" size={16} className="text-accent dark:text-accent-400 flex-shrink-0 transition-transform group-hover:translate-x-1" />
+                    <span className="text-gray-600 dark:text-white/80 group-hover:text-white transition-colors font-medium">
+                      {link.name}
+                    </span>
                   </Link>
                 </li>
               ))}
@@ -111,7 +113,7 @@ const Footer = () => {
 
           {/* Social Links */}
           <div>
-            <h3 className="text-lg font-bold mb-4">Connect With Me</h3>
+            <h3 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">Connect With Me</h3>
             {activeSocialLinks.length > 0 ? (
               <div className="flex flex-wrap gap-3">
                 {activeSocialLinks.map(({ key, url, platform }) => (
@@ -120,26 +122,26 @@ const Footer = () => {
                     href={url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 bg-primary-800 hover:bg-accent-500 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 group"
+                    className="w-10 h-10 bg-gray-200 dark:bg-white/10 hover:bg-accent-500 dark:hover:bg-accent-500 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 group"
                     title={platform.name}
                   >
                     <Icon 
                       name={platform.icon} 
                       size={18} 
-                      className="text-primary-200 group-hover:text-white transition-colors"
+                      className="text-gray-600 dark:text-white/70 group-hover:text-white transition-colors"
                     />
                   </a>
                 ))}
               </div>
             ) : (
-              <p className="text-primary-300 text-sm">No social links added yet</p>
+              <p className="text-muted text-sm">No social links added yet</p>
             )}
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-primary-700 pt-6 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-primary-300 text-sm">
+        <div className="border-t border-gray-200 dark:border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-gray-500 dark:text-white/50 text-sm">
             © {currentYear} {profile?.full_name || siteSettings?.site_title || 'Portfolio'}. All rights reserved.
           </p>
         </div>

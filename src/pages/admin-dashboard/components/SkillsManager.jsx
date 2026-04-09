@@ -6,6 +6,14 @@ import Breadcrumb from 'components/ui/Breadcrumb';
 import { useSkills } from 'context/SkillsContext';
 import { useToast } from 'context/ToastContext';
 
+const skillColorMap = {
+  accent:  { bg100: 'bg-accent-100',  bg500: 'bg-accent-500' },
+  cta:     { bg100: 'bg-cta-100',     bg500: 'bg-cta-500' },
+  success: { bg100: 'bg-success-100', bg500: 'bg-success-500' },
+  primary: { bg100: 'bg-primary-100', bg500: 'bg-primary-500' },
+  warning: { bg100: 'bg-warning-100', bg500: 'bg-warning-500' },
+};
+
 const SkillsManager = () => {
   const { success, error: showError } = useToast();
   const {
@@ -285,7 +293,7 @@ const SkillsManager = () => {
                 <div key={key} className="bg-white rounded-xl shadow-sm p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center space-x-3">
-                      <div className={`w-12 h-12 bg-${category.color}-100 rounded-lg flex items-center justify-center`}>
+                      <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${skillColorMap[category.color]?.bg100 || 'bg-accent-100'}`}>
                         <Icon name={category.icon} size={24} strokeWidth={2} />
                       </div>
                       <div>
@@ -335,7 +343,7 @@ const SkillsManager = () => {
                             <div className="flex-1 max-w-xs">
                               <div className="w-full bg-white rounded-full h-2">
                                 <div
-                                  className={`h-full bg-${category.color}-500 rounded-full`}
+                                  className={`h-full rounded-full ${skillColorMap[category.color]?.bg500 || 'bg-accent-500'}`}
                                   style={{ width: `${skill.level}%` }}
                                 ></div>
                               </div>
