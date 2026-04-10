@@ -89,7 +89,7 @@ console.log(createAmazingExperience());`,
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Side - Interactive Code Demo */}
-          <div className="order-2 lg:order-1">
+          <div className="order-2 lg:order-1 hidden lg:block">
             <div className="glass-panel rounded-2xl overflow-hidden border border-border dark:border-border-strong/40 max-w-full">
               {/* Terminal Header */}
               <div className="flex items-center justify-between px-4 py-3 bg-surface/70 dark:bg-background/50 border-b border-border dark:border-border-strong/40">
