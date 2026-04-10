@@ -90,7 +90,7 @@ console.log(createAmazingExperience());`,
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Side - Interactive Code Demo */}
           <div className="order-2 lg:order-1">
-            <div className="glass-panel rounded-2xl overflow-hidden border border-border dark:border-border-strong/40">
+            <div className="glass-panel rounded-2xl overflow-hidden border border-border dark:border-border-strong/40 max-w-full">
               {/* Terminal Header */}
               <div className="flex items-center justify-between px-4 py-3 bg-surface/70 dark:bg-background/50 border-b border-border dark:border-border-strong/40">
                 <div className="flex items-center space-x-2">
@@ -98,18 +98,18 @@ console.log(createAmazingExperience());`,
                   <div className="w-3 h-3 bg-warning-500 rounded-full"></div>
                   <div className="w-3 h-3 bg-success-500 rounded-full"></div>
                 </div>
-                <div className="text-sm text-text-secondary font-mono">
+                <div className="text-sm text-text-secondary font-mono truncate">
                   {currentSnippet.language}
                 </div>
                 <div className="flex items-center space-x-2">
                   <Icon name="Play" size={16} className="text-success-500" strokeWidth={2} />
-                  <span className="text-xs text-success-500">Running</span>
+                  <span className="text-xs text-success-500 hidden sm:inline">Running</span>
                 </div>
               </div>
 
               {/* Code Content */}
-              <div className="p-6 font-mono text-sm bg-background/70 dark:bg-background/50 transition-theme">
-                <pre className={`text-text-secondary dark:text-secondary-200 transition-opacity duration-500 ${isTyping ? 'opacity-100' : 'opacity-70'}`}>
+              <div className="p-4 sm:p-6 font-mono text-xs sm:text-sm bg-background/70 dark:bg-background/50 transition-theme min-h-[200px] max-h-[280px] overflow-y-auto">
+                <pre className={`text-text-secondary dark:text-secondary-200 transition-opacity duration-500 ${isTyping ? 'opacity-100' : 'opacity-70'} whitespace-pre-wrap break-all`}>
                   <code>{currentSnippet.code}</code>
                 </pre>
                 <div className="mt-4 pt-4 border-t border-border dark:border-border-strong/40">
@@ -118,13 +118,13 @@ console.log(createAmazingExperience());`,
               </div>
 
               {/* Language Indicators */}
-              <div className="px-6 pb-4">
-                <div className="flex space-x-2">
+              <div className="px-4 sm:px-6 pb-4">
+                <div className="flex space-x-2 overflow-x-auto">
                   {codeSnippets.map((snippet, index) => (
                     <button
                       key={index}
                       onClick={() => setCurrentCodeIndex(index)}
-                      className={`px-3 py-1 text-xs rounded-full transition-all duration-300 border border-transparent ${
+                      className={`px-3 py-1 text-xs rounded-full transition-all duration-300 border border-transparent whitespace-nowrap ${
                         index === currentCodeIndex
                           ? 'bg-accent-500 text-white shadow-md'
                           : 'bg-surface text-text-secondary hover:text-text-primary hover:border-border dark:bg-background/60 dark:text-text-secondary'
