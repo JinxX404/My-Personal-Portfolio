@@ -147,7 +147,7 @@ console.log(createAmazingExperience());`,
                  profile?.availability === 'busy' ? 'Limited availability' : 'Currently unavailable'}
               </div>
               
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 text-text-primary dark:text-primary-100">
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 text-text-primary dark:text-white">
                 {profile?.title ? (
                   profile.title.split(' ').map((word, index) => (
                     <span key={index} className="block">{word}</span>

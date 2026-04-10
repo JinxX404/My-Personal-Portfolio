@@ -81,7 +81,7 @@ const Header = () => {
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-success-500 rounded-full animate-pulse-soft"></div>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-xl font-bold text-text-primary dark:text-white group-hover:text-accent-500 transition-colors duration-200">
+              <h1 className="text-xl font-bold text-text-primary group-hover:text-accent-500 transition-colors duration-200">
                 Moataz Mohammed
               </h1>
               <p className="text-xs text-text-secondary font-mono transition-theme">{profile?.title || 'Backend Engineer'}</p>
