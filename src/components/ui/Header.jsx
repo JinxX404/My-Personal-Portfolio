@@ -84,7 +84,7 @@ const Header = () => {
               <h1 className="text-xl font-bold text-text-primary group-hover:text-accent-500 transition-colors duration-200">
                 Moataz Mohammed
               </h1>
-              <p className="text-xs text-text-secondary font-mono transition-theme">{profile?.tagline || 'Backend Engineer'}</p>
+              <p className="text-xs text-text-secondary font-mono transition-theme">{profile?.title || 'Backend Engineer'}</p>
             </div>
           </Link>
 
