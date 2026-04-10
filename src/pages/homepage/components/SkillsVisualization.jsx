@@ -9,7 +9,6 @@ const SkillsVisualization = ({ shouldReduceMotion }) => {
     const keys = Object.keys(skillCategories);
     return keys.length > 0 ? keys[0] : 'frontend';
   });
-  const [animatedSkills, setAnimatedSkills] = useState({});
 
   const getColorClasses = (color) => {
     const colorMap = {
@@ -62,7 +61,7 @@ const SkillsVisualization = ({ shouldReduceMotion }) => {
     return () => clearTimeout(timer);
   }, [activeCategory, skillCategories]);
 
-  const currentCategory = skillCategories[activeCategory] || { title: '', icon: 'Code', color: 'accent', skills: [] };
+const currentCategory = skillCategories[activeCategory] || { title: '', icon: 'Code', color: 'accent', skills: [] };
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -95,40 +94,22 @@ const SkillsVisualization = ({ shouldReduceMotion }) => {
           </h3>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {currentCategory.skills.map((skill, index) => (
             <div
               key={skill.name}
-              className="group"
-              style={{ animationDelay: `${index * 100}ms` }}
+              className="flex items-center space-x-2 px-4 py-3 bg-primary-50 dark:bg-white/10 rounded-xl border border-primary-100 dark:border-white/10 hover:border-accent-500 dark:hover:border-accent-400 hover:shadow-md transition-all duration-300 cursor-default"
+              style={{ animationDelay: `${index * 50}ms` }}
             >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center space-x-2">
-                  <Icon 
-                    name={skill.icon} 
-                    size={18} 
-                    strokeWidth={2} 
-                    className="text-text-secondary dark:text-white/70"
-                  />
-                  <span className="font-semibold text-text-primary dark:text-white">
-                    {skill.name}
-                  </span>
-                </div>
-                
-                <span className={`text-sm font-bold text-accent dark:text-accent-400`}>
-                  {animatedSkills[skill.name] || 0}%
-                </span>
-              </div>
-              
-              <div className="w-full bg-primary-100 dark:bg-primary-900/30 rounded-full h-3 overflow-hidden">
-                <div
-                  className={`h-full bg-accent dark:bg-accent-400 rounded-full transition-all duration-1000 ease-out transform origin-left`}
-                  style={{
-                    width: `${animatedSkills[skill.name] || 0}%`,
-                    transform: `scaleX(${(animatedSkills[skill.name] || 0) / 100})`
-                  }}
-                ></div>
-              </div>
+              <Icon 
+                name={skill.icon} 
+                size={18} 
+                strokeWidth={2} 
+                className="text-accent-500 dark:text-accent-400 flex-shrink-0"
+              />
+              <span className="font-semibold text-text-primary dark:text-white text-sm truncate">
+                {skill.name}
+              </span>
             </div>
           ))}
         </div>
