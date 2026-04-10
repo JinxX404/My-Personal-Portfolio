@@ -2,12 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Icon from '../AppIcon';
 import { useTheme } from 'context/ThemeContext';
+import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
+  const { profile } = usePortfolioSettings();
 
   const navigationItems = [
     { name: 'Home', path: '/homepage', icon: 'Home' },
@@ -82,7 +84,7 @@ const Header = () => {
               <h1 className="text-xl font-bold text-text-primary group-hover:text-accent-500 transition-colors duration-200">
                 Moataz Mohammed
               </h1>
-              <p className="text-xs text-text-secondary font-mono transition-theme">Backend Engineer</p>
+              <p className="text-xs text-text-secondary font-mono transition-theme">{profile?.tagline || 'Backend Engineer'}</p>
             </div>
           </Link>
 
