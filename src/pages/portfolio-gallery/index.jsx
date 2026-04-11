@@ -242,12 +242,6 @@ const PortfolioGallery = () => {
             {project.description}
           </p>
 
-          {/* Metrics */}
-          <div className="flex items-center space-x-2 mb-4">
-            <Icon name="TrendingUp" size={16} color="var(--color-success)" strokeWidth={2} />
-            <span className="text-sm font-semibold text-success">{project.metrics}</span>
-          </div>
-
           {/* Tech Stack */}
           <div className="flex flex-wrap gap-2 mb-4">
             {project.technologies.map((tech, techIndex) => (
@@ -530,10 +524,6 @@ const PortfolioGallery = () => {
                     <span className="text-cta bg-cta-50 px-3 py-1 rounded-full text-sm font-semibold">
                       {selectedProject.category}
                     </span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Icon name="TrendingUp" size={20} color="var(--color-success)" strokeWidth={2} />
-                    <span className="text-lg font-semibold text-success">{selectedProject.metrics}</span>
                   </div>
                 </div>
 
