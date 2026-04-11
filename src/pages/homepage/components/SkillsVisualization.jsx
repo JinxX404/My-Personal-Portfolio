@@ -74,7 +74,7 @@ const currentCategory = skillCategories[activeCategory] || { title: '', icon: 'C
             className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:-translate-y-1 ${
               activeCategory === key
                 ? getColorClasses(category.color)
-                : 'bg-white dark:bg-white/10 text-text-secondary dark:text-white/70 hover:bg-primary-50 dark:hover:bg-white/20 shadow-md dark:shadow-lg dark:shadow-black/20'
+                : 'bg-white dark:bg-white/10 text-text-secondary dark:text-white/70 hover:bg-primary-50 dark:hover:bg-white/20 shadow-md dark:shadow-lg dark:shadow-black/20 border border-secondary-200 dark:border-white/10'
             }`}
           >
             <Icon name={category.icon} size={20} strokeWidth={2} />
@@ -98,7 +98,7 @@ const currentCategory = skillCategories[activeCategory] || { title: '', icon: 'C
           {currentCategory.skills.map((skill, index) => (
             <div
               key={skill.name}
-              className="flex items-center space-x-2 px-4 py-3 bg-primary-50 dark:bg-white/10 rounded-xl border border-primary-100 dark:border-white/10 hover:border-accent-500 dark:hover:border-accent-400 hover:shadow-md transition-all duration-300 cursor-default"
+              className="flex items-center space-x-2 px-4 py-3 bg-white dark:bg-white/10 rounded-xl border border-secondary-200 dark:border-white/10 hover:border-accent-500 dark:hover:border-accent-400 hover:shadow-md transition-all duration-300 cursor-default"
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <Icon 
@@ -142,7 +142,7 @@ const currentCategory = skillCategories[activeCategory] || { title: '', icon: 'C
           {techStack.map((tech, index) => (
             <span
               key={tech}
-              className="px-4 py-2 bg-primary-50 dark:bg-white/10 text-primary-700 dark:text-white/80 rounded-full text-sm font-medium hover:bg-accent-50 dark:hover:bg-accent-900/30 hover:text-accent-700 dark:hover:text-accent-400 shadow-sm dark:shadow-md dark:shadow-black/20 transition-all duration-200 cursor-default"
+              className="px-4 py-2 bg-white dark:bg-white/10 text-primary-700 dark:text-white/80 rounded-full text-sm font-medium hover:bg-accent-50 dark:hover:bg-accent-900/30 hover:text-accent-700 dark:hover:text-accent-400 shadow-sm border border-secondary-200 dark:border-white/10 transition-all duration-200 cursor-default"
               style={{ animationDelay: `${index * 50}ms` }}
             >
               {tech}
