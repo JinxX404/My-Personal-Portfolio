@@ -212,7 +212,7 @@ const ProjectManager = () => {
         description: formData.description,
         category: formData.category || 'Uncategorized',
         technologies: formData.technologies?.length > 0 ? formData.technologies : [],
-        publishing_status: isDraft ? 'draft' : (formData.publishingStatus || 'draft'),
+        publishing_status: isEditing ? (formData.publishingStatus || 'draft') : (isDraft ? 'draft' : (formData.publishingStatus || 'draft')),
         featured: formData.featured || false,
         status: formData.status || 'draft',
         client: formData.client || null,
