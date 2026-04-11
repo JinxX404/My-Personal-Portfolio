@@ -58,7 +58,8 @@ const PortfolioGallery = () => {
         featured: Boolean(project.featured),
         liveUrl: project.demo_url || '#',
         githubUrl: project.repository_url || '#',
-        tags
+        tags,
+        publishingStatus: project.publishing_status || 'draft'
       };
     });
   };
@@ -214,6 +215,13 @@ const PortfolioGallery = () => {
         {project.featured && (
           <div className="absolute top-4 left-4 bg-cta text-white px-3 py-1 rounded-full text-sm font-semibold">
             Featured
+          </div>
+        )}
+        
+        {/* In Progress Badge */}
+        {project.publishingStatus === 'in_progress' && (
+          <div className="absolute top-4 right-4 bg-warning-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+            In Progress
           </div>
         )}
       </div>

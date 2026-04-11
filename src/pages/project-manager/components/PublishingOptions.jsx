@@ -7,6 +7,7 @@ const PublishingOptions = ({ formData, setFormData }) => {
 
   const workflowStages = [
     { id: 'draft', label: 'Draft', icon: 'Edit3', color: 'secondary' },
+    { id: 'in_progress', label: 'In Progress', icon: 'Clock', color: 'warning' },
     { id: 'review', label: 'Review', icon: 'Eye', color: 'warning' },
     { id: 'approved', label: 'Approved', icon: 'CheckCircle', color: 'success' },
     { id: 'published', label: 'Published', icon: 'Globe', color: 'accent' }

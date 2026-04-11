@@ -61,7 +61,7 @@ export const fetchPublishedProjects = async (options = {}) => {
     let query = supabase
       .from("projects")
       .select("*", { count: 'exact' })
-      .eq("publishing_status", "published")
+      .in("publishing_status", ["published", "in_progress"])
       .eq("visibility", "public")
       .order("created_at", { ascending: false });
 
@@ -179,6 +179,12 @@ export const publishProject = async (projectId) => {
   return updateProject(projectId, {
     publishing_status: "published",
     published_at: new Date().toISOString(),
+  });
+};
+
+export const markProjectInProgress = async (projectId) => {
+  return updateProject(projectId, {
+    publishing_status: "in_progress",
   });
 };
 
