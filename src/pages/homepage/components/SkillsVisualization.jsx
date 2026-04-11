@@ -98,7 +98,7 @@ const currentCategory = skillCategories[activeCategory] || { title: '', icon: 'C
           {currentCategory.skills.map((skill, index) => (
             <div
               key={skill.name}
-              className="flex items-center space-x-2 px-4 py-3 bg-white dark:bg-white/10 rounded-xl border border-secondary-200 dark:border-white/10 hover:border-accent-500 dark:hover:border-accent-400 hover:shadow-md transition-all duration-300 cursor-default"
+              className="flex items-center space-x-2 px-4 py-3 bg-secondary-50 dark:bg-white/10 rounded-xl border border-secondary-300 dark:border-white/10 hover:border-accent-500 dark:hover:border-accent-400 hover:shadow-lg transition-all duration-300 cursor-default"
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <Icon 
@@ -107,7 +107,7 @@ const currentCategory = skillCategories[activeCategory] || { title: '', icon: 'C
                 strokeWidth={2} 
                 className="text-accent-500 dark:text-accent-400 flex-shrink-0"
               />
-              <span className="font-semibold text-text-primary dark:text-white text-sm truncate">
+              <span className="font-bold text-primary-800 dark:text-white text-sm truncate">
                 {skill.name}
               </span>
             </div>
