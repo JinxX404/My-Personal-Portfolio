@@ -261,7 +261,9 @@ const ProjectManager = () => {
     }
   }, [formData, addProject, editProject, editId, isEditing, navigate]);
 
-  // Auto-save function — uses ref to avoid interval recreation on every keystroke
+  // Auto-save disabled - causes issues with image uploads
+  // TODO: Fix auto-save to properly handle file uploads before re-enabling
+  /*
   const formDataRef = React.useRef(formData);
   useEffect(() => { formDataRef.current = formData; }, [formData]);
 
@@ -307,6 +309,7 @@ const ProjectManager = () => {
     
     return () => clearInterval(autoSaveInterval);
   }, [addProject, editProject, editId]);
+  */
 
   const renderSectionContent = () => {
     switch (activeSection) {
