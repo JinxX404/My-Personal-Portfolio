@@ -1,5 +1,5 @@
 // src/pages/project-manager/components/VisualAssets.jsx
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import Icon from 'components/AppIcon';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -7,6 +7,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, setFormData, dragActive, activeDropZone, setDragActive, setActiveDropZone }) => {
   const images = formData?.[zone] || [];
   const isActive = activeDropZone === zone && dragActive;
+  const fileInputRef = useRef(null);
 
   const handleDrag = useCallback((e) => {
     e.preventDefault();
@@ -59,7 +60,8 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
       size: file.size,
       type: file.type,
       preview: URL.createObjectURL(file),
-      file: file
+      file: file,
+      status: 'pending'
     }));
 
     setFormData(prev => ({
@@ -67,6 +69,20 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
       [zone]: prev?.[zone] ? [...prev[zone], ...newImages] : newImages
     }));
   }, [zone, images.length, maxFiles, title, setFormData]);
+
+  const handleBrowseClick = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleFileInputChange = useCallback((e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.target.files && e.target.files.length > 0) {
+      handleFiles(e.target.files, zone);
+    }
+  }, [zone, handleFiles]);
 
   const removeImage = useCallback((imageId) => {
     setFormData(prev => {
@@ -76,6 +92,15 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
       return { ...prev, [zone]: imgs.filter(i => i.id !== imageId) };
     });
   }, [zone, setFormData]);
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'uploading': return 'bg-warning-500';
+      case 'completed': return 'bg-success-500';
+      case 'error': return 'bg-error-500';
+      default: return 'bg-secondary-400';
+    }
+  };
 
   return (
     <div className="mb-6">
@@ -98,21 +123,28 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
           <p className="text-secondary-700 dark:text-secondary-300 mb-2">{description}</p>
           <p className="text-sm text-secondary-500 mb-4">
             Drag and drop files here, or{' '}
-            <label className="text-accent-600 cursor-pointer hover:text-accent-700">
+            <button
+              type="button"
+              onClick={handleBrowseClick}
+              onMouseDown={(e) => e.preventDefault()}
+              className="text-accent-600 cursor-pointer hover:text-accent-700"
+            >
               browse
-              <input
-                type="file"
-                accept={accept}
-                multiple
-                className="hidden"
-                onChange={(e) => { e.preventDefault(); if (e.target.files) handleFiles(e.target.files); }}
-              />
-            </label>
+            </button>
           </p>
           <p className="text-xs text-secondary-400">
             Supports JPG, PNG, WebP up to 10MB each ({images.length}/{maxFiles} files)
           </p>
         </div>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept={accept}
+          multiple
+          className="hidden"
+          onChange={handleFileInputChange}
+          onClick={(e) => e.stopPropagation()}
+        />
       </div>
 
       {images.length > 0 && (
@@ -120,7 +152,19 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
           {images.map((image, idx) => (
             <div key={image.id || `img-${idx}`} className="relative group">
               <div className="aspect-square bg-secondary-100 dark:bg-primary-800 rounded-lg overflow-hidden">
-                <img src={image.preview} alt={image.name} className="w-full h-full object-cover" />
+                {image.preview ? (
+                  <img src={image.preview} alt={image.name} className="w-full h-full object-cover" />
+                ) : image.url ? (
+                  <img src={image.url} alt={image.name} className="w-full h-full object-cover" />
+                ) : null}
+                {image.status && image.status !== 'pending' && (
+                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                    <div className="text-center">
+                      <div className={`w-4 h-4 rounded-full mx-auto mb-1 ${getStatusColor(image.status)}`}></div>
+                      <span className="text-xs text-white capitalize">{image.status}</span>
+                    </div>
+                  </div>
+                )}
               </div>
               <button
                 type="button"
@@ -132,7 +176,7 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
               </button>
               <div className="mt-2">
                 <p className="text-xs text-secondary-600 dark:text-secondary-400 truncate">{image.name}</p>
-                <p className="text-xs text-secondary-400">{(image.size / 1024 / 1024).toFixed(1)} MB</p>
+                <p className="text-xs text-secondary-400">{image.size ? (image.size / 1024 / 1024).toFixed(1) + ' MB' : ''}</p>
               </div>
             </div>
           ))}
