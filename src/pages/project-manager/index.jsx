@@ -293,6 +293,9 @@ const ProjectManager = () => {
           meta_title: currentData.metaTitle || null,
           meta_description: currentData.metaDescription || null,
           content_sections: currentData.content_sections || [],
+          hero_images: currentData.heroImages?.filter(img => typeof img === 'string') || [],
+          screenshots: currentData.screenshots?.filter(img => typeof img === 'string') || [],
+          mockups: currentData.mockups?.filter(img => typeof img === 'string') || [],
         };
         if (editId) {
           editProject(editId, projectData);

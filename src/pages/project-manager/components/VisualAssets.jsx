@@ -103,8 +103,9 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
               <input
                 type="file"
                 accept={accept}
+                multiple
                 className="hidden"
-                onChange={(e) => { if (e.target.files) handleFiles(e.target.files); e.target.value = ''; }}
+                onChange={(e) => { e.preventDefault(); if (e.target.files) handleFiles(e.target.files); }}
               />
             </label>
           </p>
