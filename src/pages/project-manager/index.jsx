@@ -185,7 +185,11 @@ const ProjectManager = () => {
       const uploadImages = async (images, folder) => {
         const urls = [];
         for (const img of images) {
-          if (img.file) {
+          // Handle string URLs (existing images)
+          if (typeof img === 'string') {
+            urls.push(img);
+          } else if (img.file) {
+            // Upload new file
             const result = await uploadImage(img.file, editId || 'draft', folder);
             if (result.success) {
               urls.push(result.data);
