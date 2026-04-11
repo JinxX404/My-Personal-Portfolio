@@ -67,6 +67,10 @@ const CaseStudyDetail = () => {
             problem: project.problem,
             solution: project.solution,
             results: project.results,
+            content_sections: project.content_sections || [],
+            hero_images: project.hero_images || [],
+            screenshots: project.screenshots || [],
+            mockups: project.mockups || [],
             gallery: Array.isArray(project.screenshots)
               ? project.screenshots.map((img, idx) => ({
                   id: idx + 1,
@@ -416,7 +420,17 @@ The backend API was redesigned to support the new frontend requirements, with op
 
   // Dynamic navigation based on available content
   const getNavigationSections = () => {
-    const sections = [{ id: "overview", label: "Overview", icon: "Eye" }];
+    const sections = [];
+
+    if (caseStudy?.content_sections && caseStudy.content_sections.length > 0) {
+      caseStudy.content_sections.forEach((section, index) => {
+        sections.push({
+          id: `section-${section.id || index}`,
+          label: section.title || `Section ${index + 1}`,
+          icon: "FileText"
+        });
+      });
+    }
 
     if (caseStudy?.enableCaseStudy) {
       if (caseStudy.problem || caseStudy.solution) {
@@ -424,7 +438,7 @@ The backend API was redesigned to support the new frontend requirements, with op
       }
     }
 
-    if (caseStudy?.gallery?.length > 0) {
+    if (caseStudy?.screenshots?.length > 0) {
       sections.push({ id: "gallery", label: "Gallery", icon: "Image" });
     }
 
@@ -444,20 +458,25 @@ The backend API was redesigned to support the new frontend requirements, with op
   useEffect(() => {
     const handleScroll = () => {
       const sections = navigationSections.map((section) => section.id);
-      const scrollPosition = window.scrollY + 100;
+      const scrollPosition = window.scrollY + 150;
 
-      for (let i = sections.length - 1; i >= 0; i--) {
+      let currentSection = sections[0];
+      for (let i = 0; i < sections.length; i++) {
         const element = document.getElementById(sections[i]);
-        if (element && element.offsetTop <= scrollPosition) {
-          setActiveSection(sections[i]);
-          break;
+        if (element) {
+          const offsetTop = element.offsetTop - 150;
+          if (scrollPosition >= offsetTop) {
+            currentSection = sections[i];
+          }
         }
       }
+      setActiveSection(currentSection);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [navigationSections]);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -724,41 +743,22 @@ The backend API was redesigned to support the new frontend requirements, with op
           </div>
 
           {/* Main Content */}
-          <div className="lg:col-span-3 space-y-16">
-            {/* Overview Section */}
-            <section id="overview" className="scroll-mt-24">
-              <div className="bg-surface dark:bg-surface rounded-lg shadow-sm border border-border dark:border-border-strong p-8">
-                <h2 className="text-3xl font-bold text-text-primary dark:text-white mb-8">
-                  Project Overview
-                </h2>
-
-                {/* Description */}
-                {caseStudy.description && (
-                  <div className="prose prose-lg max-w-none text-text-secondary dark:text-white/70 mb-8">
-                    <p>{caseStudy.description}</p>
-                  </div>
-                )}
-
-                {/* Technologies */}
-                {caseStudy.tags && caseStudy.tags.length > 0 && (
-                  <div className="mb-8">
-                    <h3 className="text-xl font-semibold text-text-primary dark:text-white mb-4">
-                      Technologies Used
-                    </h3>
-                    <div className="flex flex-wrap gap-3">
-                      {caseStudy.tags.map((tag, index) => (
-                        <span
-                          key={index}
-                          className="px-4 py-2 bg-accent-50 dark:bg-accent-900/30 text-accent dark:text-accent-400 rounded-lg text-sm font-medium"
-                        >
-                          {tag}
-                        </span>
-                      ))}
+          <div className="lg:col-span-3 space-y-8">
+            {/* Dynamic Content Sections */}
+            {caseStudy.content_sections && caseStudy.content_sections.length > 0 && (
+              caseStudy.content_sections.map((section, index) => (
+                <section key={section.id || index} id={`section-${section.id || index}`} className="scroll-mt-24">
+                  <div className="bg-surface dark:bg-surface rounded-lg shadow-sm border border-border dark:border-border-strong p-6">
+                    <h2 className="text-2xl font-bold text-text-primary dark:text-white mb-4">
+                      {section.title || `Section ${index + 1}`}
+                    </h2>
+                    <div className="prose prose-lg max-w-none text-text-secondary dark:text-white/70 whitespace-pre-wrap">
+                      {section.content}
                     </div>
                   </div>
-                )}
-              </div>
-            </section>
+                </section>
+              ))
+            )}
 
             {/* Case Study Section - Only if enabled */}
             {caseStudy.enableCaseStudy &&
@@ -827,8 +827,8 @@ The backend API was redesigned to support the new frontend requirements, with op
                 </section>
               )}
 
-            {/* Gallery Section - Only if gallery has items */}
-            {caseStudy.gallery && caseStudy.gallery.length > 0 && (
+            {/* Visual Gallery Section - Shows only screenshots */}
+            {caseStudy.screenshots?.length > 0 && (
               <section id="gallery" className="scroll-mt-24">
                 <div className="bg-surface dark:bg-surface rounded-lg shadow-sm border border-border dark:border-border-strong p-8">
                   <h2 className="text-3xl font-bold text-text-primary dark:text-white mb-8">
@@ -836,35 +836,29 @@ The backend API was redesigned to support the new frontend requirements, with op
                   </h2>
 
                   <div className="grid md:grid-cols-2 gap-6">
-                    {caseStudy.gallery.map((item) => (
-                      <div
-                        key={item.id}
-                        className="group cursor-pointer"
-                        onClick={() => openImageModal(item)}
-                      >
-                        <div className="relative overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
-                          <Image
-                            src={item.image}
-                            alt={item.title}
-                            className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
-                            <Icon
-                              name="ZoomIn"
-                              size={32}
-                              color="white"
-                              className="opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                              strokeWidth={2}
-                            />
-                          </div>
-                          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-                            <h3 className="text-white font-semibold">
-                              {item.title}
-                            </h3>
+                    {caseStudy.screenshots.map((item, index) => {
+                      const imageUrl = typeof item === 'string' ? item : item.image;
+                      const imageTitle = typeof item === 'string' ? `Screenshot ${index + 1}` : (item.title || `Screenshot ${index + 1}`);
+                      return (
+                        <div 
+                          key={`screenshot-${index}`} 
+                          className="group cursor-pointer"
+                          onClick={() => openImageModal({ image: imageUrl, title: imageTitle })}
+                        >
+                          <div className="relative overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+                            <Image src={imageUrl} alt={imageTitle} className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300" />
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                              <Icon name="ZoomIn" size={32} color="white" className="opacity-0 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={2} />
+                            </div>
+                            {imageTitle && (
+                              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                                <h4 className="text-white font-semibold">{imageTitle}</h4>
+                              </div>
+                            )}
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               </section>

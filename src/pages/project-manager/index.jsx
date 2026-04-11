@@ -12,6 +12,7 @@ import VisualAssets from './components/VisualAssets';
 import TechnicalDetails from './components/TechnicalDetails';
 import CaseStudyContent from './components/CaseStudyContent';
 import PublishingOptions from './components/PublishingOptions';
+import ContentSections from './components/ContentSections';
 
 const ProjectManager = () => {
   const { addProject, editProject, getProjectById } = useProjects();
@@ -63,7 +64,10 @@ const ProjectManager = () => {
     featured: false,
     tags: [],
     metaTitle: '',
-    metaDescription: ''
+    metaDescription: '',
+
+    // Dynamic Content Sections
+    content_sections: []
   });
 
   const [activeSection, setActiveSection] = useState('basic');
@@ -113,6 +117,7 @@ const ProjectManager = () => {
             tags: p.tags || [],
             metaTitle: p.meta_title || '',
             metaDescription: p.meta_description || '',
+            content_sections: p.content_sections || [],
           });
         } else {
           showError('Project not found. Redirecting...');
@@ -131,6 +136,7 @@ const ProjectManager = () => {
   const sections = [
     { id: 'basic', label: 'Basic Information', icon: 'Info', color: 'accent' },
     { id: 'visual', label: 'Visual Assets', icon: 'Image', color: 'cta' },
+    { id: 'sections', label: 'Content Sections', icon: 'LayoutList', color: 'secondary' },
     { id: 'technical', label: 'Technical Details', icon: 'Code', color: 'success' },
     { id: 'content', label: 'Case Study Content', icon: 'FileText', color: 'primary' },
     { id: 'publishing', label: 'Publishing Options', icon: 'Settings', color: 'warning' }
@@ -142,6 +148,7 @@ const ProjectManager = () => {
     success: { bg: 'bg-success-100', text: 'text-success-800', border: 'border-success-600', iconBg: 'bg-success-200', iconText: 'text-success-600' },
     primary: { bg: 'bg-primary-100', text: 'text-primary-800', border: 'border-primary-600', iconBg: 'bg-primary-200', iconText: 'text-primary-600' },
     warning: { bg: 'bg-warning-100', text: 'text-warning-800', border: 'border-warning-600', iconBg: 'bg-warning-200', iconText: 'text-warning-600' },
+    secondary: { bg: 'bg-secondary-100', text: 'text-secondary-800', border: 'border-secondary-600', iconBg: 'bg-secondary-200', iconText: 'text-secondary-600' },
   };
 
   // Validation function - MINIMAL REQUIREMENTS ONLY
@@ -222,6 +229,7 @@ const ProjectManager = () => {
         hero_images: heroImages,
         screenshots: screenshots,
         mockups: mockups,
+        content_sections: formData.content_sections || [],
       };
       
       const result = isEditing
@@ -280,6 +288,7 @@ const ProjectManager = () => {
           tags: currentData.tags?.length > 0 ? currentData.tags : [],
           meta_title: currentData.metaTitle || null,
           meta_description: currentData.metaDescription || null,
+          content_sections: currentData.content_sections || [],
         };
         if (editId) {
           editProject(editId, projectData);
@@ -298,6 +307,8 @@ const ProjectManager = () => {
         return <BasicInformation formData={formData} setFormData={setFormData} />;
       case 'visual':
         return <VisualAssets formData={formData} setFormData={setFormData} />;
+      case 'sections':
+        return <ContentSections formData={formData} setFormData={setFormData} />;
       case 'technical':
         return <TechnicalDetails formData={formData} setFormData={setFormData} />;
       case 'content':

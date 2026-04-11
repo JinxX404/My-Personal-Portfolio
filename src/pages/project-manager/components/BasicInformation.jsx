@@ -157,15 +157,15 @@ const BasicInformation = ({ formData, setFormData }) => {
         {/* Description */}
         <div className="md:col-span-2">
           <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
-            Project Description *
+            Short Summary <span className="text-secondary-400 font-normal">(shown in project cards)</span>
           </label>
           <div className="relative">
             <textarea
               value={formData?.description || ''}
               onChange={(e) => handleInputChange('description', e.target.value)}
               className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none"
-              rows={4}
-              placeholder="Brief description of the project..."
+              rows={3}
+              placeholder="Brief summary shown in project cards (you can add detailed content in Content Sections below)..."
               maxLength={500}
             />
             <div className="absolute right-3 bottom-3 text-xs text-secondary-500">

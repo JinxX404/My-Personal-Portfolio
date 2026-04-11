@@ -31,30 +31,40 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
   }, [zone, setDragActive, setActiveDropZone]);
 
   const handleFiles = useCallback((files) => {
-    const file = files[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) return;
-    if (file.size > MAX_FILE_SIZE) {
-      alert(`File "${file.name}" is too large. Max size is 10MB.`);
-      return;
-    }
-    if (images.length >= maxFiles) {
+    const fileArray = Array.from(files);
+    const remainingSlots = maxFiles - images.length;
+    
+    if (remainingSlots <= 0) {
       alert(`Maximum ${maxFiles} files allowed for ${title}.`);
       return;
     }
 
-    const newImage = {
+    const validFiles = fileArray.filter(file => {
+      if (!file.type.startsWith('image/')) {
+        alert(`"${file.name}" is not an image file.`);
+        return false;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        alert(`File "${file.name}" is too large. Max size is 10MB.`);
+        return false;
+      }
+      return true;
+    }).slice(0, remainingSlots);
+
+    if (validFiles.length === 0) return;
+
+    const newImages = validFiles.map(file => ({
       id: `${zone}-${Date.now()}-${Math.random().toString(36).slice(2)}`,
       name: file.name,
       size: file.size,
       type: file.type,
       preview: URL.createObjectURL(file),
       file: file
-    };
+    }));
 
     setFormData(prev => ({
       ...prev,
-      [zone]: prev?.[zone] ? [...prev[zone], newImage] : [newImage]
+      [zone]: prev?.[zone] ? [...prev[zone], ...newImages] : newImages
     }));
   }, [zone, images.length, maxFiles, title, setFormData]);
 

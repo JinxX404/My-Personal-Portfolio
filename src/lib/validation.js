@@ -3,6 +3,13 @@ import { z } from "zod";
 
 // ==================== PROJECT SCHEMAS ====================
 
+const contentSectionSchema = z.object({
+  id: z.string().optional(),
+  title: z.string().min(1, "Section title is required").max(100),
+  content: z.string().min(1, "Section content is required"),
+  order: z.number().optional()
+});
+
 export const projectSchema = z.object({
   title: z
     .string()
@@ -16,6 +23,7 @@ export const projectSchema = z.object({
     .string()
     .min(1, "Category is required")
     .max(50, "Category must be less than 50 characters"),
+  content_sections: z.array(contentSectionSchema).optional().default([]),
   client: z
     .string()
     .max(100, "Client name must be less than 100 characters")
