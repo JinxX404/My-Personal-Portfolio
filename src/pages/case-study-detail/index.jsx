@@ -598,7 +598,7 @@ The backend API was redesigned to support the new frontend requirements, with op
                 </Link>
               </div>
 
-              <h1 className="text-4xl lg:text-5xl font-bold mb-4 leading-tight">
+              <h1 className="text-4xl lg:text-5xl font-bold mb-4 leading-tight text-white">
                 {caseStudy.title}
               </h1>
               <p className="text-xl text-accent-100 mb-6">
