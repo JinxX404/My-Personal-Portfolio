@@ -35,9 +35,9 @@ CREATE TABLE IF NOT EXISTS projects (
 
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Public can view published projects"
+CREATE POLICY "Public can view published and in-progress projects"
   ON projects FOR SELECT
-  USING (publishing_status = 'published' AND visibility = 'public');
+  USING (publishing_status IN ('published', 'in_progress') AND visibility = 'public');
 
 CREATE POLICY "Authenticated users can view all projects"
   ON projects FOR SELECT
