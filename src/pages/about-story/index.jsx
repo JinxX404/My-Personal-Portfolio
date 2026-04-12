@@ -233,8 +233,8 @@ const AboutStory = () => {
                     </div>
 
                     {/* Timeline Content */}
-                    <div className="flex-1 bg-surface dark:bg-background rounded-xl p-6 shadow-sm border border-primary-200 dark:border-border-strong hover:shadow-md transition-all duration-300">
-                      <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1 bg-surface dark:bg-background rounded-xl p-6 shadow-sm border border-primary-200 dark:border-border-strong">
+                      <div className="flex items-start justify-between mb-2">
                         <div>
                           <h3 className="text-xl font-bold text-primary-800 mb-1">
                             {item.title}
@@ -245,7 +245,7 @@ const AboutStory = () => {
                         </div>
                         <Icon
                           name={
-                            activeTimelineItem === item.id
+                            activeTimelineItem === (item.id || index)
                               ? "ChevronUp"
                               : "ChevronDown"
                           }
@@ -254,20 +254,20 @@ const AboutStory = () => {
                         />
                       </div>
 
-                      <p className="text-secondary-600 mb-4">
-                        {item.description}
-                      </p>
-
                       {activeTimelineItem === (item.id || index) && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
-                          exit={{ opacity: 0, height: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="space-y-4"
-                        >
-                          {item.achievements &&
-                            item.achievements.length > 0 && (
+                        <>
+                          <p className="text-secondary-600 mb-4">
+                            {item.description}
+                          </p>
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: "auto" }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="space-y-4"
+                          >
+                            {item.achievements &&
+                              item.achievements.length > 0 && (
                               <div>
                                 <h4 className="font-semibold text-primary-800 mb-2">
                                   Key Achievements:
@@ -307,7 +307,8 @@ const AboutStory = () => {
                                 </div>
                               </div>
                             )}
-                        </motion.div>
+                          </motion.div>
+                        </>
                       )}
                     </div>
                   </div>
