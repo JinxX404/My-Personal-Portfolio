@@ -7,14 +7,14 @@ import LoadError from "components/ui/LoadError";
 import { useProjects } from "context/ProjectsContext";
 import { SkeletonCard, SkeletonText } from "components/ui/Skeleton";
 import { safeHref } from "lib/safeUrl";
+import ProjectGallery, { normalizeGalleryImages } from "./ProjectGallery";
 
 const CaseStudyDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { getProjectById } = useProjects();
 
-  const [activeSection, setActiveSection] = useState("overview");
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [activeSection, setActiveSection] = useState("");
   const [caseStudy, setCaseStudy] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
@@ -36,7 +36,7 @@ const CaseStudyDetail = () => {
         if (result.success && result.data) {
           const project = result.data;
 
-          // Transform project data to case study format
+          // Shape the project record for the detail page
           const transformedData = {
             id: project.id,
             title: project.title || "Untitled Project",
@@ -123,6 +123,10 @@ const CaseStudyDetail = () => {
   const getNavigationSections = () => {
     const sections = [];
 
+    if (caseStudy?.screenshots?.length > 0) {
+      sections.push({ id: "gallery", label: "Gallery", icon: "Image" });
+    }
+
     if (caseStudy?.content_sections && caseStudy.content_sections.length > 0) {
       caseStudy.content_sections.forEach((section, index) => {
         sections.push({
@@ -133,14 +137,11 @@ const CaseStudyDetail = () => {
       });
     }
 
-    if (caseStudy?.enableCaseStudy) {
-      if (caseStudy.problem || caseStudy.solution) {
-        sections.push({ id: "case-study", label: "Details", icon: "FileText" });
-      }
-    }
-
-    if (caseStudy?.screenshots?.length > 0) {
-      sections.push({ id: "gallery", label: "Gallery", icon: "Image" });
+    if (
+      caseStudy?.enableCaseStudy &&
+      (caseStudy.problem || caseStudy.solution || caseStudy.results)
+    ) {
+      sections.push({ id: "project-details", label: "Project Details", icon: "FileText" });
     }
 
     if (caseStudy?.testimonial) {
@@ -186,13 +187,7 @@ const CaseStudyDetail = () => {
     }
   };
 
-  const openImageModal = (image) => {
-    setSelectedImage(image);
-  };
-
-  const closeImageModal = () => {
-    setSelectedImage(null);
-  };
+  const galleryImages = normalizeGalleryImages(caseStudy?.screenshots);
 
   // Loading state
   if (isLoading) {
@@ -451,6 +446,8 @@ const CaseStudyDetail = () => {
 
           {/* Main Content */}
           <div className="lg:col-span-3 space-y-8">
+            {galleryImages.length > 0 && <ProjectGallery images={galleryImages} />}
+
             {/* Dynamic Content Sections */}
             {caseStudy.content_sections && caseStudy.content_sections.length > 0 && (
               caseStudy.content_sections.map((section, index) => (
@@ -467,12 +464,12 @@ const CaseStudyDetail = () => {
               ))
             )}
 
-            {/* Case Study Section - Only if enabled */}
+            {/* Problem, solution, and results — only when the write-up is enabled */}
             {caseStudy.enableCaseStudy &&
               (caseStudy.problem ||
                 caseStudy.solution ||
                 caseStudy.results) && (
-                <section id="case-study" className="scroll-mt-24">
+                <section id="project-details" className="scroll-mt-24">
                   <div className="bg-surface dark:bg-surface rounded-lg shadow-sm border border-border dark:border-border-strong p-8">
                     <h2 className="text-3xl font-bold text-text-primary dark:text-white mb-8">
                       Project Details
@@ -534,43 +531,6 @@ const CaseStudyDetail = () => {
                 </section>
               )}
 
-            {/* Visual Gallery Section - Shows only screenshots */}
-            {caseStudy.screenshots?.length > 0 && (
-              <section id="gallery" className="scroll-mt-24">
-                <div className="bg-surface dark:bg-surface rounded-lg shadow-sm border border-border dark:border-border-strong p-8">
-                  <h2 className="text-3xl font-bold text-text-primary dark:text-white mb-8">
-                    Visual Gallery
-                  </h2>
-
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {caseStudy.screenshots.map((item, index) => {
-                      const imageUrl = typeof item === 'string' ? item : item.image;
-                      const imageTitle = typeof item === 'string' ? `Screenshot ${index + 1}` : (item.title || `Screenshot ${index + 1}`);
-                      return (
-                        <div 
-                          key={`screenshot-${index}`} 
-                          className="group cursor-pointer"
-                          onClick={() => openImageModal({ image: imageUrl, title: imageTitle })}
-                        >
-                          <div className="relative overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
-                            <Image src={imageUrl} alt={imageTitle} width={1280} height={720} className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300" />
-                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
-                              <Icon name="ZoomIn" size={32} color="white" className="opacity-0 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={2} />
-                            </div>
-                            {imageTitle && (
-                              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-                                <h4 className="text-white font-semibold">{imageTitle}</h4>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </section>
-            )}
-
             {/* Testimonial Section */}
             {caseStudy.testimonial && (
               <section id="testimonial" className="scroll-mt-24">
@@ -624,7 +584,7 @@ const CaseStudyDetail = () => {
                 {caseStudy.nextProjects.map((project) => (
                   <Link
                     key={project.id}
-                    to={`/case-study-detail/${project.id}`}
+                    to={`/projects/${project.id}`}
                     className="group block bg-primary-50 dark:bg-primary-900/30 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300"
                   >
                     <div className="relative overflow-hidden">
@@ -673,31 +633,6 @@ const CaseStudyDetail = () => {
         </div>
       </div>
 
-      {/* Image Modal */}
-      {selectedImage && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
-          <div className="relative max-w-5xl max-h-full">
-            <button
-              onClick={closeImageModal}
-              className="absolute -top-12 right-0 text-white hover:text-accent-200 transition-colors duration-200"
-            >
-              <Icon name="X" size={32} strokeWidth={2} />
-            </button>
-            <Image
-              src={selectedImage.image}
-              alt={selectedImage.title}
-              width={1600}
-              height={1000}
-              className="max-w-full max-h-full object-contain rounded-lg"
-            />
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">
-              <h3 className="text-white text-xl font-semibold">
-                {selectedImage.title}
-              </h3>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

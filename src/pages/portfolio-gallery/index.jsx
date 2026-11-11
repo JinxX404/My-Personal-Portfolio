@@ -174,20 +174,20 @@ const PortfolioGallery = () => {
 
   const ProjectCard = ({ project, index }) => (
     <div
-      className={`group relative bg-surface dark:bg-surface rounded-xl shadow-sm border border-border dark:border-border-strong overflow-hidden hover:shadow-lg transition-all duration-300 ${
-        project.featured ? 'md:col-span-2 md:row-span-2' : ''
+      className={`group relative self-start w-full bg-surface dark:bg-surface rounded-xl shadow-sm border border-border dark:border-border-strong overflow-hidden hover:shadow-lg transition-all duration-300 ${
+        project.featured && viewMode === 'grid' ? 'md:col-span-2' : ''
       } ${viewMode === 'list' ? 'flex flex-row' : 'flex flex-col'}`}
     >
       {/* Project Image */}
-      <div className={`relative overflow-hidden ${
-        viewMode === 'list' ? 'w-1/3 flex-shrink-0' : 'aspect-video'
+      <div className={`relative shrink-0 overflow-hidden bg-primary-100 dark:bg-primary-900 ${
+        viewMode === 'list' ? 'w-36 sm:w-56 self-stretch min-h-36' : 'aspect-video'
       }`}>
         <Image
           src={project.image}
           alt={project.title}
           width={1280}
           height={720}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         
@@ -246,7 +246,7 @@ const PortfolioGallery = () => {
       </div>
 
       {/* Project Content */}
-      <div className={`p-6 flex-1 ${viewMode === 'list' ? 'flex flex-col justify-between' : ''}`}>
+      <div className={`p-6 ${viewMode === 'list' ? 'flex flex-1 flex-col justify-between' : ''}`}>
         <div>
           <div className="flex items-start justify-between mb-3">
             <h3 className="text-xl font-bold text-text-primary group-hover:text-accent transition-colors duration-200">
@@ -276,7 +276,7 @@ const PortfolioGallery = () => {
 
         {/* Action Button */}
         <Link
-          to={`/case-study-detail/${project.id}`}
+          to={`/projects/${project.id}`}
           className="inline-flex items-center space-x-2 text-accent hover:text-accent-700 font-semibold transition-colors duration-200"
         >
           <span>View Project</span>
@@ -438,7 +438,7 @@ const PortfolioGallery = () => {
               <>
               <div
                 className={
-                  viewMode === 'grid' ?'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 auto-rows-max' :'space-y-6'
+                  viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start' : 'space-y-6'
                 }
               >
                 {filteredProjects.map((project, index) => (
@@ -564,7 +564,7 @@ const PortfolioGallery = () => {
 
                 <div className="flex space-x-4">
                   <Link
-                    to={`/case-study-detail/${selectedProject.id}`}
+                    to={`/projects/${selectedProject.id}`}
                     className="btn-primary flex items-center space-x-2"
                     onClick={() => setSelectedProject(null)}
                   >

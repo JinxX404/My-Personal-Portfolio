@@ -10,7 +10,8 @@ const ROUTES = [
       'Portfolio of Moataz Mohammed, a Full-Stack .NET developer. Selected projects, skills, and ways to get in touch.',
   },
   {
-    match: (pathname) => pathname.startsWith('/portfolio-gallery'),
+    match: (pathname) =>
+      pathname.startsWith('/portfolio-gallery') || pathname === '/projects',
     page: 'Portfolio',
     description: 'Projects by Moataz Mohammed, a Full-Stack .NET developer.',
   },
@@ -25,9 +26,10 @@ const ROUTES = [
     description: 'Contact Moataz Mohammed about software projects and collaborations.',
   },
   {
-    match: (pathname) => pathname.startsWith('/case-study-detail'),
-    page: 'Project',
-    description: 'Project case study by Moataz Mohammed, a Full-Stack .NET developer.',
+    match: (pathname) =>
+      /^\/projects\/[^/]+/.test(pathname) || pathname.startsWith('/case-study-detail'),
+    page: 'Project Details',
+    description: 'Project details by Moataz Mohammed, a Full-Stack .NET developer.',
   },
   {
     match: (pathname) =>

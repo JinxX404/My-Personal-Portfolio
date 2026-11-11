@@ -184,6 +184,11 @@ module.exports = {
         'out-quart': 'cubic-bezier(0.25, 1, 0.5, 1)',
         'in-out-back': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
       },
+      aspectRatio: {
+        auto: 'auto',
+        square: '1 / 1',
+        video: '16 / 9',
+      },
       backdropBlur: {
         'xs': '2px',
         'sm': '4px',

@@ -55,7 +55,7 @@ This is my personal portfolio website with a custom-built content management sys
 - ✅ **Project Manager** - Comprehensive project creation
   - Rich media (hero images, screenshots, mockups)
   - Technologies and metrics
-  - Case study sections (problem, solution, results)
+  - Project detail sections (problem, solution, results)
   - Draft/Published workflow
   - SEO metadata
 
