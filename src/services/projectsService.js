@@ -68,7 +68,10 @@ export const fetchPublishedProjects = async (options = {}) => {
     if (limit) query = query.range(offset || 0, (offset || 0) + limit - 1);
 
     const { data, error, count } = await query;
-    return { success: true, data, count, error };
+    if (error) {
+      return { success: false, error: error.message, data: [], count: 0 };
+    }
+    return { success: true, data: data || [], count: count || 0 };
   } catch (error) {
     return { success: false, error: error.message };
   }

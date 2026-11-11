@@ -1,21 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Icon from "components/AppIcon";
 import { usePortfolioSettings } from "context/PortfolioSettingsContext";
+import { safeHref } from "lib/safeUrl";
 
-const FloatingCTA = ({ scrollProgress }) => {
+const FloatingCTA = () => {
   const { profile, socialLinks } = usePortfolioSettings();
   const [isExpanded, setIsExpanded] = useState(false);
-  const cvUrl = profile?.cv_url || profile?.resume_url;
+  const [navOpen, setNavOpen] = useState(false);
+  const cvUrl = safeHref(profile?.cv_url || profile?.resume_url);
+  const emailHref = safeHref(profile?.email ? `mailto:${profile.email}` : "");
+  const linkedinHref = safeHref(socialLinks?.linkedin);
+  const githubHref = safeHref(socialLinks?.github);
+
+  useEffect(() => {
+    const sync = () => {
+      setNavOpen(document.documentElement.classList.contains("mobile-nav-open"));
+    };
+    sync();
+    const observer = new MutationObserver(sync);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  if (navOpen) return null;
 
   const toggleExpanded = () => {
     setIsExpanded(!isExpanded);
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-40">
+    <div className="fixed bottom-6 right-4 z-30 sm:right-6">
       <div
-        className={`transition-all duration-300 ${isExpanded ? "w-80" : "w-auto"}`}
+        className={`transition-all duration-300 ${isExpanded ? "w-[min(20rem,calc(100vw-2rem))]" : "w-auto"}`}
       >
         {/* Expanded CTA Card */}
         {isExpanded && (
@@ -30,8 +50,10 @@ const FloatingCTA = ({ scrollProgress }) => {
                 </p>
               </div>
               <button
+                type="button"
                 onClick={toggleExpanded}
                 className="text-secondary-400 hover:text-secondary-600 transition-colors duration-200"
+                aria-label="Close contact panel"
               >
                 <Icon name="X" size={18} strokeWidth={2} />
               </button>
@@ -73,10 +95,11 @@ const FloatingCTA = ({ scrollProgress }) => {
             <div className="mt-4 pt-4 border-t border-primary-100">
               <p className="text-xs text-secondary-500 mb-2">Quick Connect:</p>
               <div className="flex space-x-2">
-                {profile?.email && (
+                {emailHref && (
                   <a
-                    href={`mailto:${profile.email}`}
+                    href={emailHref}
                     className="flex-1 bg-primary-50 hover:bg-primary-100 text-primary-600 p-2 rounded text-center transition-colors duration-200"
+                    aria-label="Email"
                     title="Email"
                   >
                     <Icon
@@ -87,12 +110,13 @@ const FloatingCTA = ({ scrollProgress }) => {
                     />
                   </a>
                 )}
-                {socialLinks?.linkedin && (
+                {linkedinHref && (
                   <a
-                    href={socialLinks.linkedin}
+                    href={linkedinHref}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1 bg-primary-50 hover:bg-primary-100 text-primary-600 p-2 rounded text-center transition-colors duration-200"
+                    aria-label="LinkedIn"
                     title="LinkedIn"
                   >
                     <Icon
@@ -103,12 +127,13 @@ const FloatingCTA = ({ scrollProgress }) => {
                     />
                   </a>
                 )}
-                {socialLinks?.github && (
+                {githubHref && (
                   <a
-                    href={socialLinks.github}
+                    href={githubHref}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex-1 bg-primary-50 hover:bg-primary-100 text-primary-600 p-2 rounded text-center transition-colors duration-200"
+                    aria-label="GitHub"
                     title="GitHub"
                   >
                     <Icon
@@ -127,7 +152,10 @@ const FloatingCTA = ({ scrollProgress }) => {
         {/* Main Floating Button */}
         <div className="flex justify-end">
           <button
+            type="button"
             onClick={toggleExpanded}
+            aria-expanded={isExpanded}
+            aria-label={isExpanded ? "Close contact options" : "Open contact options"}
             className={`group relative bg-gradient-to-r from-cta to-cta-600 hover:from-cta-600 hover:to-cta-700 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 ${
               isExpanded ? "w-12 h-12" : "w-14 h-14"
             }`}

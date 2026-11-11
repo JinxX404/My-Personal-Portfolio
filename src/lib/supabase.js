@@ -1,12 +1,17 @@
 // src/lib/supabase.js
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const configuredUrl = import.meta.env.VITE_SUPABASE_URL;
+const configuredKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
+if (!configuredUrl || !configuredKey) {
   console.error('Missing Supabase environment variables. Please check your .env file.');
 }
+
+// createClient throws without a URL. Keep a non-routable placeholder so the
+// site can render, and treat it as "not configured" below.
+const supabaseUrl = configuredUrl || 'https://dummy.supabase.co';
+const supabaseAnonKey = configuredKey || 'dummy-anon-key';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {

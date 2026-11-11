@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import Icon from 'components/AppIcon';
 import { useReducedMotion } from 'hooks/useReducedMotion';
 import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
+import { safeHref } from 'lib/safeUrl';
 
 import HeroSection from './components/HeroSection';
 import FeaturedWork from './components/FeaturedWork';
 import SkillsVisualization from './components/SkillsVisualization';
-import SocialProof from './components/SocialProof';
 import FloatingCTA from './components/FloatingCTA';
 import WhoAmI from './components/WhoAmI';
 
@@ -16,7 +15,7 @@ const Homepage = () => {
   const [scrollProgress, setScrollProgress] = useState(0);
   const shouldReduceMotion = useReducedMotion();
   const { profile } = usePortfolioSettings();
-  const cvUrl = profile?.cv_url || profile?.resume_url;
+  const cvUrl = safeHref(profile?.cv_url || profile?.resume_url);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,12 +31,6 @@ const Homepage = () => {
 
   return (
     <div className="min-h-screen bg-background text-text-primary transition-theme">
-      <Helmet>
-        <title>Home — Full Stack Developer Portfolio</title>
-        <meta name="description" content="Explore my portfolio of web development projects, skills, and experience in building modern digital solutions." />
-        <meta property="og:title" content="Home — Full Stack Developer Portfolio" />
-        <meta property="og:description" content="Explore my portfolio of web development projects, skills, and experience." />
-      </Helmet>
       {/* Progress Bar */}
       <div className="fixed top-0 left-0 w-full h-1 bg-primary-100 dark:bg-primary-200/30 z-50 transition-theme">
         <div 
@@ -52,20 +45,19 @@ const Homepage = () => {
       {/* Who Am I Section */}
       <WhoAmI />
 
-      {/* Featured Work Section
-      <section className="py-20 bg-surface">
+      <section className="py-20 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-primary-800 mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-text-primary mb-6">
               Featured Work
             </h2>
-            <p className="text-xl text-secondary-600 max-w-3xl mx-auto">
-              A curated selection of projects that showcase my approach to solving complex problems through thoughtful design and robust development.
+            <p className="text-xl text-text-secondary max-w-3xl mx-auto">
+              Projects pulled from the portfolio. Featured ones come first, and the latest published work fills in when none are marked featured.
             </p>
           </div>
           <FeaturedWork />
         </div>
-      </section> */}
+      </section>
 
       {/* Skills Visualization Section */}
       <section className="py-20 bg-surface dark:bg-surface transition-theme">
@@ -75,21 +67,12 @@ const Homepage = () => {
               Technical Expertise
             </h2>
             <p className="text-xl text-text-secondary max-w-3xl mx-auto">
-              A comprehensive toolkit built through years of hands-on experience and continuous learning.
+              The languages, frameworks, and tools I use to design, build, and ship software.
             </p>
           </div>
           <SkillsVisualization shouldReduceMotion={shouldReduceMotion} />
         </div>
       </section>
-
-      {/* Latest Insights Section Removed */}
-
-      {/* Social Proof Section
-      <section className="py-20 bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <SocialProof />
-        </div>
-      </section> */}
 
       {/* Call to Action Section */}
       <section className="py-20 bg-background dark:bg-background border-t border-border dark:border-border-strong transition-theme">
@@ -131,7 +114,7 @@ const Homepage = () => {
       </section>
 
       {/* Floating CTA */}
-      <FloatingCTA scrollProgress={scrollProgress} />
+      <FloatingCTA />
     </div>
   );
 };

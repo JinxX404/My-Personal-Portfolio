@@ -1,15 +1,29 @@
 {
-  "short_name": "moataz's_portfolio",
-  "name": "moataz's_portfolio",
+  "name": "Moataz Mohammed — Full-Stack .NET Developer",
+  "short_name": "Moataz",
+  "description": "Portfolio of Moataz Mohammed, a Full-Stack .NET developer.",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
+      "src": "/favicon.ico",
+      "sizes": "48x48",
       "type": "image/x-icon"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#6366f1",
+  "background_color": "#0f172a"
 }

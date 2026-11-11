@@ -1,3 +1,5 @@
+> The SQL in this file is an older reference. Do not run it. Write access is restricted by `supabase/migrations/006_restrict_admin_access.sql`. Re-running the policies below would open content, contact submissions, and storage to the public again.
+
 # Supabase Database Schema
 
 This document contains the complete database schema for Moataz's Portfolio.

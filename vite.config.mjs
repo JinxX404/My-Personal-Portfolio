@@ -8,6 +8,8 @@ export default defineConfig({
   // comment this out if that isn't relevant for your project
   build: {
     // outDir: "build",
+    // Do not emit source maps into dist. They would be published with the site.
+    sourcemap: false,
     chunkSizeWarningLimit: 500,
     rollupOptions: {
       output: {

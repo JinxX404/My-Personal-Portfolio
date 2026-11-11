@@ -1,14 +1,15 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
+import LoadError from 'components/ui/LoadError';
 import { useProjects } from 'context/ProjectsContext';
 import { SkeletonProjectCard } from 'components/ui/Skeleton';
 import { useDebounce } from 'hooks/useDebounce';
+import { safeHref } from 'lib/safeUrl';
 
-const fallbackImage = 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&h=600&fit=crop';
+const fallbackImage = '/assets/images/no_image.png';
 
 const categoryIconMap = {
   'Web Apps': 'Monitor',
@@ -26,6 +27,7 @@ const PortfolioGallery = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [portfolioProjects, setPortfolioProjects] = useState([]);
   const [isFetching, setIsFetching] = useState(false);
+  const [loadError, setLoadError] = useState(null);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const PAGE_SIZE = 20;
@@ -56,8 +58,8 @@ const PortfolioGallery = () => {
         image: heroImages.length ? heroImages[0] : fallbackImage,
         metrics: metricsLabel,
         featured: Boolean(project.featured),
-        liveUrl: project.demo_url || '#',
-        githubUrl: project.repository_url || '#',
+        liveUrl: safeHref(project.demo_url),
+        githubUrl: safeHref(project.repository_url),
         tags,
         publishingStatus: project.publishing_status || 'draft'
       };
@@ -74,12 +76,18 @@ const PortfolioGallery = () => {
     const { fetchPublishedProjects } = await import('../../services/projectsService.js');
     const result = await fetchPublishedProjects({ limit: PAGE_SIZE, offset: 0 });
 
-    if (result.success && Array.isArray(result.data) && result.data.length) {
+    if (!result.success) {
+      setPortfolioProjects([]);
+      setHasMore(false);
+      setLoadError(result.error || 'Projects could not be loaded.');
+    } else if (Array.isArray(result.data) && result.data.length) {
       setPortfolioProjects(transformProjects(result.data));
       setHasMore(result.data.length >= PAGE_SIZE || (result.count && result.data.length < result.count));
+      setLoadError(null);
     } else {
       setPortfolioProjects([]);
       setHasMore(false);
+      setLoadError(null);
     }
 
     setIsFetching(false);
@@ -177,6 +185,8 @@ const PortfolioGallery = () => {
         <Image
           src={project.image}
           alt={project.title}
+          width={1280}
+          height={720}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -185,6 +195,7 @@ const PortfolioGallery = () => {
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <div className="flex space-x-3">
             <button
+              type="button"
               onClick={() => setSelectedProject(project)}
               className="bg-surface/90 dark:bg-surface hover:bg-surface dark:hover:bg-surface/80 text-text-primary p-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
               aria-label={`Preview ${project.title}`}
@@ -192,22 +203,30 @@ const PortfolioGallery = () => {
             >
               <Icon name="Eye" size={20} strokeWidth={2} />
             </button>
+            {project.liveUrl && (
             <a
               href={project.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-accent/90 hover:bg-accent text-white p-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
               aria-label={`View live demo of ${project.title}`}
               title={`View live demo of ${project.title}`}
             >
               <Icon name="ExternalLink" size={20} strokeWidth={2} />
             </a>
+            )}
+            {project.githubUrl && (
             <a
               href={project.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-primary-600/90 hover:bg-primary-600 text-white p-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
               aria-label={`View source code of ${project.title} on GitHub`}
               title={`View source code of ${project.title} on GitHub`}
             >
               <Icon name="Github" size={20} strokeWidth={2} />
             </a>
+            )}
           </div>
         </div>
 
@@ -269,12 +288,6 @@ const PortfolioGallery = () => {
 
   return (
     <div className="min-h-screen bg-background dark:bg-background pt-20">
-      <Helmet>
-        <title>Portfolio Gallery — Projects</title>
-        <meta name="description" content="Browse my portfolio of web development projects, including web apps, mobile apps, and open source work." />
-        <meta property="og:title" content="Portfolio Gallery — Projects" />
-        <meta property="og:description" content="Browse my portfolio of web development projects." />
-      </Helmet>
       {/* Hero Section */}
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto text-center">
@@ -408,7 +421,9 @@ const PortfolioGallery = () => {
       <section className="px-4 pb-20">
         <div className="max-w-7xl mx-auto">
           <AnimatePresence mode="wait">
-            {isLoading ? (
+            {loadError ? (
+              <LoadError message={loadError} onRetry={loadInitialProjects} />
+            ) : isLoading ? (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -435,6 +450,7 @@ const PortfolioGallery = () => {
               {hasMore && !isFetching && (
                 <div className="text-center mt-12">
                   <button
+                    type="button"
                     onClick={loadMoreProjects}
                     disabled={isLoadingMore}
                     className="btn-primary inline-flex items-center gap-2"
@@ -468,6 +484,7 @@ const PortfolioGallery = () => {
                   Try adjusting your search criteria or browse all projects to discover amazing work.
                 </p>
                 <button
+                  type="button"
                   onClick={() => {
                     setActiveFilter('All');
                     setSearchQuery('');
@@ -503,9 +520,12 @@ const PortfolioGallery = () => {
                 <Image
                   src={selectedProject.image}
                   alt={selectedProject.title}
+                  width={1280}
+                  height={720}
                   className="w-full h-64 object-cover"
                 />
                 <button
+                  type="button"
                   onClick={() => setSelectedProject(null)}
                   className="absolute top-4 right-4 bg-white/90 hover:bg-white text-primary-800 p-2 rounded-full shadow-lg transition-all duration-200"
                   aria-label="Close preview"
@@ -551,20 +571,28 @@ const PortfolioGallery = () => {
                     <Icon name="FolderOpen" size={18} strokeWidth={2} />
                     <span>View Project</span>
                   </Link>
+                  {selectedProject.liveUrl && (
                   <a
                     href={selectedProject.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="btn-secondary flex items-center space-x-2"
                   >
                     <Icon name="ExternalLink" size={18} strokeWidth={2} />
                     <span>Live Demo</span>
                   </a>
+                  )}
+                  {selectedProject.githubUrl && (
                   <a
                     href={selectedProject.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="flex items-center space-x-2 px-6 py-3 border border-primary-300 text-primary-700 hover:bg-primary-50 rounded-lg transition-colors duration-200"
                   >
                     <Icon name="Github" size={18} strokeWidth={2} />
                     <span>Source Code</span>
                   </a>
+                  )}
                 </div>
               </div>
             </motion.div>

@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import Icon from "components/AppIcon";
 import { usePortfolioSettings } from "context/PortfolioSettingsContext";
+import { safeHref } from "lib/safeUrl";
 
 const socialColorMap = {
   "blue-600": {
@@ -146,10 +147,10 @@ const SocialLinks = ({ embedded = false }) => {
   };
 
   const socialPlatforms = Object.entries(socialLinks || {})
-    .filter(([key, url]) => url && url.trim() !== "" && platformMeta[key])
+    .filter(([key, url]) => platformMeta[key] && safeHref(url))
     .map(([key, url]) => ({
       ...platformMeta[key],
-      url,
+      url: safeHref(url),
     }));
 
   const cardWrapper = embedded ? "" : "bg-surface dark:bg-surface rounded-2xl shadow-lg p-8 border border-border dark:border-border-strong";

@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import Icon from "components/AppIcon";
 import Image from "components/AppImage";
+import { PageMeta } from "components/PageMeta";
+import LoadError from "components/ui/LoadError";
 import { useProjects } from "context/ProjectsContext";
 import { SkeletonCard, SkeletonText } from "components/ui/Skeleton";
+import { safeHref } from "lib/safeUrl";
 
 const CaseStudyDetail = () => {
   const { id } = useParams();
@@ -12,18 +14,17 @@ const CaseStudyDetail = () => {
   const { getProjectById } = useProjects();
 
   const [activeSection, setActiveSection] = useState("overview");
-  const [isCodeExpanded, setIsCodeExpanded] = useState({});
   const [selectedImage, setSelectedImage] = useState(null);
   const [caseStudy, setCaseStudy] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   // Load project data from Supabase
   useEffect(() => {
     const loadProject = async () => {
-      console.log("\ud83d\udcdd Loading case study for project ID:", id);
 
       if (!id) {
-        console.error("\u274c No project ID provided");
         navigate("/portfolio-gallery");
         return;
       }
@@ -31,7 +32,6 @@ const CaseStudyDetail = () => {
       setIsLoading(true);
       try {
         const result = await getProjectById(id);
-        console.log("\ud83d\udcca Project data result:", result);
 
         if (result.success && result.data) {
           const project = result.data;
@@ -59,7 +59,7 @@ const CaseStudyDetail = () => {
             heroImage:
               (Array.isArray(project.hero_images) && project.hero_images[0]) ||
               project.featured_image ||
-              "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=2340&h=600&fit=crop",
+              "/assets/images/no_image.png",
             description: project.description,
             repositoryUrl: project.repository_url,
             demoUrl: project.demo_url,
@@ -99,324 +99,25 @@ const CaseStudyDetail = () => {
             nextProjects: [], // Can be populated later with related projects
           };
 
-          console.log("\u2705 Case study loaded successfully");
           setCaseStudy(transformedData);
+          setLoadError(null);
+        } else if (result?.success) {
+          setCaseStudy(null);
+          setLoadError(null);
         } else {
-          console.error("\u274c Failed to load project:", result.error);
-          // Fallback to empty/default state
-          navigate("/portfolio-gallery");
+          setCaseStudy(null);
+          setLoadError(result?.error || "This project could not be loaded.");
         }
       } catch (error) {
-        console.error("\ud83d\udca5 Error loading project:", error);
-        navigate("/portfolio-gallery");
+        setCaseStudy(null);
+        setLoadError(error?.message || "This project could not be loaded.");
       }
 
       setIsLoading(false);
     };
 
     loadProject();
-  }, [id, getProjectById, navigate]);
-
-  // Fallback mock data structure (kept for reference)
-  const mockCaseStudy = {
-    id: 1,
-    title: "E-Commerce Platform Redesign",
-    subtitle: "Transforming User Experience for Better Conversions",
-    client: "TechMart Solutions",
-    duration: "4 months",
-    role: "Lead Frontend Developer & UX Designer",
-    team: [
-      "Frontend Developer",
-      "Backend Developer",
-      "UI/UX Designer",
-      "Product Manager",
-    ],
-    tags: ["React", "Node.js", "MongoDB", "Stripe API", "AWS"],
-    heroImage:
-      "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80",
-    overview: {
-      challenge: `TechMart Solutions approached us with a critical business challenge: their existing e-commerce platform was experiencing a 68% cart abandonment rate and declining user engagement. The outdated interface, slow loading times, and complex checkout process were driving potential customers away, resulting in significant revenue loss.
-
-The platform served over 50,000 monthly active users but was built on legacy technology that couldn't scale with modern user expectations. Mobile users, representing 65% of traffic, were particularly affected by poor responsive design and slow performance.`,
-      solution: `We implemented a comprehensive redesign strategy focusing on three core areas: user experience optimization, performance enhancement, and conversion funnel improvement. The solution involved migrating to a modern React-based architecture with server-side rendering for optimal performance.
-
-Key improvements included a streamlined checkout process, intelligent product recommendations, real-time inventory updates, and a mobile-first responsive design. We also integrated advanced analytics to track user behavior and continuously optimize the experience.`,
-      results: [
-        {
-          metric: "Cart Abandonment Rate",
-          before: "68%",
-          after: "32%",
-          improvement: "-53%",
-        },
-        {
-          metric: "Page Load Time",
-          before: "4.2s",
-          after: "1.8s",
-          improvement: "-57%",
-        },
-        {
-          metric: "Mobile Conversion Rate",
-          before: "1.2%",
-          after: "3.8%",
-          improvement: "+217%",
-        },
-        {
-          metric: "User Session Duration",
-          before: "2.1 min",
-          after: "4.7 min",
-          improvement: "+124%",
-        },
-        {
-          metric: "Revenue Growth",
-          before: "Baseline",
-          after: "+45%",
-          improvement: "+45%",
-        },
-      ],
-    },
-    process: {
-      research: `Our research phase involved comprehensive user interviews with 25 existing customers, competitive analysis of 12 similar platforms, and detailed analytics review of user behavior patterns. We discovered that users were frustrated with the complex navigation, unclear product information, and lengthy checkout process.
-
-Heat mapping revealed that users were dropping off at specific points in the checkout flow, while user testing sessions highlighted confusion around product filtering and search functionality. This data formed the foundation of our redesign strategy.`,
-      strategy: `Based on research insights, we developed a three-phase strategy:
-
-Phase 1: Information Architecture Redesign - Simplified navigation, improved product categorization, and enhanced search functionality.
-
-Phase 2: User Interface Modernization - Clean, modern design with improved visual hierarchy and mobile-first approach.
-
-Phase 3: Performance Optimization - Code splitting, image optimization, and caching strategies to improve load times.`,
-      design: `The design process followed a user-centered approach with iterative prototyping and testing. We created a comprehensive design system with reusable components, ensuring consistency across all touchpoints.
-
-Key design decisions included implementing a card-based layout for better content organization, using progressive disclosure to reduce cognitive load, and creating a streamlined checkout flow with clear progress indicators.`,
-      implementation: `Development followed agile methodology with two-week sprints. We used React 18 with TypeScript for type safety, implemented Redux Toolkit for state management, and used React Query for efficient data fetching.
-
-The backend API was redesigned to support the new frontend requirements, with optimized database queries and caching strategies. We also implemented comprehensive testing with Jest and React Testing Library.`,
-    },
-    gallery: [
-      {
-        id: 1,
-        title: "Homepage Before",
-        image:
-          "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80",
-        type: "before",
-      },
-      {
-        id: 2,
-        title: "Homepage After",
-        image:
-          "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80",
-        type: "after",
-      },
-      {
-        id: 3,
-        title: "Mobile Product Page",
-        image:
-          "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80",
-        type: "mobile",
-      },
-      {
-        id: 4,
-        title: "Checkout Flow",
-        image:
-          "https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80",
-        type: "desktop",
-      },
-    ],
-    codeSnippets: [
-      {
-        id: 1,
-        title: "Product Card Component",
-        language: "jsx",
-        code: `const ProductCard = ({ product, onAddToCart }) => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleAddToCart = async () => {
-    setIsLoading(true);
-    try {
-      await onAddToCart(product.id);
-      toast.success('Added to cart successfully!');
-    } catch (error) {
-      toast.error('Failed to add to cart');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  return (
-    <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-      <div className="relative overflow-hidden rounded-t-lg">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="w-full h-48 object-cover transform hover:scale-105 transition-transform duration-300"
-        />
-        {product.discount && (
-          <div className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded-md text-sm font-semibold">
-            -{product.discount}%
-          </div>
-        )}
-      </div>
-
-      <div className="p-4">
-        <h3 className="font-semibold text-lg mb-2 line-clamp-2">{product.name}</h3>
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center space-x-2">
-            <span className="text-xl font-bold text-gray-900">
-              $\{product.price}
-            </span>
-            {product.originalPrice && (
-              <span className="text-sm text-gray-500 line-through">
-                $\{product.originalPrice}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center">
-            <Star className="w-4 h-4 text-yellow-400 fill-current" />
-            <span className="ml-1 text-sm text-gray-600">{product.rating}</span>
-          </div>
-        </div>
-
-        <button
-          onClick={handleAddToCart}
-          disabled={isLoading || !product.inStock}
-          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-2 px-4 rounded-md transition-colors duration-200 flex items-center justify-center"
-        >
-          {isLoading ? (
-            <Loader2 className="w-4 h-4 animate-spin" />
-          ) : (
-            <>
-              <ShoppingCart className="w-4 h-4 mr-2" />
-              {product.inStock ? 'Add to Cart' : 'Out of Stock'}
-            </>
-          )}
-        </button>
-      </div>
-    </div>
-  );
-};`,
-      },
-      {
-        id: 2,
-        title: "Checkout Optimization Hook",
-        language: "jsx",
-        code: `const useCheckoutOptimization = () => {
-  const [checkoutData, setCheckoutData] = useState({
-    step: 1,
-    shippingInfo: {},
-    paymentInfo: {},
-    orderSummary: {}
-  });
-
-  const [validationErrors, setValidationErrors] = useState({});
-  const [isProcessing, setIsProcessing] = useState(false);
-
-  const validateStep = useCallback((step, data) => {
-    const errors = {};
-
-    switch (step) {
-      case 1: // Shipping Information
-        if (!data.firstName?.trim()) errors.firstName = 'First name is required';
-        if (!data.lastName?.trim()) errors.lastName = 'Last name is required';
-        if (!data.email?.trim()) errors.email = 'Email is required';
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
-          errors.email = 'Please enter a valid email address';
-        }
-        if (!data.address?.trim()) errors.address = 'Address is required';
-        if (!data.city?.trim()) errors.city = 'City is required';
-        if (!data.zipCode?.trim()) errors.zipCode = 'ZIP code is required';
-        break;
-
-      case 2: // Payment Information
-        if (!data.cardNumber?.replace(/\s/g, '')) {
-          errors.cardNumber = 'Card number is required';
-        } else if (!/^\d{16}$/.test(data.cardNumber.replace(/\s/g, ''))) {
-          errors.cardNumber = 'Please enter a valid 16-digit card number';
-        }
-        if (!data.expiryDate?.trim()) errors.expiryDate = 'Expiry date is required';
-        if (!data.cvv?.trim()) errors.cvv = 'CVV is required';
-        break;
-    }
-
-    return errors;
-  }, []);
-
-  const proceedToNextStep = useCallback(async (stepData) => {
-    const errors = validateStep(checkoutData.step, stepData);
-
-    if (Object.keys(errors).length > 0) {
-      setValidationErrors(errors);
-      return false;
-    }
-
-    setValidationErrors({});
-    setCheckoutData(prev => ({
-      ...prev,
-      step: prev.step + 1,
-      [prev.step === 1 ? 'shippingInfo' : 'paymentInfo']: stepData
-    }));
-
-    return true;
-  }, [checkoutData.step, validateStep]);
-
-  const processOrder = useCallback(async () => {
-    setIsProcessing(true);
-
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Process payment and create order
-      const orderResult = await createOrder({
-        ...checkoutData.shippingInfo,
-        ...checkoutData.paymentInfo,
-        items: checkoutData.orderSummary.items
-      });
-
-      return orderResult;
-    } catch (error) {
-      throw new Error('Payment processing failed. Please try again.');
-    } finally {
-      setIsProcessing(false);
-    }
-  }, [checkoutData]);
-
-  return {
-    checkoutData,
-    validationErrors,
-    isProcessing,
-    proceedToNextStep,
-    processOrder,
-    setCheckoutData
-  };
-};`,
-      },
-    ],
-    testimonial: {
-      quote: `The transformation of our e-commerce platform exceeded all expectations. The new design not only looks modern and professional but has significantly improved our business metrics. Our customers frequently comment on how much easier it is to find and purchase products. The team's attention to detail and technical expertise was evident throughout the project.`,
-      author: "Sarah Johnson",
-      position: "CEO, TechMart Solutions",
-      avatar:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=256&q=80",
-    },
-    nextProjects: [
-      {
-        id: 2,
-        title: "Healthcare Dashboard",
-        subtitle: "Patient Management System",
-        image:
-          "https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80",
-        tags: ["React", "D3.js", "Node.js"],
-      },
-      {
-        id: 3,
-        title: "Financial Analytics Platform",
-        subtitle: "Real-time Trading Dashboard",
-        image:
-          "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80",
-        tags: ["Vue.js", "Python", "WebSocket"],
-      },
-    ],
-  };
+  }, [id, getProjectById, navigate, reloadKey]);
 
   // Dynamic navigation based on available content
   const getNavigationSections = () => {
@@ -483,13 +184,6 @@ The backend API was redesigned to support the new frontend requirements, with op
     if (element) {
       element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  };
-
-  const toggleCodeExpansion = (codeId) => {
-    setIsCodeExpanded((prev) => ({
-      ...prev,
-      [codeId]: !prev[codeId],
-    }));
   };
 
   const openImageModal = (image) => {
@@ -566,6 +260,21 @@ The backend API was redesigned to support the new frontend requirements, with op
     );
   }
 
+  if (loadError) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-4 pt-20">
+        <div className="max-w-lg w-full">
+          <LoadError message={loadError} onRetry={() => setReloadKey((value) => value + 1)} />
+          <div className="text-center mt-6">
+            <Link to="/portfolio-gallery" className="text-accent font-semibold">
+              Back to portfolio
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // No project found
   if (!caseStudy) {
     return (
@@ -592,15 +301,11 @@ The backend API was redesigned to support the new frontend requirements, with op
 
   return (
     <div className="min-h-screen bg-background dark:bg-background">
-      <Helmet>
-        <title>{caseStudy.title} — Project</title>
-        <meta name="description" content={caseStudy.description} />
-        <meta property="og:title" content={`${caseStudy.title} — Project`} />
-        <meta property="og:description" content={caseStudy.description} />
-        {caseStudy.heroImage && (
-          <meta property="og:image" content={caseStudy.heroImage} />
-        )}
-      </Helmet>
+      <PageMeta
+        page={caseStudy.title}
+        description={caseStudy.description}
+        image={caseStudy.heroImage}
+      />
       {/* Hero Section */}
       <section className="relative bg-gradient-to-br from-primary-800 text-white pt-20 pb-16 dark:from-primary-900 from-primary-900 to-accent-900 ">
         <div className="absolute inset-0 bg-black/20"></div>
@@ -662,11 +367,11 @@ The backend API was redesigned to support the new frontend requirements, with op
               </div>
 
               {/* Links */}
-              {(caseStudy.repositoryUrl || caseStudy.demoUrl) && (
+              {(safeHref(caseStudy.repositoryUrl) || safeHref(caseStudy.demoUrl)) && (
                 <div className="flex flex-wrap gap-4 mb-8">
-                  {caseStudy.repositoryUrl && (
+                  {safeHref(caseStudy.repositoryUrl) && (
                     <a
-                      href={caseStudy.repositoryUrl}
+                      href={safeHref(caseStudy.repositoryUrl)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center space-x-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
@@ -675,9 +380,9 @@ The backend API was redesigned to support the new frontend requirements, with op
                       <span>View Code</span>
                     </a>
                   )}
-                  {caseStudy.demoUrl && (
+                  {safeHref(caseStudy.demoUrl) && (
                     <a
-                      href={caseStudy.demoUrl}
+                      href={safeHref(caseStudy.demoUrl)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center space-x-2 px-4 py-2 bg-accent hover:bg-accent-600 rounded-lg transition-colors"
@@ -706,6 +411,8 @@ The backend API was redesigned to support the new frontend requirements, with op
                 <Image
                   src={caseStudy.heroImage}
                   alt={caseStudy.title}
+                  width={1200}
+                  height={640}
                   className="w-full h-80 object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
@@ -846,7 +553,7 @@ The backend API was redesigned to support the new frontend requirements, with op
                           onClick={() => openImageModal({ image: imageUrl, title: imageTitle })}
                         >
                           <div className="relative overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
-                            <Image src={imageUrl} alt={imageTitle} className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300" />
+                            <Image src={imageUrl} alt={imageTitle} width={1280} height={720} className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300" />
                             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
                               <Icon name="ZoomIn" size={32} color="white" className="opacity-0 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={2} />
                             </div>
@@ -889,6 +596,8 @@ The backend API was redesigned to support the new frontend requirements, with op
                       <Image
                         src={caseStudy.testimonial.avatar}
                         alt={caseStudy.testimonial.author}
+                        width={64}
+                        height={64}
                         className="w-16 h-16 rounded-full object-cover"
                       />
                       <div>
@@ -922,6 +631,8 @@ The backend API was redesigned to support the new frontend requirements, with op
                       <Image
                         src={project.image}
                         alt={project.title}
+                        width={800}
+                        height={480}
                         className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
@@ -975,6 +686,8 @@ The backend API was redesigned to support the new frontend requirements, with op
             <Image
               src={selectedImage.image}
               alt={selectedImage.title}
+              width={1600}
+              height={1000}
               className="max-w-full max-h-full object-contain rounded-lg"
             />
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-6">

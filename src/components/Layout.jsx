@@ -3,11 +3,24 @@ import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Header from "components/ui/Header";
 import Footer from "components/Footer";
+import LoadError from 'components/ui/LoadError';
+import { usePageMetaOverride } from 'components/PageMeta';
 import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
+import {
+  absoluteHttpsUrl,
+  canonicalUrl,
+  formatPageTitle,
+  publicKeywords,
+  resolveRouteMeta,
+} from 'lib/pageMeta';
 
 const Layout = ({ children }) => {
   const location = useLocation();
-  const { siteSettings, seoSettings, profile } = usePortfolioSettings();
+  const { siteSettings, seoSettings, profile, error: settingsError, loadSettings } = usePortfolioSettings();
+  const pageMeta = usePageMetaOverride();
+  const routeMeta = resolveRouteMeta(location.pathname);
+  const pageName = pageMeta?.override?.page || routeMeta.page;
+  const pageDescription = pageMeta?.override?.description || routeMeta.description;
 
   // Google Analytics
   useEffect(() => {
@@ -41,10 +54,11 @@ const Layout = ({ children }) => {
 
   const shouldHide = hideLayoutRoutes.some(route => location.pathname.startsWith(route));
 
-  const siteTitle = seoSettings?.meta_title || siteSettings?.site_title || `${profile?.full_name || 'Moataz'} — Portfolio`;
-  const siteDescription = seoSettings?.meta_description || siteSettings?.site_description || 'Full Stack Developer Portfolio';
-  const siteKeywords = siteSettings?.site_keywords || '';
-  const ogImage = seoSettings?.og_image || '';
+  const siteTitle = formatPageTitle(pageName, profile);
+  const siteDescription = pageDescription || seoSettings?.meta_description || siteSettings?.site_description || 'Full-Stack .NET developer portfolio.';
+  const siteKeywords = publicKeywords(siteSettings?.site_keywords);
+  const ogImage = absoluteHttpsUrl(pageMeta?.override?.image || seoSettings?.og_image);
+  const pageUrl = canonicalUrl(location.pathname);
   const twitterHandle = seoSettings?.twitter_handle || '';
   const googleVerification = seoSettings?.google_site_verification || '';
 
@@ -57,14 +71,27 @@ const Layout = ({ children }) => {
         <meta property="og:title" content={siteTitle} />
         <meta property="og:description" content={siteDescription} />
         <meta property="og:type" content="website" />
-        {ogImage && <meta property="og:image" content={ogImage} />}
+        <meta property="og:url" content={pageUrl} />
+        <meta property="og:image" content={ogImage} />
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={siteTitle} />
+        <meta name="twitter:description" content={siteDescription} />
+        <meta name="twitter:image" content={ogImage} />
         {twitterHandle && <meta name="twitter:creator" content={twitterHandle} />}
         {googleVerification && <meta name="google-site-verification" content={googleVerification} />}
-        <link rel="canonical" href={window.location.href} />
+        <link rel="canonical" href={pageUrl} />
       </Helmet>
 
       {!shouldHide && <Header />}
+      {!shouldHide && settingsError && (
+        <div className="max-w-3xl mx-auto px-4 pt-24">
+          <LoadError
+            title="Site content could not be loaded"
+            message={settingsError}
+            onRetry={loadSettings}
+          />
+        </div>
+      )}
       {children}
       {!shouldHide && <Footer />}
     </>

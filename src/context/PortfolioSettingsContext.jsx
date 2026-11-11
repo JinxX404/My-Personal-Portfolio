@@ -44,7 +44,7 @@ const defaultSettings = {
   site_settings: {
     site_title: 'Portfolio',
     site_description: 'Professional portfolio showcasing my work and expertise',
-    site_keywords: 'web developer, designer, react, nodejs',
+    site_keywords: 'full-stack .NET developer, C#, ASP.NET, software engineer',
     logo_url: '',
     favicon_url: '',
     primary_color: '#3B82F6',
@@ -54,8 +54,8 @@ const defaultSettings = {
     enable_contact_form: true
   },
   seo_settings: {
-    meta_title: 'Professional Portfolio',
-    meta_description: 'Showcasing innovative projects and technical expertise',
+    meta_title: 'Moataz Mohammed — Full-Stack .NET Developer',
+    meta_description: 'Portfolio of Moataz Mohammed, a Full-Stack .NET developer.',
     og_image: '',
     twitter_handle: '',
     google_analytics_id: '',

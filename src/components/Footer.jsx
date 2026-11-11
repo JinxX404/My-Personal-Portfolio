@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Icon from './AppIcon';
 import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
+import { safeHref } from 'lib/safeUrl';
 
 const Footer = () => {
   const { profile, socialLinks, siteSettings } = usePortfolioSettings();
@@ -56,12 +57,12 @@ const Footer = () => {
 
   // Get all social links that have values
   const activeSocialLinks = Object.entries(socialLinks || {})
-    .filter(([key, url]) => url && url.trim() !== '')
     .map(([key, url]) => ({
       key,
-      url,
+      url: safeHref(url),
       platform: detectPlatform(url)
-    }));
+    }))
+    .filter((link) => link.url);
 
   const footerLinks = [
     { name: 'Home', path: '/' },
@@ -72,7 +73,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-surface dark:bg-surface border-t border-border dark:border-border-strong">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-28">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* About Section */}
           <div>
@@ -80,9 +81,9 @@ const Footer = () => {
             <p className="text-gray-600 dark:text-white/70 mb-4">
               {profile?.tagline || 'Crafting digital experiences that matter.'}
             </p>
-            {profile?.email && (
+            {profile?.email && safeHref(`mailto:${profile.email}`) && (
               <a 
-                href={`mailto:${profile.email}`}
+                href={safeHref(`mailto:${profile.email}`)}
                 className="hover:text-accent-500 dark:hover:text-accent-400 transition-colors flex items-center space-x-2"
               >
                 <Icon name="Mail" size={16} className="text-accent-500 dark:text-accent-400 flex-shrink-0" />
@@ -123,6 +124,7 @@ const Footer = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-10 h-10 bg-gray-200 dark:bg-white/10 hover:bg-accent-500 dark:hover:bg-accent-500 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 group"
+                    aria-label={platform.name}
                     title={platform.name}
                   >
                     <Icon 

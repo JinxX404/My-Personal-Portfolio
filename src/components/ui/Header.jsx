@@ -9,7 +9,8 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
-  const { profile } = usePortfolioSettings();
+  const { profile, siteSettings } = usePortfolioSettings();
+  const showThemeToggle = siteSettings?.show_theme_toggle !== false;
 
   const navigationItems = [
     { name: 'Home', path: '/homepage', icon: 'Home' },
@@ -49,6 +50,11 @@ const Header = () => {
     setIsMobileMenuOpen(false);
   };
 
+  useEffect(() => {
+    document.documentElement.classList.toggle('mobile-nav-open', isMobileMenuOpen);
+    return () => document.documentElement.classList.remove('mobile-nav-open');
+  }, [isMobileMenuOpen]);
+
   const isActivePath = (path) => {
     return location.pathname === path;
   };
@@ -81,10 +87,10 @@ const Header = () => {
               <div className="absolute -top-1 -right-1 w-3 h-3 bg-success-500 rounded-full animate-pulse-soft"></div>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-xl font-bold text-text-primary group-hover:text-accent-500 transition-colors duration-200">
-                Moataz Mohammed
-              </h1>
-              <p className="text-xs text-text-secondary font-mono transition-theme">{profile?.title || 'Backend Engineer'}</p>
+              <span className="block text-xl font-bold text-text-primary group-hover:text-accent-500 transition-colors duration-200">
+                {profile?.full_name || 'Moataz Mohammed'}
+              </span>
+              <p className="text-xs text-text-secondary font-mono transition-theme">{profile?.title || 'Full-Stack .NET Developer'}</p>
             </div>
           </Link>
 
@@ -117,7 +123,9 @@ const Header = () => {
 
           {/* CTA Button + Theme Toggle + User Menu */}
           <div className="hidden lg:flex items-center gap-3">
+            {showThemeToggle && (
             <button
+              type="button"
               onClick={toggleTheme}
               className="relative inline-flex items-center justify-center w-10 h-10 rounded-full border border-border dark:border-border-strong transition-theme hover:border-accent-500 hover:text-accent-500"
               aria-label="Toggle theme"
@@ -129,6 +137,7 @@ const Header = () => {
                 <Icon name="Sun" size={18} strokeWidth={2.5} />
               </span>
             </button>
+            )}
 
             {/* Admin menu removed for consistency */}
 
@@ -142,6 +151,7 @@ const Header = () => {
 
           {/* Mobile Menu Button */}
           <button
+            type="button"
             onClick={toggleMobileMenu}
             className="lg:hidden p-2.5 rounded-lg text-text-primary hover:text-accent-500 hover:bg-surface/80 dark:hover:bg-background/60 transition-theme"
             aria-label="Toggle mobile menu"
@@ -198,7 +208,9 @@ const Header = () => {
                 <Icon name="MessageCircle" size={18} strokeWidth={2} />
                 <span>Let's Talk</span>
               </Link>
+              {showThemeToggle && (
               <button
+                type="button"
                 onClick={() => {
                   toggleTheme();
                   closeMobileMenu();
@@ -209,6 +221,7 @@ const Header = () => {
                 <Icon name={isDark ? 'Moon' : 'Sun'} size={18} strokeWidth={2.5} />
                 <span>{isDark ? 'Dark mode' : 'Light mode'}</span>
               </button>
+              )}
             </div>
           </div>
         </div>

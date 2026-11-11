@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import Icon from "components/AppIcon";
 import Image from "components/AppImage";
+import LoadError from "components/ui/LoadError";
 import { usePortfolioSettings } from "context/PortfolioSettingsContext";
 import { useSkills } from "context/SkillsContext";
 
 const AboutStory = () => {
   const { profile, careerData } = usePortfolioSettings();
-  const { skillCategories } = useSkills();
+  const { skillCategories, error: skillsError, resyncFromDatabase } = useSkills();
   const [activeTimelineItem, setActiveTimelineItem] = useState(null);
   const [visibleSections, setVisibleSections] = useState(new Set());
 
@@ -72,18 +72,11 @@ const AboutStory = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-background dark:via-surface dark:to-background">
-      <Helmet>
-        <title>About Me — Moataz Mohammed, Backend Engineer</title>
-        <meta
-          name="description"
-          content="Learn about my background, education, skills, and the values that drive my work as a software engineer."
-        />
-        <meta property="og:title" content="About Me — Moataz Mohammed" />
-        <meta
-          property="og:description"
-          content="Learn about my background, education, skills, and values."
-        />
-      </Helmet>
+      {skillsError && (
+        <div className="max-w-3xl mx-auto px-4 pt-24">
+          <LoadError message={skillsError} onRetry={resyncFromDatabase} />
+        </div>
+      )}
       {/* Hero Section */}
       <section className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -98,8 +91,10 @@ const AboutStory = () => {
               <div className="relative max-w-md mx-auto lg:max-w-none">
                 <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-accent-100 to-cta-100 p-2">
                   <Image
-                    src={profile?.avatar || ""}
+                    src={profile?.avatar || "/assets/images/no_image.png"}
                     alt={profile?.full_name || "Moataz Mohammed"}
+                    width={640}
+                    height={640}
                     className="w-full h-full object-cover rounded-xl"
                   />
                 </div>

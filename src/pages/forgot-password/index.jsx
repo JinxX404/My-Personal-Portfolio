@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import Icon from 'components/AppIcon';
 import { supabase } from 'lib/supabase';
 import { useToast } from 'context/ToastContext';
@@ -45,11 +44,6 @@ const ForgotPassword = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <Helmet>
-        <title>Forgot Password — Reset Your Account</title>
-        <meta name="description" content="Reset your portfolio admin password." />
-      </Helmet>
-
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Link to="/login" className="inline-flex items-center text-secondary-600 hover:text-accent transition-colors mb-6">

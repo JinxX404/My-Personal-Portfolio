@@ -3,6 +3,46 @@ import { Link } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
 import { useProjects } from 'context/ProjectsContext';
+import { safeHref } from 'lib/safeUrl';
+
+const codeSnippets = [
+  {
+    language: 'C#',
+    code: `var builder = WebApplication.CreateBuilder(args);
+var app = builder.Build();
+
+app.MapGet("/api/health", () => Results.Ok(new
+{
+    status = "ready"
+}));
+
+app.Run();`,
+    output: '// ASP.NET Core minimal API'
+  },
+  {
+    language: 'EF Core',
+    code: `public async Task<List<Order>> GetOpenOrders(AppDbContext db)
+{
+    return await db.Orders
+        .Where(order => order.Status == OrderStatus.Open)
+        .OrderByDescending(order => order.CreatedAt)
+        .ToListAsync();
+}`,
+    output: '// Query the data the UI actually needs'
+  },
+  {
+    language: 'ASP.NET',
+    code: `app.MapPost("/api/invoices", async (
+    CreateInvoice body,
+    IInvoiceService invoices) =>
+{
+    var invoice = await invoices.CreateAsync(body);
+    return Results.Created(
+        $"/api/invoices/{invoice.Id}", invoice);
+});`,
+    output: '// A small endpoint with a real service behind it'
+  }
+];
 
 const HeroSection = ({ shouldReduceMotion }) => {
   const { profile, freelanceProjects } = usePortfolioSettings();
@@ -10,60 +50,10 @@ const HeroSection = ({ shouldReduceMotion }) => {
   const [currentCodeIndex, setCurrentCodeIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(true);
   
-  const cvUrl = profile?.cv_url || profile?.resume_url;
-
-  const codeSnippets = [
-    {
-      language: 'JavaScript',
-      code: `const createAmazingExperience = () => {
-  const passion = 'problem-solving';
-  const skills = ['React', 'Node.js', 'Design'];
-  
-  return skills.map(skill => 
-    passion + skill + 'innovation' ).join(' = success');
-};
-
-console.log(createAmazingExperience());`,
-      output: '// Output: Exceptional digital solutions'
-    },
-    {
-      language: 'CSS',
-      code: `.digital-craftsperson {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  
-  --creativity: infinite;
-  --attention-to-detail: 100%;
-  --problem-solving: always-on;
-  
-  background: linear-gradient(
-    45deg, passion, expertise
-  );
-}`,
-      output: '/* Result: Beautiful, functional interfaces */'
-    },
-    {
-      language: 'React',
-      code: `function ProblemSolver({ challenge }) {
-  const [solution, setSolution] = useState(null);
-  
-  useEffect(() => {
-    const solve = async () => {
-      const result = await analyzeAndSolve(challenge);
-      setSolution(result);
-    };
-    solve();
-  }, [challenge]);
-  
-  return <Innovation solution={solution} />;
-}`,
-      output: '// Returns: Scalable, maintainable solutions'
-    }
-  ];
+  const cvUrl = safeHref(profile?.cv_url || profile?.resume_url);
 
   useEffect(() => {
-    if (shouldReduceMotion) return;
+    if (shouldReduceMotion) return undefined;
     const interval = setInterval(() => {
       setIsTyping(false);
       setTimeout(() => {
@@ -73,7 +63,7 @@ console.log(createAmazingExperience());`,
     }, 6000);
 
     return () => clearInterval(interval);
-  }, [codeSnippets, shouldReduceMotion]);
+  }, [shouldReduceMotion]);
 
   const currentSnippet = codeSnippets[currentCodeIndex];
 
@@ -148,19 +138,12 @@ console.log(createAmazingExperience());`,
               </div>
               
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 text-text-primary dark:text-white">
-                {profile?.title ? (
-                  profile.title.split(' ').map((word, index) => (
-                    <span key={index} className="block">{word}</span>
-                  ))
-                ) : (
-                  <>
-                    <span className="block">Full Stack</span>
-                    <span className="block">Developer</span>
-                  </>
-                )}
+                {(profile?.title || 'Full-Stack .NET Developer').split(' ').map((word, index) => (
+                  <span key={index} className="block">{word}</span>
+                ))}
               </h1>
               <p className="text-xl md:text-2xl text-text-secondary max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                {profile?.tagline || 'Crafting digital experiences that matter through innovative solutions and thoughtful design.'}
+                {profile?.tagline || 'Full-stack .NET developer building APIs, data-backed applications, and the interfaces in front of them.'}
               </p>
             </div>
 
@@ -196,7 +179,7 @@ console.log(createAmazingExperience());`,
             {/* Quick Stats */}
             <div className="grid grid-cols-3 gap-6 max-w-xl mx-auto lg:mx-0">
               <div className="text-center lg:text-left">
-                <div className="text-2xl font-bold text-accent-500">{profile?.experience_years || '1+'}</div>
+                <div className="text-2xl font-bold text-accent-500">{profile?.experience_years ? `${profile.experience_years}+` : '—'}</div>
                 <div className="text-sm text-text-secondary">Years Experience</div>
               </div>
               <div className="text-center lg:text-left">

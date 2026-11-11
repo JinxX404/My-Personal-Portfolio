@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Helmet } from "react-helmet-async";
 import { motion } from "framer-motion";
 import Icon from "components/AppIcon";
 
 import ContactForm from "./components/ContactForm";
 import ContactInfo from "./components/ContactInfo";
-import FAQ from "./components/FAQ";
 
 const ContactHub = () => {
   const [selectedInquiryType, setSelectedInquiryType] = useState("general");
@@ -73,18 +71,6 @@ const ContactHub = () => {
 
   return (
     <div className="min-h-screen bg-background dark:bg-background">
-      <Helmet>
-        <title>Contact — Get in Touch</title>
-        <meta
-          name="description"
-          content="Get in touch for project inquiries, collaborations, speaking requests, or general questions. Response within 24 hours."
-        />
-        <meta property="og:title" content="Contact — Get in Touch" />
-        <meta
-          property="og:description"
-          content="Get in touch for project inquiries, collaborations, speaking requests, or general questions."
-        />
-      </Helmet>
       {/* Hero Section */}
       <section className="pt-24 lg:pt-32 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -124,17 +110,10 @@ const ContactHub = () => {
 
             <motion.div
               variants={itemVariants}
-              className="flex items-center justify-center space-x-4 text-sm text-muted"
+              className="flex items-center justify-center space-x-2 text-sm text-muted"
             >
-              <div className="flex items-center space-x-2">
-                <Icon name="Clock" size={16} strokeWidth={2} />
-                <span>Response within 24 hours</span>
-              </div>
-              <div className="w-1 h-1 bg-secondary-400 rounded-full"></div>
-              <div className="flex items-center space-x-2">
-                <Icon name="Shield" size={16} strokeWidth={2} />
-                <span>100% Confidential</span>
-              </div>
+              <Icon name="Clock" size={16} strokeWidth={2} />
+              <span>I usually reply within one business day.</span>
             </motion.div>
           </motion.div>
 
@@ -151,6 +130,7 @@ const ContactHub = () => {
               return (
                 <motion.button
                   key={type.id}
+                  type="button"
                   variants={itemVariants}
                   onClick={() => setSelectedInquiryType(type.id)}
                   className={`p-6 rounded-xl border-2 transition-all duration-300 text-left group bg-surface dark:bg-surface ${
@@ -211,37 +191,10 @@ const ContactHub = () => {
         </div>
       </section>
 
-      {/* FAQ Section */}
-      {/* <section className="py-16 px-4 sm:px-6 lg:px-8 bg-surface dark:bg-surface border-t border-border dark:border-border-strong">
-        <div className="max-w-4xl mx-auto">
-          <FAQ />
-        </div>
-      </section>*/}
-
-      {/* Trust Signals */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 bg-surface dark:bg-surface border-t border-border dark:border-border-strong">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-            <div className="flex items-center space-x-6 text-sm text-text-secondary">
-              <div className="flex items-center space-x-2">
-                <Icon name="Shield" size={16} strokeWidth={2} />
-                <span>Privacy Protected</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Icon name="Lock" size={16} strokeWidth={2} />
-                <span>Secure Communication</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Icon name="CheckCircle" size={16} strokeWidth={2} />
-                <span>Verified Professional</span>
-              </div>
-            </div>
-
-            <div className="text-sm text-muted">
-              <span>Available in timezone: </span>
-              <span className="font-medium text-text-primary">EET (UTC+2)</span>
-            </div>
-          </div>
+        <div className="max-w-7xl mx-auto text-center text-sm text-text-secondary">
+          <span>Based in </span>
+          <span className="font-medium text-text-primary">EET (UTC+2)</span>
         </div>
       </section>
     </div>

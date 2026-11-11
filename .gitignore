@@ -1,7 +1,6 @@
 .DS_Store
 node_modules
 .idea
-package-lock.json
 # Build output
 /build
 /dist
@@ -27,8 +26,6 @@ playwright.config.js
 # Tests
 tests/
 test-results/
-
-netlify.toml
 
 
 
