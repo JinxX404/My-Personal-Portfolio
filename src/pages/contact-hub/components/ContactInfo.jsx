@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import Icon from "components/AppIcon";
 import { usePortfolioSettings } from "context/PortfolioSettingsContext";
+import { safeHref } from "lib/safeUrl";
 import SocialLinks from "./SocialLinks";
 
 const contactMethodColorMap = {
@@ -21,7 +22,7 @@ const contactMethodColorMap = {
 const ContactInfo = () => {
   const { profile } = usePortfolioSettings();
   
-  const cvUrl = profile?.cv_url || profile?.resume_url;
+  const cvUrl = safeHref(profile?.cv_url || profile?.resume_url);
 
   const contactMethods = [
     profile?.email && {
@@ -29,7 +30,7 @@ const ContactInfo = () => {
       title: "Email",
       value: profile.email,
       description: "Best for detailed inquiries",
-      action: `mailto:${profile.email}`,
+      action: safeHref(`mailto:${profile.email}`),
       color: "accent",
     },
     profile?.phone && {
@@ -37,7 +38,7 @@ const ContactInfo = () => {
       title: "Phone",
       value: profile.phone,
       description: "Available All Week, 9AM-6PM EET",
-      action: `tel:${profile.phone.replace(/[^0-9]/g, "")}`,
+      action: safeHref(`tel:${profile.phone.replace(/[^\d+]/g, "")}`),
       color: "success",
     },
     profile?.location && {
@@ -45,7 +46,7 @@ const ContactInfo = () => {
       title: "Location",
       value: profile.location,
       description: "Let's meet or work remotely",
-      action: "#",
+      action: null,
       color: "warning",
     },
   ].filter(Boolean);
@@ -77,10 +78,18 @@ const ContactInfo = () => {
         {contactMethods.map((method, index) => {
           const colors =
             contactMethodColorMap[method.color] || contactMethodColorMap.accent;
+          const MotionTag = method.action ? motion.a : motion.div;
           return (
-            <motion.a
+            <MotionTag
               key={method.title}
-              href={method.action}
+              {...(method.action
+                ? {
+                    href: method.action,
+                    ...(method.action.startsWith("http")
+                      ? { target: "_blank", rel: "noopener noreferrer" }
+                      : {}),
+                  }
+                : {})}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
@@ -113,7 +122,7 @@ const ContactInfo = () => {
                 className="text-secondary-400 group-hover:text-secondary-600 transition-colors duration-200"
                 strokeWidth={2}
               />
-            </motion.a>
+            </MotionTag>
           );
         })}
       </div>
@@ -206,6 +215,7 @@ const ContactInfo = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center w-10 h-10 rounded-lg bg-accent hover:bg-accent-600 text-white transition-colors duration-200 shadow-md hover:shadow-lg"
+              aria-label="Download CV"
               title="Download CV"
             >
               <Icon name="Download" size={18} strokeWidth={2} />

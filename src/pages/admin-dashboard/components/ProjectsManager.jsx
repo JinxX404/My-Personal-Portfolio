@@ -31,44 +31,32 @@ const ProjectsManager = () => {
 
   const handleDelete = async (projectId, projectTitle) => {
     if (window.confirm(`Delete project "${projectTitle}"?\n\nThis action cannot be undone. All project data, including images and case study content, will be permanently removed.`)) {
-      console.log('🗑️ Delete project clicked:', { projectId, projectTitle });
       const result = await removeProject(projectId);
-      console.log('📊 Delete project result:', result);
-      
+
       if (result.success) {
-        console.log('✅ Project deleted successfully');
         loadProjects();
       } else {
-        console.error('❌ Failed to delete project:', result.error);
         alert(`Failed to delete project: ${result.error}`);
       }
     }
   };
 
   const handleTogglePublish = async (projectId, currentStatus) => {
-    console.log('🔄 Toggle publish clicked:', { projectId, currentStatus });
     const result = await togglePublish(projectId, currentStatus !== 'published');
-    console.log('📊 Toggle publish result:', result);
-    
+
     if (result.success) {
-      console.log('✅ Publish toggled successfully');
       loadProjects();
     } else {
-      console.error('❌ Failed to toggle publish:', result.error);
       alert(`Failed to ${currentStatus === 'published' ? 'unpublish' : 'publish'} project: ${result.error}`);
     }
   };
 
   const handleToggleFeatured = async (projectId, currentFeatured) => {
-    console.log('⭐ Toggle featured clicked:', { projectId, currentFeatured });
     const result = await toggleFeatured(projectId, !currentFeatured);
-    console.log('📊 Toggle featured result:', result);
-    
+
     if (result.success) {
-      console.log('✅ Featured toggled successfully');
       loadProjects();
     } else {
-      console.error('❌ Failed to toggle featured:', result.error);
       alert(`Failed to toggle featured status: ${result.error}`);
     }
   };

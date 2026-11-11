@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 import Icon from 'components/AppIcon';
+import TurnstileField, { turnstileSiteKey } from 'components/TurnstileField';
 import { useToast } from 'context/ToastContext';
 import { submitContactForm } from 'services/contactService';
 
@@ -21,6 +22,8 @@ const ContactForm = ({ selectedInquiryType }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errors, setErrors] = useState({});
+  const [turnstileToken, setTurnstileToken] = useState('');
+  const captchaEnabled = Boolean(turnstileSiteKey());
 
   const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -40,6 +43,7 @@ const ContactForm = ({ selectedInquiryType }) => {
       if (!formData.budget) newErrors.budget = 'Budget range is required';
       if (!formData.timeline) newErrors.timeline = 'Timeline is required';
     }
+    if (captchaEnabled && !turnstileToken) newErrors.captcha = 'Complete the captcha before sending.';
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -58,6 +62,7 @@ const ContactForm = ({ selectedInquiryType }) => {
       const result = await submitContactForm({
         ...formData,
         inquiryType: selectedInquiryType,
+        turnstileToken,
       });
       
       if (result.success) {
@@ -187,6 +192,9 @@ const ContactForm = ({ selectedInquiryType }) => {
                 errors.name ? 'border-error' : 'border-border dark:border-border-strong'
               }`}
               placeholder="Your full name"
+              required
+              aria-required="true"
+              aria-invalid={errors.name ? 'true' : 'false'}
             />
             {errors.name && (
               <p className="mt-1 text-sm text-error flex items-center">
@@ -210,6 +218,9 @@ const ContactForm = ({ selectedInquiryType }) => {
                 errors.email ? 'border-error' : 'border-border dark:border-border-strong'
               }`}
               placeholder="your@email.com"
+              required
+              aria-required="true"
+              aria-invalid={errors.email ? 'true' : 'false'}
             />
             {errors.email && (
               <p className="mt-1 text-sm text-error flex items-center">
@@ -247,7 +258,7 @@ const ContactForm = ({ selectedInquiryType }) => {
               value={formData.phone}
               onChange={handleChange}
               className="w-full px-4 py-3 border border-border dark:border-border-strong rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors bg-background dark:bg-background"
-              placeholder="+1 (555) 123-4567"
+              placeholder="+20 10 0000 0000"
             />
           </div>
         </div>
@@ -267,6 +278,9 @@ const ContactForm = ({ selectedInquiryType }) => {
                 className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors bg-background dark:bg-background ${
                   errors.budget ? 'border-error' : 'border-border dark:border-border-strong'
                 }`}
+                required
+                aria-required="true"
+                aria-invalid={errors.budget ? 'true' : 'false'}
               >
                 {budgetOptions.map(option => (
                   <option key={option.value} value={option.value}>
@@ -294,6 +308,9 @@ const ContactForm = ({ selectedInquiryType }) => {
                 className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors bg-background dark:bg-background ${
                   errors.timeline ? 'border-error' : 'border-border dark:border-border-strong'
                 }`}
+                required
+                aria-required="true"
+                aria-invalid={errors.timeline ? 'true' : 'false'}
               >
                 {timelineOptions.map(option => (
                   <option key={option.value} value={option.value}>
@@ -326,6 +343,9 @@ const ContactForm = ({ selectedInquiryType }) => {
               errors.subject ? 'border-error' : 'border-border dark:border-border-strong'
             }`}
             placeholder="Brief subject line"
+            required
+            aria-required="true"
+            aria-invalid={errors.subject ? 'true' : 'false'}
           />
           {errors.subject && (
             <p className="mt-1 text-sm text-error flex items-center">
@@ -349,6 +369,9 @@ const ContactForm = ({ selectedInquiryType }) => {
               errors.message ? 'border-error' : 'border-border dark:border-border-strong'
             }`}
             placeholder="Tell me more about your project, goals, or questions..."
+            required
+            aria-required="true"
+            aria-invalid={errors.message ? 'true' : 'false'}
           />
           {errors.message && (
             <p className="mt-1 text-sm text-error flex items-center">
@@ -360,6 +383,18 @@ const ContactForm = ({ selectedInquiryType }) => {
             {formData.message.length}/1000 characters
           </p>
         </div>
+
+        {captchaEnabled && (
+          <div>
+            <TurnstileField onToken={setTurnstileToken} />
+            {errors.captcha && (
+              <p className="mt-1 text-sm text-error flex items-center">
+                <Icon name="AlertCircle" size={14} className="mr-1" strokeWidth={2} />
+                {errors.captcha}
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Submit Button */}
         <div className="pt-4">
@@ -385,11 +420,7 @@ const ContactForm = ({ selectedInquiryType }) => {
         {/* Privacy Notice */}
         <div className="text-sm text-muted text-center">
           <p>
-            By submitting this form, you agree to our{' '}
-            <a href="#" className="text-accent hover:text-accent-600 underline">
-              Privacy Policy
-            </a>
-            . Your information is secure and will never be shared.
+            Your message is stored so I can reply. I don&apos;t share these details with anyone else.
           </p>
         </div>
       </form>

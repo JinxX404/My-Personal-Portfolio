@@ -2,21 +2,27 @@ import React from 'react';
 
 function Image({
   src,
-  alt = "Image Name",
+  alt = "",
   className = "",
   loading = "lazy",
+  width,
+  height,
   ...props
 }) {
 
   return (
     <img
+      {...props}
       src={src}
       alt={alt}
       className={className}
+      loading={loading}
+      width={width}
+      height={height}
+      decoding="async"
       onError={(e) => {
-        e.target.src = "/assets/images/no_image.png"
+        e.currentTarget.src = "/assets/images/no_image.png"
       }}
-      {...props}
     />
   );
 }

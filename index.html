@@ -2,37 +2,28 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Moataz Mohammed — Full Stack Developer Portfolio</title>
+    <title>Moataz Mohammed — Full-Stack .NET Developer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#6366f1" />
-    <meta name="description" content="Full Stack Developer Portfolio — showcasing web development projects, skills, and experience in building modern digital solutions." />
-    <meta property="og:title" content="Moataz Mohammed — Full Stack Developer Portfolio" />
-    <meta property="og:description" content="Full Stack Developer Portfolio — showcasing web development projects, skills, and experience." />
+    <meta name="description" content="Portfolio of Moataz Mohammed, a Full-Stack .NET developer. Selected projects, skills, and ways to get in touch." />
+    <link rel="canonical" href="https://moatazz.site/" />
+    <meta property="og:title" content="Moataz Mohammed — Full-Stack .NET Developer" />
+    <meta property="og:description" content="Portfolio of Moataz Mohammed, a Full-Stack .NET developer. Selected projects, skills, and ways to get in touch." />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://moatazz.site/" />
+    <meta property="og:image" content="https://moatazz.site/og-image.png" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Moataz Mohammed — Full-Stack .NET Developer" />
+    <meta name="twitter:description" content="Portfolio of Moataz Mohammed, a Full-Stack .NET developer." />
+    <meta name="twitter:image" content="https://moatazz.site/og-image.png" />
     <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
     <link rel="manifest" href="/manifest.json" />
-    <script>
-      (function() {
-        try {
-          var storageKey = 'portfolio-theme-preference';
-          var stored = localStorage.getItem(storageKey);
-          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          var theme = stored === 'light' || stored === 'dark' ? stored : (prefersDark ? 'dark' : 'light');
-          if (theme === 'dark') {
-            document.documentElement.classList.add('dark');
-          } else {
-            document.documentElement.classList.remove('dark');
-          }
-        } catch (err) {
-          console.warn('Theme initialisation failed', err);
-        }
-      })();
-    </script>
+    <script src="/theme-init.js"></script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div class="dhiwise-code" id="root"></div>
+    <div id="root"></div>
     <script type="module" src="/src/index.jsx"></script>
   </body>
 </html>

@@ -14,7 +14,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const { signIn, isAuthenticated, isConfigured } = useAuth();
+  const { signIn, isAuthenticated, isAdmin, loading: authLoading, isConfigured } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,10 +23,10 @@ const Login = () => {
   const from = location.state?.from?.pathname || '/admin-dashboard';
   
   useEffect(() => {
-    if (isAuthenticated) {
+    if (!authLoading && isAdmin) {
       navigate(from, { replace: true });
     }
-  }, [isAuthenticated, navigate, from]);
+  }, [authLoading, isAdmin, navigate, from]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -87,6 +87,14 @@ const Login = () => {
                 </p>
               </div>
             </div>
+          </div>
+        )}
+
+        {!authLoading && isAuthenticated && !isAdmin && (
+          <div className="bg-error/10 border border-error/30 rounded-lg p-4 mb-6" role="alert">
+            <p className="text-sm text-text-primary">
+              This account is signed in, but it does not have admin access.
+            </p>
           </div>
         )}
 

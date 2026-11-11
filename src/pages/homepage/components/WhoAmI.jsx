@@ -12,7 +12,7 @@ const WhoAmI = () => {
   const projectCount = projects?.filter(p => p.publishing_status === 'published').length || 0;
 
   const highlights = [
-    { icon: 'Code2', text: profile?.experience_years ? `${profile.experience_years}+ Years` : '1+ Years', label: 'Experience' },
+    { icon: 'Code2', text: profile?.experience_years ? `${profile.experience_years}+ Years` : '—', label: 'Experience' },
     { icon: 'MapPin', text: profile?.location || 'Remote', label: 'Location' },
     { icon: 'Briefcase', text: profile?.title || 'Developer', label: 'Role' },
     { icon: 'FolderOpen', text: `${projectCount}+`, label: 'Projects' },
@@ -26,8 +26,10 @@ const WhoAmI = () => {
           <div className="flex-shrink-0">
             <div className="relative">
               <Image
-                src={profile?.avatar || ''}
-                alt={profile?.full_name || 'Profile'}
+                src={profile?.avatar || '/assets/images/no_image.png'}
+                alt={profile?.full_name || 'Moataz Mohammed'}
+                width={128}
+                height={128}
                 className="w-32 h-32 rounded-full object-cover border-4 border-accent shadow-xl"
               />
               <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-success rounded-full border-4 border-surface dark:border-surface flex items-center justify-center">
@@ -42,7 +44,7 @@ const WhoAmI = () => {
               {profile?.full_name || 'Moataz Mohammed'}
             </h2>
             <p className="text-accent font-medium mb-4">
-              {profile?.tagline || 'Backend Engineer & Problem Solver'}
+              {profile?.tagline || 'Full-Stack .NET Developer'}
             </p>
             <p className="text-text-secondary dark:text-white/70 max-w-2xl mb-6">
               {profile?.bio ? (

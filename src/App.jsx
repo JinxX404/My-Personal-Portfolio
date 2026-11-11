@@ -6,6 +6,7 @@ import { ProjectsProvider } from "./context/ProjectsContext";
 import { PortfolioSettingsProvider } from "./context/PortfolioSettingsContext";
 import { ToastProvider } from "./context/ToastContext";
 import { AuthProvider } from "./context/AuthContext";
+import { PageMetaProvider } from "./components/PageMeta";
 import Toast from "./components/Toast";
 
 function App() {
@@ -16,8 +17,10 @@ function App() {
           <PortfolioSettingsProvider>
             <SkillsProvider>
               <ProjectsProvider>
+                <PageMetaProvider>
                   <Routes />
                   <Toast />
+                </PageMetaProvider>
               </ProjectsProvider>
             </SkillsProvider>
           </PortfolioSettingsProvider>

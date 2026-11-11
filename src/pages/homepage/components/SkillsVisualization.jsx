@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Icon from 'components/AppIcon';
+import LoadError from 'components/ui/LoadError';
 import { useSkills } from 'context/SkillsContext';
 
-const SkillsVisualization = ({ shouldReduceMotion }) => {
-  const { skillCategories, techStack } = useSkills();
-  const [activeCategory, setActiveCategory] = useState(() => {
-    // Get first category key dynamically
-    const keys = Object.keys(skillCategories);
-    return keys.length > 0 ? keys[0] : 'frontend';
-  });
+const SkillsVisualization = () => {
+  const { skillCategories, techStack, loading, error, resyncFromDatabase } = useSkills();
+  const [activeCategory, setActiveCategory] = useState('');
+  const categoryKey = Object.keys(skillCategories || {}).join('|');
 
   const getColorClasses = (color) => {
     const colorMap = {
@@ -43,32 +41,29 @@ const SkillsVisualization = ({ shouldReduceMotion }) => {
   };
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const newAnimatedSkills = {};
-      const category = skillCategories[activeCategory];
-      if (category && category.skills) {
-        category.skills.forEach((skill, index) => {
-          setTimeout(() => {
-            setAnimatedSkills(prev => ({
-              ...prev,
-              [skill.name]: skill.level
-            }));
-          }, index * 100);
-        });
-      }
-    }, 300);
+    const keys = categoryKey ? categoryKey.split('|') : [];
+    if (keys.length === 0) return;
+    setActiveCategory((current) => (current && keys.includes(current) ? current : keys[0]));
+  }, [categoryKey]);
 
-    return () => clearTimeout(timer);
-  }, [activeCategory, skillCategories]);
+  const currentCategory = skillCategories[activeCategory] || { title: '', icon: 'Code', color: 'accent', skills: [] };
 
-const currentCategory = skillCategories[activeCategory] || { title: '', icon: 'Code', color: 'accent', skills: [] };
+  if (loading && categoryKey.length === 0) {
+    return <p className="text-center text-text-secondary">Loading skills…</p>;
+  }
 
   return (
     <div className="max-w-6xl mx-auto">
+      {error && (
+        <div className="mb-8">
+          <LoadError message={error} onRetry={resyncFromDatabase} />
+        </div>
+      )}
       {/* Category Tabs */}
       <div className="flex flex-wrap justify-center gap-4 mb-12">
         {Object.entries(skillCategories).map(([key, category]) => (
           <button
+            type="button"
             key={key}
             onClick={() => setActiveCategory(key)}
             className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:-translate-y-1 ${
@@ -95,7 +90,7 @@ const currentCategory = skillCategories[activeCategory] || { title: '', icon: 'C
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {currentCategory.skills.map((skill, index) => (
+          {(currentCategory.skills || []).map((skill, index) => (
             <div
               key={skill.name}
               className="flex items-center space-x-2 px-4 py-3 bg-secondary-50 dark:bg-white/10 rounded-xl border border-secondary-300 dark:border-white/10 hover:border-accent-500 dark:hover:border-accent-400 hover:shadow-lg transition-all duration-300 cursor-default"

@@ -72,8 +72,10 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
             <div className="flex items-center space-x-6">
               <div className="relative">
                 <Image
-                  src={settings.avatar || 'https://via.placeholder.com/150'}
+                  src={settings.avatar || '/assets/images/no_image.png'}
                   alt="Avatar"
+                  width={96}
+                  height={96}
                   className="w-24 h-24 rounded-full object-cover border-4 border-accent shadow-lg"
                 />
                 <label className="absolute bottom-0 right-0 bg-accent text-white p-2 rounded-full cursor-pointer hover:bg-accent-700 transition-colors">
