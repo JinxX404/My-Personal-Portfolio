@@ -48,7 +48,7 @@ const ProjectManager = () => {
     repositoryUrl: '',
     demoUrl: '',
     
-    // Case Study Content
+    // Detailed project write-up
     problem: '',
     solution: '',
     results: '',
@@ -138,7 +138,7 @@ const ProjectManager = () => {
     { id: 'visual', label: 'Visual Assets', icon: 'Image', color: 'cta' },
     { id: 'sections', label: 'Content Sections', icon: 'LayoutList', color: 'secondary' },
     { id: 'technical', label: 'Technical Details', icon: 'Code', color: 'success' },
-    { id: 'content', label: 'Case Study Content', icon: 'FileText', color: 'primary' },
+    { id: 'content', label: 'Project Details', icon: 'FileText', color: 'primary' },
     { id: 'publishing', label: 'Publishing Options', icon: 'Settings', color: 'warning' }
   ];
 

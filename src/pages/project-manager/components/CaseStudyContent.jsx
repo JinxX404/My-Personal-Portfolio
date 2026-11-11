@@ -124,10 +124,10 @@ const CaseStudyContent = ({ formData, setFormData }) => {
           <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-lg mr-3">
             <Icon name="FileText" size={20} className="text-primary-600" />
           </div>
-          <h2 className="text-2xl font-bold text-primary-800 dark:text-primary-200">Case Study Content</h2>
+          <h2 className="text-2xl font-bold text-primary-800 dark:text-primary-200">Project Details</h2>
         </div>
         
-        {/* Toggle Case Study */}
+        {/* Toggle detailed project write-up */}
         <label className="flex items-center cursor-pointer">
           <div className="relative">
             <input
@@ -154,12 +154,12 @@ const CaseStudyContent = ({ formData, setFormData }) => {
       {!isCaseStudyEnabled && (
         <div className="text-center py-12 bg-secondary-50 rounded-lg border-2 border-dashed border-secondary-300">
           <Icon name="FileText" size={48} className="text-secondary-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-secondary-700 mb-2">Case Study Disabled</h3>
+          <h3 className="text-lg font-semibold text-secondary-700 mb-2">Project Details Off</h3>
           <p className="text-secondary-600 mb-4">
-            Enable the toggle above to add detailed case study content to this project.
+            Enable the toggle above to add a detailed write-up for this project.
           </p>
           <p className="text-sm text-secondary-500">
-            Case study sections include problem definition, solution approach, results, testimonials, and more.
+            Sections include problem definition, solution approach, results, testimonials, and more.
           </p>
         </div>
       )}

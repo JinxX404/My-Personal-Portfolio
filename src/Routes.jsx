@@ -46,6 +46,8 @@ const Routes = () => {
               <Route path="/" element={<Homepage />} />
               <Route path="/homepage" element={<Homepage />} />
               <Route path="/portfolio-gallery" element={<PortfolioGallery />} />
+              <Route path="/projects" element={<PortfolioGallery />} />
+              <Route path="/projects/:id" element={<CaseStudyDetail />} />
               <Route path="/case-study-detail/:id" element={<CaseStudyDetail />} />
               <Route path="/about-story" element={<AboutStory />} />
               <Route path="/contact-hub" element={<ContactHub />} />
