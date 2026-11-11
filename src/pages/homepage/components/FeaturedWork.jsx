@@ -123,15 +123,14 @@ const FeaturedWork = () => {
       )}
       <div className="bg-surface dark:bg-background/80 rounded-2xl shadow-xl overflow-hidden border border-border dark:border-border-strong/50 transition-theme">
         <div className="grid lg:grid-cols-2 gap-0">
-          <div className="relative aspect-[16/10] min-h-56 overflow-hidden lg:aspect-auto lg:min-h-[20rem]">
+          <div className="relative aspect-[16/10] overflow-hidden bg-primary-900 lg:aspect-auto lg:h-full lg:min-h-[22rem]">
             <Image
               src={current.image}
               alt={current.title}
-              width={1200}
-              height={800}
-              className="absolute inset-0 h-full w-full object-cover"
+              width={1600}
+              height={1000}
+              className="absolute inset-0 h-full w-full object-contain"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-overlay/60 to-transparent"></div>
             <div className="absolute top-4 left-4">
               <span className="px-3 py-1 bg-accent-500/90 text-white text-sm font-medium rounded-full">
                 {current.category}

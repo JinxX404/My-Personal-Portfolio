@@ -179,15 +179,15 @@ const PortfolioGallery = () => {
       } ${viewMode === 'list' ? 'flex flex-row' : 'flex flex-col'}`}
     >
       {/* Project Image */}
-      <div className={`relative shrink-0 overflow-hidden bg-primary-100 dark:bg-primary-900 ${
-        viewMode === 'list' ? 'w-36 sm:w-56 self-stretch min-h-36' : 'aspect-video'
+      <div className={`relative shrink-0 overflow-hidden bg-primary-900 ${
+        viewMode === 'list' ? 'w-36 sm:w-56 self-stretch min-h-36' : 'aspect-[16/10]'
       }`}>
         <Image
           src={project.image}
           alt={project.title}
-          width={1280}
-          height={720}
-          className="absolute inset-0 h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+          width={1600}
+          height={1000}
+          className="absolute inset-0 h-full w-full object-contain"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         
@@ -516,13 +516,13 @@ const PortfolioGallery = () => {
               className="bg-surface dark:bg-surface rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-border dark:border-border-strong"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="relative">
+              <div className="relative aspect-[16/10] bg-primary-900">
                 <Image
                   src={selectedProject.image}
                   alt={selectedProject.title}
-                  width={1280}
-                  height={720}
-                  className="w-full h-64 object-cover"
+                  width={1600}
+                  height={1000}
+                  className="h-full w-full object-contain"
                 />
                 <button
                   type="button"
