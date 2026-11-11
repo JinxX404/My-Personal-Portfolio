@@ -4,6 +4,30 @@ import Icon from 'components/AppIcon';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
+const assetSource = (image) => {
+  if (typeof image === 'string') return image.trim();
+  if (!image || typeof image !== 'object') return '';
+  const src = image.preview || image.url || image.src || image.image || '';
+  return typeof src === 'string' ? src.trim() : '';
+};
+
+const assetLabel = (image, index) => {
+  if (image && typeof image === 'object' && typeof image.name === 'string' && image.name.trim()) {
+    return image.name.trim();
+  }
+  const src = assetSource(image);
+  if (src && !src.startsWith('blob:')) {
+    try {
+      const path = src.split('?')[0].split('#')[0];
+      const base = decodeURIComponent(path.split('/').filter(Boolean).pop() || '');
+      if (base) return base;
+    } catch {
+      // Keep the numbered fallback when the URL is not decodable.
+    }
+  }
+  return `image ${index + 1}`;
+};
+
 const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, setFormData }) => {
   const images = formData?.[zone] || [];
 
@@ -53,12 +77,14 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
     e.target.value = '';
   }, [handleFiles]);
 
-  const removeImage = useCallback((imageId) => {
+  const removeImage = useCallback((index) => {
     setFormData(prev => {
       const imgs = prev?.[zone] || [];
-      const img = imgs.find(i => i.id === imageId);
-      if (img?.preview) URL.revokeObjectURL(img.preview);
-      return { ...prev, [zone]: imgs.filter(i => i.id !== imageId) };
+      const img = imgs[index];
+      if (img && typeof img === 'object' && typeof img.preview === 'string' && img.preview.startsWith('blob:')) {
+        URL.revokeObjectURL(img.preview);
+      }
+      return { ...prev, [zone]: imgs.filter((_, imageIndex) => imageIndex !== index) };
     });
   }, [zone, setFormData]);
 
@@ -128,13 +154,15 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
 
       {images.length > 0 && (
         <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {images.map((image, idx) => (
-            <div key={image.id || `img-${idx}`} className="relative group">
+          {images.map((image, idx) => {
+            const src = assetSource(image);
+            const label = assetLabel(image, idx);
+            const key = (image && typeof image === 'object' && image.id) || `${zone}-${idx}-${src}`;
+            return (
+            <div key={key} className="relative group">
               <div className="aspect-square bg-secondary-100 dark:bg-primary-800 rounded-lg overflow-hidden">
-                {image.preview ? (
-                  <img src={image.preview} alt={image.name} className="w-full h-full object-cover" />
-                ) : image.url ? (
-                  <img src={image.url} alt={image.name} className="w-full h-full object-cover" />
+                {src ? (
+                  <img src={src} alt={label} className="w-full h-full object-cover" />
                 ) : null}
               </div>
               <button
@@ -142,18 +170,20 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  removeImage(image.id);
+                  removeImage(idx);
                 }}
                 className="absolute -top-2 -right-2 w-6 h-6 bg-error-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center"
-                aria-label={`Remove ${image.name}`}
+                aria-label={`Remove ${label}`}
+                title={`Remove ${label}`}
               >
                 <Icon name="X" size={12} />
               </button>
               <div className="mt-2">
-                <p className="text-xs text-secondary-600 dark:text-secondary-400 truncate">{image.name}</p>
+                <p className="text-xs text-secondary-600 dark:text-secondary-400 truncate">{label}</p>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
