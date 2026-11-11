@@ -14,6 +14,15 @@ import CaseStudyContent from './components/CaseStudyContent';
 import PublishingOptions from './components/PublishingOptions';
 import ContentSections from './components/ContentSections';
 
+const formatPublishingStatus = (value) => {
+  if (!value || typeof value !== 'string') return 'Not set';
+  return value
+    .split(/[_\s-]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase())
+    .join(' ');
+};
+
 const ProjectManager = () => {
   const { addProject, editProject, getProjectById } = useProjects();
   const { success, error: showError } = useToast();
@@ -494,8 +503,8 @@ const ProjectManager = () => {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-secondary-600">Status:</span>
-                    <span className="font-medium text-secondary-800 capitalize">
-                      {formData.status || 'Not set'}
+                    <span className="font-medium text-secondary-800">
+                      {formatPublishingStatus(formData.publishingStatus)}
                     </span>
                   </div>
                   <div className="flex justify-between">

@@ -11,6 +11,30 @@ import { safeHref } from 'lib/safeUrl';
 
 const fallbackImage = '/assets/images/no_image.png';
 
+const imageUrl = (value) => {
+  if (typeof value === 'string') return value.trim();
+  if (value && typeof value === 'object') {
+    const candidate = value.url || value.src || value.image;
+    return typeof candidate === 'string' ? candidate.trim() : '';
+  }
+  return '';
+};
+
+const firstImageUrl = (items) => {
+  if (!Array.isArray(items)) return '';
+  for (const item of items) {
+    const url = imageUrl(item);
+    if (url) return url;
+  }
+  return '';
+};
+
+// Hero first, then the first screenshot, then the stock placeholder.
+const coverForProject = (project) =>
+  firstImageUrl(project?.hero_images) ||
+  firstImageUrl(project?.screenshots) ||
+  fallbackImage;
+
 const categoryIconMap = {
   'Web Apps': 'Monitor',
   'E-commerce': 'ShoppingCart',
@@ -36,7 +60,6 @@ const PortfolioGallery = () => {
     return projects.map((project) => {
       const technologies = Array.isArray(project.technologies) ? project.technologies : [];
       const tags = Array.isArray(project.tags) ? project.tags : [];
-      const heroImages = Array.isArray(project.hero_images) ? project.hero_images : [];
       const metrics = Array.isArray(project.metrics) ? project.metrics : [];
 
       let metricsLabel = project.results || 'Proven Results';
@@ -55,7 +78,7 @@ const PortfolioGallery = () => {
         category: project.category || 'General',
         technologies,
         description: project.description || 'No description available yet.',
-        image: heroImages.length ? heroImages[0] : fallbackImage,
+        image: coverForProject(project),
         metrics: metricsLabel,
         featured: Boolean(project.featured),
         liveUrl: safeHref(project.demo_url),
@@ -174,9 +197,9 @@ const PortfolioGallery = () => {
 
   const ProjectCard = ({ project, index }) => (
     <div
-      className={`group relative self-start w-full bg-surface dark:bg-surface rounded-xl shadow-sm border border-border dark:border-border-strong overflow-hidden hover:shadow-lg transition-all duration-300 ${
-        project.featured && viewMode === 'grid' ? 'md:col-span-2' : ''
-      } ${viewMode === 'list' ? 'flex flex-row' : 'flex flex-col'}`}
+      className={`group relative flex h-full w-full bg-surface dark:bg-surface rounded-xl shadow-sm border border-border dark:border-border-strong overflow-hidden hover:shadow-lg transition-all duration-300 ${
+        viewMode === 'list' ? 'flex-row' : 'flex-col'
+      }`}
     >
       {/* Project Image */}
       <div className={`relative shrink-0 overflow-hidden bg-primary-900 ${
@@ -246,7 +269,7 @@ const PortfolioGallery = () => {
       </div>
 
       {/* Project Content */}
-      <div className={`p-6 ${viewMode === 'list' ? 'flex flex-1 flex-col justify-between' : ''}`}>
+      <div className="flex flex-1 flex-col p-6">
         <div>
           <div className="flex items-start justify-between mb-3">
             <h3 className="text-xl font-bold text-text-primary group-hover:text-accent transition-colors duration-200">
@@ -277,7 +300,7 @@ const PortfolioGallery = () => {
         {/* Action Button */}
         <Link
           to={`/projects/${project.id}`}
-          className="inline-flex items-center space-x-2 text-accent hover:text-accent-700 font-semibold transition-colors duration-200"
+          className="mt-auto inline-flex items-center space-x-2 text-accent hover:text-accent-700 font-semibold transition-colors duration-200"
         >
           <span>View Project</span>
           <Icon name="ArrowRight" size={16} strokeWidth={2} />
@@ -438,7 +461,7 @@ const PortfolioGallery = () => {
               <>
               <div
                 className={
-                  viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start' : 'space-y-6'
+                  viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8' : 'space-y-6'
                 }
               >
                 {filteredProjects.map((project, index) => (
