@@ -6,10 +6,12 @@ import {
   arrangeBento,
   classifyScreenshot,
   explicitLayout,
+  frameScrollAllowed,
   resolveScreenshotKind,
   screenshotLimitMessage,
   screenshotsWithinLimit,
   scrollDurationMs,
+  scrollFrameUrl,
   splitGallery,
   toStoredScreenshot,
 } from './screenshotLayout.mjs';
@@ -142,4 +144,22 @@ test('bento places a phone beside the lead tile and keeps source indexes', () =>
 test('a single landscape screenshot spans the collage', () => {
   const [only] = arrangeBento([{ kind: 'tile', id: 'a' }]);
   assert.equal(only.span, 'hero');
+});
+
+test('the browser frame does not scroll until the screenshot is ready to paint', () => {
+  assert.equal(frameScrollAllowed(), false);
+  assert.equal(frameScrollAllowed({ ready: false, distance: 4800 }), false);
+  assert.equal(frameScrollAllowed({ ready: true, distance: 0 }), false);
+  assert.equal(frameScrollAllowed({ ready: true, distance: 1 }), false);
+  assert.equal(frameScrollAllowed({ ready: true, reduced: true, distance: 4800 }), false);
+  assert.equal(frameScrollAllowed({ ready: true, paused: true, distance: 4800 }), false);
+  assert.equal(frameScrollAllowed({ ready: true, distance: 4800 }), true);
+});
+
+test('full-page frames keep the original object URL', () => {
+  const src =
+    'https://project.supabase.co/storage/v1/object/public/project-images/screenshots/page.jpg';
+  assert.equal(scrollFrameUrl(src), src);
+  assert.equal(scrollFrameUrl(src).includes('/render/image/'), false);
+  assert.equal(scrollFrameUrl(null), '');
 });

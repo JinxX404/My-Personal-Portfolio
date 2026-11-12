@@ -1,11 +1,13 @@
-import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Icon from 'components/AppIcon';
 import { useReducedMotion } from 'hooks/useReducedMotion';
+import { preloadImages } from 'lib/preloadImage.mjs';
 import {
   arrangeBento,
   explicitLayout,
   resolveScreenshotKind,
+  scrollFrameUrl,
   splitGallery,
 } from 'lib/screenshotLayout.mjs';
 import BrowserScrollFrame from './BrowserScrollFrame';
@@ -54,6 +56,9 @@ function useImageMetrics(images) {
 
   useEffect(() => {
     let cancelled = false;
+    // An explicit layout already knows how to present the file. Probing it
+    // would download the long page capture twice and fight the preload.
+    const deferProbes = images.some((image) => image.layout === 'scroll');
     images.forEach((image) => {
       if (image.width && image.height) {
         setMetrics((current) =>
@@ -63,7 +68,15 @@ function useImageMetrics(images) {
         );
         return;
       }
+      if (image.layout === 'scroll' || image.layout === 'phone' || image.layout === 'tile') return;
+
       const probe = new Image();
+      probe.decoding = 'async';
+      try {
+        probe.fetchPriority = deferProbes ? 'low' : 'auto';
+      } catch {
+        // Older browsers ignore fetch priority on Image.
+      }
       probe.onload = () => {
         if (cancelled) return;
         setMetrics((current) => ({
@@ -88,7 +101,75 @@ function useImageMetrics(images) {
   return metrics;
 }
 
-function PhoneTile({ image, onOpen }) {
+function nextPaint() {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(resolve));
+  });
+}
+
+function GalleryStill({ src, className, reduced, tone = 'light' }) {
+  const ref = useRef(null);
+  const flightRef = useRef(0);
+  const [phase, setPhase] = useState('loading');
+
+  const reveal = useCallback(async (image, flight) => {
+    try {
+      if (typeof image.decode === 'function') await image.decode();
+    } catch {
+      if (flight !== flightRef.current) return;
+      if (!image.complete || image.naturalWidth === 0) {
+        setPhase('error');
+        return;
+      }
+    }
+    if (flight !== flightRef.current) return;
+    await nextPaint();
+    if (flight !== flightRef.current) return;
+    setPhase('ready');
+  }, []);
+
+  useEffect(() => {
+    const flight = ++flightRef.current;
+    setPhase('loading');
+    const image = ref.current;
+    if (image?.complete && image.naturalWidth > 0) reveal(image, flight);
+    return () => {
+      flightRef.current += 1;
+    };
+  }, [reveal, src]);
+
+  const onLoad = (event) => {
+    reveal(event.currentTarget, flightRef.current);
+  };
+
+  const shimmer = tone === 'dark' ? 'gallery-shimmer' : 'gallery-shimmer-light';
+  const still = reduced ? 'bg-white/10' : shimmer;
+
+  return (
+    <>
+      {phase !== 'ready' && (
+        <span
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-0 ${phase === 'error' ? 'bg-white/10' : still}`}
+        />
+      )}
+      <img
+        ref={ref}
+        src={src}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        fetchpriority="low"
+        onLoad={onLoad}
+        onError={() => setPhase('error')}
+        style={reduced ? undefined : { transition: 'opacity 500ms ease-out, transform 500ms ease-out' }}
+        className={`${className} ${phase === 'ready' ? 'opacity-100' : 'opacity-0'}`}
+      />
+    </>
+  );
+}
+
+function PhoneTile({ image, onOpen, reduced }) {
   return (
     <button
       type="button"
@@ -102,13 +183,14 @@ function PhoneTile({ image, onOpen }) {
             className="absolute left-1/2 top-[9px] z-10 h-3.5 w-12 -translate-x-1/2 rounded-full bg-black"
             aria-hidden="true"
           />
-          <img
-            src={image.src}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            className="h-full w-full rounded-[1.25rem] object-cover object-top"
-          />
+          <span className="relative block h-full w-full overflow-hidden rounded-[1.25rem]">
+            <GalleryStill
+              src={image.src}
+              reduced={reduced}
+              tone="dark"
+              className="absolute inset-0 h-full w-full object-cover object-top"
+            />
+          </span>
         </span>
       </span>
     </button>
@@ -124,14 +206,12 @@ function Tile({ image, span, onOpen, reduced }) {
       aria-label={`Open ${image.title} full screen`}
       className={`${SPAN_CLASS[span] || SPAN_CLASS.small} group relative overflow-hidden rounded-2xl bg-[#f6f3ee] shadow-[0_10px_30px_rgba(8,12,24,0.18)] ring-1 ring-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-300`}
     >
-      <img
+      <GalleryStill
         src={image.src}
-        alt=""
-        loading="lazy"
-        decoding="async"
+        reduced={reduced}
         className={`absolute inset-0 h-full w-full ${
           showEntireShot ? 'object-contain' : 'object-cover object-top'
-        } ${reduced ? '' : 'transition-transform duration-500 ease-out group-hover:scale-[1.035]'}`}
+        } ${reduced ? '' : 'group-hover:scale-[1.035]'}`}
       />
       <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
       <span className="pointer-events-none absolute bottom-3 right-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/55 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
@@ -176,6 +256,15 @@ const ProjectGallery = ({ images, projectTitle = 'Project' }) => {
   const { fullPage, rest } = splitGallery(decorated);
   const pending = rest.some((image) => image.kind === 'unknown');
   const bento = pending ? [] : arrangeBento(rest);
+  const scrollSrcKey = fullPage
+    .map((image) => scrollFrameUrl(image.src))
+    .filter(Boolean)
+    .join('|');
+
+  useLayoutEffect(() => {
+    if (!scrollSrcKey) return;
+    preloadImages(scrollSrcKey.split('|'));
+  }, [scrollSrcKey]);
 
   const safeIndex = count ? ((index % count) + count) % count : 0;
   const current = images[safeIndex];
@@ -371,7 +460,7 @@ const ProjectGallery = ({ images, projectTitle = 'Project' }) => {
           {fullPage.map((image) => (
             <BrowserScrollFrame
               key={image.id}
-              src={image.src}
+              src={scrollFrameUrl(image.src)}
               title={image.title}
               projectName={projectTitle}
               paused={open}
@@ -382,7 +471,10 @@ const ProjectGallery = ({ images, projectTitle = 'Project' }) => {
           {pending && (
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4" aria-hidden="true">
               {rest.map((image) => (
-                <div key={image.id} className="aspect-video animate-pulse rounded-2xl bg-white/10" />
+                <div
+                  key={image.id}
+                  className={`aspect-video rounded-2xl ${reduced ? 'bg-white/10' : 'gallery-shimmer'}`}
+                />
               ))}
             </div>
           )}
@@ -394,6 +486,7 @@ const ProjectGallery = ({ images, projectTitle = 'Project' }) => {
                   <PhoneTile
                     key={image.id}
                     image={image}
+                    reduced={reduced}
                     onOpen={(event) => openAt(image.index, event)}
                   />
                 ) : (

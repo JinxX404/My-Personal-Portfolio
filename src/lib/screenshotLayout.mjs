@@ -20,6 +20,39 @@ export const SCROLL_SPEED = {
   mobile: 52,
 };
 
+/**
+ * The browser frame may move only after the screenshot bitmap is decoded
+ * and the reveal has finished. A non-zero layout height is not enough:
+ * JPEG metadata (and `onload` with `decoding="async"`) can size the
+ * element while the pixels are still blank, which is what made the empty
+ * frame scroll.
+ *
+ * `reduced` and `paused` keep the existing manual-scroll and lightbox
+ * behavior: auto-scroll stays off in both cases.
+ */
+export function frameScrollAllowed({
+  ready = false,
+  reduced = false,
+  paused = false,
+  distance = 0,
+} = {}) {
+  if (!ready || reduced || paused) return false;
+  const pixels = Number(distance);
+  return Number.isFinite(pixels) && pixels > 1;
+}
+
+/**
+ * Full-page captures are served from the original Storage object.
+ *
+ * `/storage/v1/render/image/` is not enabled for this project (the endpoint
+ * answers `FeatureNotEnabled`). Even where transforms are on, width and
+ * height are clamped near 2500px, which would shrink a 1440×10000 page
+ * capture until the text is soft. Callers preload this URL unchanged.
+ */
+export function scrollFrameUrl(src) {
+  return typeof src === 'string' ? src : '';
+}
+
 // Per-project cap. The editor and the save validation both use this.
 // supabase/migrations/007_limit_project_screenshots.sql checks the same
 // number. Older rows are still read in full.
