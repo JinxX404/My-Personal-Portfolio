@@ -28,7 +28,14 @@ const assetLabel = (image, index) => {
   return `image ${index + 1}`;
 };
 
-const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, setFormData }) => {
+const LAYOUT_OPTIONS = [
+  { value: 'auto', label: 'Auto' },
+  { value: 'scroll', label: 'Full-page scroll' },
+  { value: 'phone', label: 'Phone frame' },
+  { value: 'tile', label: 'Standard tile' },
+];
+
+const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, setFormData, allowLayout = false }) => {
   const images = formData?.[zone] || [];
 
   const handleFiles = useCallback((files) => {
@@ -76,6 +83,19 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
     }
     e.target.value = '';
   }, [handleFiles]);
+
+  const setImageLayout = useCallback((index, layout) => {
+    setFormData((prev) => {
+      const imgs = [...(prev?.[zone] || [])];
+      const current = imgs[index];
+      if (typeof current === 'string') {
+        imgs[index] = layout && layout !== 'auto' ? { url: current, layout } : current;
+      } else if (current && typeof current === 'object') {
+        imgs[index] = { ...current, layout: layout || 'auto' };
+      }
+      return { ...prev, [zone]: imgs };
+    });
+  }, [zone, setFormData]);
 
   const removeImage = useCallback((index) => {
     setFormData(prev => {
@@ -180,6 +200,24 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
               </button>
               <div className="mt-2">
                 <p className="text-xs text-secondary-600 dark:text-secondary-400 truncate">{label}</p>
+                {allowLayout && (
+                  <label className="mt-2 block">
+                    <span className="mb-1 block text-[11px] font-medium text-secondary-500 dark:text-secondary-400">
+                      Display
+                    </span>
+                    <select
+                      value={(image && typeof image === 'object' && image.layout) || 'auto'}
+                      onChange={(event) => setImageLayout(idx, event.target.value)}
+                      className="w-full rounded-md border border-secondary-200 bg-white px-2 py-1 text-xs text-secondary-800 focus:border-accent-500 focus:ring-accent-500 dark:border-primary-700 dark:bg-primary-800 dark:text-secondary-100"
+                    >
+                      {LAYOUT_OPTIONS.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
               </div>
             </div>
             );
@@ -202,7 +240,10 @@ const VisualAssets = ({ formData, setFormData }) => {
 
       <div className="space-y-6">
         <DropZone zone="heroImages" title="Hero Images" description="Main project showcase images" accept="image/*" maxFiles={3} formData={formData} setFormData={setFormData} />
-        <DropZone zone="screenshots" title="Screenshots" description="Application screenshots showing key features" accept="image/*" maxFiles={8} formData={formData} setFormData={setFormData} />
+        <DropZone zone="screenshots" title="Screenshots" description="Application screenshots showing key features" accept="image/*" maxFiles={8} formData={formData} setFormData={setFormData} allowLayout />
+        <p className="text-xs text-secondary-500 dark:text-secondary-400 -mt-3">
+          Auto reads the image shape. A tall desktop capture scrolls inside a browser frame, and a portrait shot sits in a phone frame. Pick a display to override that.
+        </p>
         <DropZone zone="mockups" title="Mockups & Designs" description="Design mockups, wireframes, and visual prototypes" accept="image/*" maxFiles={5} formData={formData} setFormData={setFormData} />
         <DropZone zone="beforeAfter" title="Before/After" description="Images showing the improvement achieved" accept="image/*" maxFiles={4} formData={formData} setFormData={setFormData} />
       </div>
