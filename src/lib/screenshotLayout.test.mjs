@@ -1,11 +1,16 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  MAX_SCREENSHOTS,
   SCROLL_SPEED,
   arrangeBento,
   classifyScreenshot,
   explicitLayout,
+  resolveScreenshotKind,
+  screenshotLimitMessage,
+  screenshotsWithinLimit,
   scrollDurationMs,
+  splitGallery,
   toStoredScreenshot,
 } from './screenshotLayout.mjs';
 
@@ -45,10 +50,56 @@ test('layout aliases on stored screenshot objects', () => {
   assert.equal(explicitLayout('https://example.com/a.jpg'), null);
   assert.equal(explicitLayout({ url: 'https://example.com/a.jpg' }), null);
   assert.equal(explicitLayout({ layout: 'full-page' }), 'scroll');
+  assert.equal(explicitLayout({ layout: 'fullpage' }), 'scroll');
+  assert.equal(explicitLayout({ layout: 'Full-page scroll' }), 'scroll');
   assert.equal(explicitLayout({ fullPage: true }), 'scroll');
   assert.equal(explicitLayout({ device: 'phone' }), 'phone');
   assert.equal(explicitLayout({ layout: 'auto' }), null);
   assert.equal(explicitLayout({ layout: 'tile' }), 'tile');
+});
+
+test('a project can store up to 15 screenshots', () => {
+  assert.equal(MAX_SCREENSHOTS, 15);
+  assert.equal(screenshotsWithinLimit(undefined), true);
+  assert.equal(screenshotsWithinLimit(null), true);
+  assert.equal(screenshotsWithinLimit({ url: 'https://cdn.example/legacy.jpg' }), true);
+  assert.equal(screenshotsWithinLimit(Array.from({ length: 15 }, (_, index) => `https://cdn.example/${index}.jpg`)), true);
+  assert.equal(screenshotsWithinLimit(Array.from({ length: 16 }, () => ({ url: 'https://cdn.example/a.jpg', layout: 'scroll' }))), false);
+  assert.match(screenshotLimitMessage(), /15/);
+});
+
+test('full-page shots lead the gallery regardless of stored order', () => {
+  const shots = [
+    { id: 'tile', width: 1920, height: 1200 },
+    { id: 'explicit', layout: 'fullpage', width: 800, height: 600 },
+    { id: 'phone', width: 1170, height: 2532 },
+    { id: 'auto', width: 1440, height: 4000 },
+    'https://cdn.example/legacy.jpg',
+  ];
+  const { fullPage, rest } = splitGallery(shots);
+  assert.deepEqual(fullPage.map((item) => item.id || item), ['explicit', 'auto']);
+  assert.deepEqual(rest.map((item) => item.id || item), [
+    'tile',
+    'phone',
+    'https://cdn.example/legacy.jpg',
+  ]);
+});
+
+test('two full-page shots keep their stored order ahead of the bento', () => {
+  const shots = [
+    { id: 'late', layout: 'full-page scroll' },
+    { id: 'tile', kind: 'tile' },
+    { id: 'early', width: 1920, height: 4200 },
+  ];
+  const { fullPage, rest } = splitGallery(shots);
+  assert.deepEqual(fullPage.map((item) => item.id), ['late', 'early']);
+  assert.deepEqual(rest.map((item) => item.id), ['tile']);
+});
+
+test('a failed image probe still honors an explicit full-page layout', () => {
+  assert.equal(resolveScreenshotKind({ layout: 'fullpage' }, { failed: true }), 'scroll');
+  assert.equal(resolveScreenshotKind({ url: 'https://cdn.example/a.jpg' }, { failed: true }), 'tile');
+  assert.equal(resolveScreenshotKind({ layout: 'scroll' }, { width: 1920, height: 1080 }), 'scroll');
 });
 
 test('scroll duration scales with image travel', () => {

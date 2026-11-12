@@ -1,5 +1,9 @@
 // src/lib/validation.js
 import { z } from "zod";
+import {
+  screenshotLimitMessage,
+  screenshotsWithinLimit,
+} from "./screenshotLayout.mjs";
 
 // ==================== PROJECT SCHEMAS ====================
 
@@ -61,6 +65,19 @@ export const projectSchema = z.object({
     .max(160, "Meta description should be under 160 characters")
     .optional()
     .nullable(),
+  // Strings and {url, layout, caption} objects both stay valid. Only the
+  // length is capped, and a missing or non-array value is left alone.
+  screenshots: z
+    .any()
+    .optional()
+    .superRefine((value, ctx) => {
+      if (!screenshotsWithinLimit(value)) {
+        ctx.addIssue({
+          code: "custom",
+          message: screenshotLimitMessage(),
+        });
+      }
+    }),
 });
 
 export const projectCreateSchema = projectSchema.extend({
@@ -147,11 +164,17 @@ export const validate = (schema, data) => {
     const validated = schema.parse(data);
     return { success: true, data: validated };
   } catch (error) {
-    if (error instanceof z.ZodError && error.errors) {
+    const issues = Array.isArray(error?.issues)
+      ? error.issues
+      : Array.isArray(error?.errors)
+        ? error.errors
+        : null;
+    if ((error instanceof z.ZodError || issues) && issues) {
       const errors = {};
-      error.errors.forEach((err) => {
-        const path = err.path.join(".");
-        errors[path] = err.message;
+      issues.forEach((err) => {
+        const path = Array.isArray(err.path) ? err.path.join(".") : "";
+        const key = path || "_error";
+        if (!errors[key]) errors[key] = err.message;
       });
       return { success: false, errors };
     }

@@ -1,6 +1,7 @@
 // src/pages/project-manager/components/VisualAssets.jsx
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import Icon from 'components/AppIcon';
+import { explicitLayout, MAX_SCREENSHOTS } from 'lib/screenshotLayout.mjs';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -47,7 +48,7 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
       return;
     }
 
-    const validFiles = fileArray.filter(file => {
+    const imageFiles = fileArray.filter(file => {
       if (!file.type.startsWith('image/')) {
         return false;
       }
@@ -55,7 +56,13 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
         return false;
       }
       return true;
-    }).slice(0, remainingSlots);
+    });
+
+    if (imageFiles.length > remainingSlots) {
+      alert(`Maximum ${maxFiles} files allowed for ${title}.`);
+    }
+
+    const validFiles = imageFiles.slice(0, remainingSlots);
 
     if (validFiles.length === 0) return;
 
@@ -83,6 +90,17 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
     }
     e.target.value = '';
   }, [handleFiles]);
+
+  const moveImage = useCallback((index, direction) => {
+    setFormData((prev) => {
+      const imgs = [...(prev?.[zone] || [])];
+      const target = index + direction;
+      if (target < 0 || target >= imgs.length) return prev;
+      const [moved] = imgs.splice(index, 1);
+      imgs.splice(target, 0, moved);
+      return { ...prev, [zone]: imgs };
+    });
+  }, [zone, setFormData]);
 
   const setImageLayout = useCallback((index, layout) => {
     setFormData((prev) => {
@@ -206,7 +224,7 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
                       Display
                     </span>
                     <select
-                      value={(image && typeof image === 'object' && image.layout) || 'auto'}
+                      value={(image && typeof image === 'object' && explicitLayout(image)) || 'auto'}
                       onChange={(event) => setImageLayout(idx, event.target.value)}
                       className="w-full rounded-md border border-secondary-200 bg-white px-2 py-1 text-xs text-secondary-800 focus:border-accent-500 focus:ring-accent-500 dark:border-primary-700 dark:bg-primary-800 dark:text-secondary-100"
                     >
@@ -217,6 +235,30 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
                       ))}
                     </select>
                   </label>
+                )}
+                {allowLayout && (
+                  <div className="mt-2 flex gap-1">
+                    <button
+                      type="button"
+                      disabled={idx === 0}
+                      onClick={() => moveImage(idx, -1)}
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-secondary-200 bg-white text-secondary-700 hover:bg-secondary-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-primary-700 dark:bg-primary-800 dark:text-secondary-200"
+                      aria-label={`Move ${label} up`}
+                      title="Move up"
+                    >
+                      <Icon name="ChevronUp" size={14} />
+                    </button>
+                    <button
+                      type="button"
+                      disabled={idx === images.length - 1}
+                      onClick={() => moveImage(idx, 1)}
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-secondary-200 bg-white text-secondary-700 hover:bg-secondary-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-primary-700 dark:bg-primary-800 dark:text-secondary-200"
+                      aria-label={`Move ${label} down`}
+                      title="Move down"
+                    >
+                      <Icon name="ChevronDown" size={14} />
+                    </button>
+                  </div>
                 )}
               </div>
             </div>
@@ -240,7 +282,7 @@ const VisualAssets = ({ formData, setFormData }) => {
 
       <div className="space-y-6">
         <DropZone zone="heroImages" title="Hero Images" description="Main project showcase images" accept="image/*" maxFiles={3} formData={formData} setFormData={setFormData} />
-        <DropZone zone="screenshots" title="Screenshots" description="Application screenshots showing key features" accept="image/*" maxFiles={8} formData={formData} setFormData={setFormData} allowLayout />
+        <DropZone zone="screenshots" title="Screenshots" description="Application screenshots showing key features" accept="image/*" maxFiles={MAX_SCREENSHOTS} formData={formData} setFormData={setFormData} allowLayout />
         <p className="text-xs text-secondary-500 dark:text-secondary-400 -mt-3">
           Auto reads the image shape. A tall desktop capture scrolls inside a browser frame, and a portrait shot sits in a phone frame. Pick a display to override that.
         </p>

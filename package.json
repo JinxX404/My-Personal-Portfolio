@@ -20,6 +20,7 @@
   "scripts": {
     "start": "vite",
     "build": "vite build",
+    "test": "node --test src/lib/screenshotLayout.test.mjs src/lib/validation.screenshots.test.mjs",
     "serve": "vite preview",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",

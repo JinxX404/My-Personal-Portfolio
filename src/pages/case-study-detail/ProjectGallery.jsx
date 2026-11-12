@@ -4,8 +4,9 @@ import Icon from 'components/AppIcon';
 import { useReducedMotion } from 'hooks/useReducedMotion';
 import {
   arrangeBento,
-  classifyScreenshot,
   explicitLayout,
+  resolveScreenshotKind,
+  splitGallery,
 } from 'lib/screenshotLayout.mjs';
 import BrowserScrollFrame from './BrowserScrollFrame';
 
@@ -161,23 +162,20 @@ const ProjectGallery = ({ images, projectTitle = 'Project' }) => {
 
   const decorated = images.map((image, sourceIndex) => {
     const measured = metrics[image.id];
-    const kind = measured?.failed
-      ? 'tile'
-      : classifyScreenshot({
-          width: measured?.width || image.width,
-          height: measured?.height || image.height,
-          layout: image.layout,
-        });
+    let kind = resolveScreenshotKind(image, measured);
+    if (kind === 'unknown' && gaveUpWaiting) kind = 'tile';
     return {
       ...image,
       index: sourceIndex,
-      kind: kind === 'unknown' && gaveUpWaiting ? 'tile' : kind,
+      kind,
     };
   });
 
-  const ready = decorated.every((image) => image.kind !== 'unknown');
-  const scrollShots = decorated.filter((image) => image.kind === 'scroll');
-  const bento = ready ? arrangeBento(decorated.filter((image) => image.kind !== 'scroll')) : [];
+  // Full-page frames stay above the bento even when later shots are still
+  // measuring, and even when a full-page shot was stored in the middle.
+  const { fullPage, rest } = splitGallery(decorated);
+  const pending = rest.some((image) => image.kind === 'unknown');
+  const bento = pending ? [] : arrangeBento(rest);
 
   const safeIndex = count ? ((index % count) + count) % count : 0;
   const current = images[safeIndex];
@@ -370,27 +368,26 @@ const ProjectGallery = ({ images, projectTitle = 'Project' }) => {
         </h2>
 
         <div className="space-y-4 rounded-2xl bg-[#0c1222] p-3 shadow-inner ring-1 ring-white/10 sm:p-4">
-          {ready &&
-            scrollShots.map((image) => (
-              <BrowserScrollFrame
-                key={image.id}
-                src={image.src}
-                title={image.title}
-                projectName={projectTitle}
-                paused={open}
-                onOpen={(event) => openAt(image.index, event)}
-              />
-            ))}
+          {fullPage.map((image) => (
+            <BrowserScrollFrame
+              key={image.id}
+              src={image.src}
+              title={image.title}
+              projectName={projectTitle}
+              paused={open}
+              onOpen={(event) => openAt(image.index, event)}
+            />
+          ))}
 
-          {!ready && (
+          {pending && (
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4" aria-hidden="true">
-              {images.map((image) => (
+              {rest.map((image) => (
                 <div key={image.id} className="aspect-video animate-pulse rounded-2xl bg-white/10" />
               ))}
             </div>
           )}
 
-          {ready && bento.length > 0 && (
+          {!pending && bento.length > 0 && (
             <div className="grid grid-cols-2 auto-rows-[132px] gap-3 sm:auto-rows-[148px] md:grid-cols-4 md:auto-rows-[156px] md:gap-4">
               {bento.map((image) =>
                 image.span === 'phone' ? (

@@ -20,12 +20,34 @@ export const SCROLL_SPEED = {
   mobile: 52,
 };
 
+// Per-project cap. The editor and the save validation both use this.
+// supabase/migrations/007_limit_project_screenshots.sql checks the same
+// number. Older rows are still read in full.
+export const MAX_SCREENSHOTS = 15;
+
+export function screenshotLimitMessage() {
+  return `A project can include at most ${MAX_SCREENSHOTS} screenshots.`;
+}
+
+/**
+ * True when this value can be stored. Non-arrays (null, or a legacy shape)
+ * are not a list that can exceed the cap, so they stay valid.
+ */
+export function screenshotsWithinLimit(screenshots) {
+  if (!Array.isArray(screenshots)) return true;
+  return screenshots.length <= MAX_SCREENSHOTS;
+}
+
 const LAYOUT_ALIASES = {
   scroll: 'scroll',
   long: 'scroll',
   full: 'scroll',
   fullpage: 'scroll',
   'full-page': 'scroll',
+  'full page': 'scroll',
+  'fullpage scroll': 'scroll',
+  'full-page scroll': 'scroll',
+  'full page scroll': 'scroll',
   browser: 'scroll',
   phone: 'phone',
   mobile: 'phone',
@@ -70,6 +92,39 @@ export function classifyScreenshot({ width, height, layout } = {}) {
   if (tall && w >= LONG_PAGE_MIN_WIDTH && ratio >= EXTREME_PAGE_RATIO) return 'scroll';
   if (tall || (portrait && w <= PHONE_MAX_WIDTH)) return 'phone';
   return 'tile';
+}
+
+/**
+ * Kind for one stored screenshot. An explicit full-page layout wins even
+ * when the file failed to load or its pixels say otherwise. `measurement`
+ * is `{ width, height }` from the loaded image, or `{ failed: true }`.
+ */
+export function resolveScreenshotKind(item, measurement) {
+  const layout = explicitLayout(item);
+  if (measurement?.failed && !layout) return 'tile';
+
+  const width = measurement?.width ?? item?.width;
+  const height = measurement?.height ?? item?.height;
+  return classifyScreenshot({ width, height, layout });
+}
+
+/**
+ * Full-page shots (explicit or measured) come first, in their stored
+ * relative order. Everything else keeps stored order for the bento.
+ * A precomputed `kind` is trusted so "unknown" stays put while images load.
+ */
+export function splitGallery(items) {
+  const fullPage = [];
+  const rest = [];
+  if (!Array.isArray(items)) return { fullPage, rest };
+
+  for (const item of items) {
+    const kind = typeof item?.kind === 'string' ? item.kind : resolveScreenshotKind(item);
+    if (kind === 'scroll') fullPage.push(item);
+    else rest.push(item);
+  }
+
+  return { fullPage, rest };
 }
 
 /** Duration grows with the distance the image has to travel. */
