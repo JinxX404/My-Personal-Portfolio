@@ -9,6 +9,10 @@ import {
   projectUpdateSchema,
   validate,
 } from "../lib/validation";
+import {
+  screenshotLimitMessage,
+  screenshotsWithinLimit,
+} from "../lib/screenshotLayout.mjs";
 
 /**
  * Projects Service - Handles all database operations for projects
@@ -124,6 +128,11 @@ export const createProject = async (projectData) => {
     return { success: false, error: "Supabase not configured" };
   }
 
+  if (!screenshotsWithinLimit(projectData?.screenshots)) {
+    const message = screenshotLimitMessage();
+    return { success: false, error: message, errors: { screenshots: message } };
+  }
+
   // Validate input
   const validation = validate(projectCreateSchema, projectData);
   if (!validation.success) {
@@ -152,6 +161,11 @@ export const createProject = async (projectData) => {
 export const updateProject = async (projectId, updates) => {
   if (!isSupabaseConfigured()) {
     return { success: false, error: "Supabase not configured" };
+  }
+
+  if (!screenshotsWithinLimit(updates?.screenshots)) {
+    const message = screenshotLimitMessage();
+    return { success: false, error: message, errors: { screenshots: message } };
   }
 
   // Validate input

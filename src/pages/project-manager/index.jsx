@@ -5,7 +5,7 @@ import Icon from 'components/AppIcon';
 import { useProjects } from 'context/ProjectsContext';
 import { useToast } from 'context/ToastContext';
 import { uploadImage } from 'services/storageService';
-import { toStoredScreenshot } from 'lib/screenshotLayout.mjs';
+import { screenshotLimitMessage, screenshotsWithinLimit, toStoredScreenshot } from 'lib/screenshotLayout.mjs';
 
 // Import components
 import BasicInformation from './components/BasicInformation';
@@ -164,6 +164,10 @@ const ProjectManager = () => {
   // Validation function - MINIMAL REQUIREMENTS ONLY
   const validateForm = () => {
     const errors = {};
+
+    if (!screenshotsWithinLimit(formData.screenshots)) {
+      errors.screenshots = screenshotLimitMessage();
+    }
     
     // Only require the absolute essentials
     if (!formData.title?.trim()) errors.title = 'Project title is required';
@@ -184,6 +188,14 @@ const ProjectManager = () => {
     setIsSaving(true);
     setSaveStatus('');
     
+    if (!screenshotsWithinLimit(formData.screenshots)) {
+      const message = screenshotLimitMessage();
+      setFormErrors({ screenshots: message });
+      setIsSaving(false);
+      setSaveStatus(message);
+      return;
+    }
+
     if (!isDraft && !validateForm()) {
       setIsSaving(false);
       setSaveStatus('Please fix the validation errors before saving.');
