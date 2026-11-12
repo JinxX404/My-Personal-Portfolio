@@ -8,6 +8,7 @@ import { useProjects } from 'context/ProjectsContext';
 import { SkeletonProjectCard } from 'components/ui/Skeleton';
 import { useDebounce } from 'hooks/useDebounce';
 import { safeHref } from 'lib/safeUrl';
+import TiltCard from 'components/TiltCard';
 
 const fallbackImage = '/assets/images/no_image.png';
 
@@ -195,7 +196,8 @@ const PortfolioGallery = () => {
     return filtered;
   }, [activeFilter, debouncedSearch, displayProjects]);
 
-  const ProjectCard = ({ project, index }) => (
+  const ProjectCard = ({ project, index }) => {
+    const card = (
     <div
       className={`group relative flex h-full w-full bg-surface dark:bg-surface rounded-xl shadow-sm border border-border dark:border-border-strong overflow-hidden hover:shadow-lg transition-all duration-300 ${
         viewMode === 'list' ? 'flex-row' : 'flex-col'
@@ -307,7 +309,11 @@ const PortfolioGallery = () => {
         </Link>
       </div>
     </div>
-  );
+    );
+
+    if (viewMode === 'list') return card;
+    return <TiltCard className="h-full">{card}</TiltCard>;
+  };
 
   return (
     <div className="min-h-screen bg-background dark:bg-background pt-20">

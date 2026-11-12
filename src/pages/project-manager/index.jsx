@@ -5,6 +5,7 @@ import Icon from 'components/AppIcon';
 import { useProjects } from 'context/ProjectsContext';
 import { useToast } from 'context/ToastContext';
 import { uploadImage } from 'services/storageService';
+import { toStoredScreenshot } from 'lib/screenshotLayout.mjs';
 
 // Import components
 import BasicInformation from './components/BasicInformation';
@@ -192,22 +193,28 @@ const ProjectManager = () => {
     try {
       // Upload images to Supabase Storage first
       const uploadImages = async (images, folder) => {
-        const urls = [];
+        const stored = [];
         for (const img of images) {
-          // Handle string URLs (existing images)
           if (typeof img === 'string') {
-            urls.push(img);
-          } else if (img.file) {
-            // Upload new file
-            const result = await uploadImage(img.file, editId || 'draft', folder);
-            if (result.success) {
-              urls.push(result.data);
-            }
-          } else if (img.preview) {
-            urls.push(img.preview);
+            const item = toStoredScreenshot(img, null);
+            if (item) stored.push(item);
+            continue;
           }
+
+          let url = '';
+          if (img?.file) {
+            const result = await uploadImage(img.file, editId || 'draft', folder);
+            if (result.success) url = result.data;
+          } else if (typeof img?.url === 'string') {
+            url = img.url;
+          } else if (typeof img?.preview === 'string' && !img.preview.startsWith('blob:')) {
+            url = img.preview;
+          }
+
+          const item = toStoredScreenshot(url, img);
+          if (item) stored.push(item);
         }
-        return urls;
+        return stored;
       };
 
       const [heroImages, screenshots, mockups] = await Promise.all([

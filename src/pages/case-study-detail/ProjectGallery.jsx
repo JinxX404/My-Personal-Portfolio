@@ -1,6 +1,13 @@
 import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Icon from 'components/AppIcon';
+import { useReducedMotion } from 'hooks/useReducedMotion';
+import {
+  arrangeBento,
+  classifyScreenshot,
+  explicitLayout,
+} from 'lib/screenshotLayout.mjs';
+import BrowserScrollFrame from './BrowserScrollFrame';
 
 const FOCUSABLE =
   'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -8,32 +15,170 @@ const FOCUSABLE =
 const controlClass =
   'inline-flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-black/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black';
 
+const SPAN_CLASS = {
+  hero: 'col-span-2 row-span-2 md:col-span-4',
+  large: 'col-span-2 row-span-2',
+  wide: 'col-span-2 row-span-1',
+  small: 'col-span-1 row-span-1',
+  phone: 'col-span-1 row-span-2',
+};
+
 export function normalizeGalleryImages(screenshots) {
   if (!Array.isArray(screenshots)) return [];
 
   return screenshots
     .map((item, index) => {
       const src = typeof item === 'string' ? item : item?.url || item?.image;
-      if (!src) return null;
+      if (!src || typeof src !== 'string') return null;
       const title =
         typeof item === 'string'
           ? `Screenshot ${index + 1}`
           : item?.caption || item?.title || `Screenshot ${index + 1}`;
-      return { src, title, id: `${index}-${src}` };
+      const width = Number(item?.width);
+      const height = Number(item?.height);
+      return {
+        src,
+        title,
+        id: `${index}-${src}`,
+        layout: explicitLayout(item),
+        width: Number.isFinite(width) && width > 0 ? width : null,
+        height: Number.isFinite(height) && height > 0 ? height : null,
+      };
     })
     .filter(Boolean);
 }
 
-const ProjectGallery = ({ images }) => {
+function useImageMetrics(images) {
+  const [metrics, setMetrics] = useState({});
+
+  useEffect(() => {
+    let cancelled = false;
+    images.forEach((image) => {
+      if (image.width && image.height) {
+        setMetrics((current) =>
+          current[image.id]
+            ? current
+            : { ...current, [image.id]: { width: image.width, height: image.height } }
+        );
+        return;
+      }
+      const probe = new Image();
+      probe.onload = () => {
+        if (cancelled) return;
+        setMetrics((current) => ({
+          ...current,
+          [image.id]: { width: probe.naturalWidth, height: probe.naturalHeight },
+        }));
+      };
+      probe.onerror = () => {
+        if (cancelled) return;
+        setMetrics((current) => ({
+          ...current,
+          [image.id]: { failed: true },
+        }));
+      };
+      probe.src = image.src;
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [images]);
+
+  return metrics;
+}
+
+function PhoneTile({ image, onOpen }) {
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      aria-label={`Open ${image.title} full screen`}
+      className={`${SPAN_CLASS.phone} group relative flex items-center justify-center rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-300`}
+    >
+      <span className="relative flex h-[92%] max-h-[440px] w-auto items-center justify-center">
+        <span className="relative block h-full aspect-[9/19.5] rounded-[1.65rem] bg-[#070b14] p-[7px] shadow-[0_16px_40px_rgba(0,0,0,0.45)] ring-1 ring-white/15 transition-transform duration-300 motion-safe:group-hover:-translate-y-1">
+          <span
+            className="absolute left-1/2 top-[9px] z-10 h-3.5 w-12 -translate-x-1/2 rounded-full bg-black"
+            aria-hidden="true"
+          />
+          <img
+            src={image.src}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full rounded-[1.25rem] object-cover object-top"
+          />
+        </span>
+      </span>
+    </button>
+  );
+}
+
+function Tile({ image, span, onOpen, reduced }) {
+  const showEntireShot = span === 'large' || span === 'hero';
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      aria-label={`Open ${image.title} full screen`}
+      className={`${SPAN_CLASS[span] || SPAN_CLASS.small} group relative overflow-hidden rounded-2xl bg-[#f6f3ee] shadow-[0_10px_30px_rgba(8,12,24,0.18)] ring-1 ring-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-300`}
+    >
+      <img
+        src={image.src}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        className={`absolute inset-0 h-full w-full ${
+          showEntireShot ? 'object-contain' : 'object-cover object-top'
+        } ${reduced ? '' : 'transition-transform duration-500 ease-out group-hover:scale-[1.035]'}`}
+      />
+      <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <span className="pointer-events-none absolute bottom-3 right-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/55 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+        <Icon name="ZoomIn" size={15} />
+      </span>
+    </button>
+  );
+}
+
+const ProjectGallery = ({ images, projectTitle = 'Project' }) => {
   const count = images.length;
   const [index, setIndex] = useState(0);
   const [open, setOpen] = useState(false);
+  const [gaveUpWaiting, setGaveUpWaiting] = useState(false);
   const galleryRef = useRef(null);
   const dialogRef = useRef(null);
   const triggerRef = useRef(null);
   const touchStart = useRef(null);
-  const swiped = useRef(false);
   const titleId = useId();
+  const reduced = useReducedMotion();
+  const metrics = useImageMetrics(images);
+
+  useEffect(() => {
+    setGaveUpWaiting(false);
+    const timer = setTimeout(() => setGaveUpWaiting(true), 4000);
+    return () => clearTimeout(timer);
+  }, [images]);
+
+  const decorated = images.map((image, sourceIndex) => {
+    const measured = metrics[image.id];
+    const kind = measured?.failed
+      ? 'tile'
+      : classifyScreenshot({
+          width: measured?.width || image.width,
+          height: measured?.height || image.height,
+          layout: image.layout,
+        });
+    return {
+      ...image,
+      index: sourceIndex,
+      kind: kind === 'unknown' && gaveUpWaiting ? 'tile' : kind,
+    };
+  });
+
+  const ready = decorated.every((image) => image.kind !== 'unknown');
+  const scrollShots = decorated.filter((image) => image.kind === 'scroll');
+  const bento = ready ? arrangeBento(decorated.filter((image) => image.kind !== 'scroll')) : [];
+
   const safeIndex = count ? ((index % count) + count) % count : 0;
   const current = images[safeIndex];
 
@@ -47,8 +192,9 @@ const ProjectGallery = ({ images }) => {
 
   const close = useCallback(() => setOpen(false), []);
 
-  const openLightbox = (event) => {
+  const openAt = (imageIndex, event) => {
     triggerRef.current = event.currentTarget;
+    setIndex(imageIndex);
     setOpen(true);
   };
 
@@ -66,12 +212,9 @@ const ProjectGallery = ({ images }) => {
   }, [open]);
 
   useEffect(() => {
+    if (!open) return undefined;
     const onKey = (event) => {
-      const gallery = galleryRef.current;
       const dialog = dialogRef.current;
-      const inGallery = Boolean(gallery && gallery.contains(document.activeElement));
-      if (!open && !inGallery) return;
-
       if (event.key === 'ArrowLeft') {
         event.preventDefault();
         go(-1);
@@ -82,8 +225,6 @@ const ProjectGallery = ({ images }) => {
         go(1);
         return;
       }
-      if (!open) return;
-
       if (event.key === 'Escape') {
         event.preventDefault();
         close();
@@ -132,73 +273,14 @@ const ProjectGallery = ({ images }) => {
     const dy = touch.clientY - touchStart.current.y;
     touchStart.current = null;
     if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
-    swiped.current = true;
     go(dx < 0 ? 1 : -1);
   };
 
-  const openFromTap = (event) => {
-    if (swiped.current) {
-      swiped.current = false;
-      return;
-    }
-    openLightbox(event);
-  };
-
-  if (!current) return null;
+  if (!count) return null;
 
   const counter = `${safeIndex + 1} / ${count}`;
 
-  const renderArrows = () =>
-    count > 1 ? (
-      <>
-        <button
-          type="button"
-          className={`${controlClass} absolute left-3 top-1/2 z-10 -translate-y-1/2`}
-          onClick={() => go(-1)}
-          data-no-swipe=""
-          aria-label="Previous image"
-        >
-          <Icon name="ChevronLeft" size={22} />
-        </button>
-        <button
-          type="button"
-          className={`${controlClass} absolute right-3 top-1/2 z-10 -translate-y-1/2`}
-          onClick={() => go(1)}
-          data-no-swipe=""
-          aria-label="Next image"
-        >
-          <Icon name="ChevronRight" size={22} />
-        </button>
-      </>
-    ) : null;
-
-  const renderThumbnails = (onDark) => (
-    <div className="flex gap-2 overflow-x-auto py-1" role="list">
-      {images.map((image, imageIndex) => {
-        const selected = imageIndex === safeIndex;
-        return (
-          <button
-            key={image.id}
-            type="button"
-            role="listitem"
-            data-no-swipe=""
-            aria-label={`Show image ${imageIndex + 1} of ${count}: ${image.title}`}
-            aria-current={selected ? 'true' : undefined}
-            onClick={() => setIndex(imageIndex)}
-            className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-md border-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
-              onDark
-                ? 'focus-visible:ring-white focus-visible:ring-offset-black'
-                : 'focus-visible:ring-accent-400 focus-visible:ring-offset-background'
-            } ${selected ? 'border-accent opacity-100' : 'border-transparent opacity-80 hover:opacity-100'}`}
-          >
-            <img src={image.src} alt="" className="h-full w-full object-cover" />
-          </button>
-        );
-      })}
-    </div>
-  );
-
-  const lightbox = open
+  const lightbox = open && current
     ? createPortal(
         <div
           ref={dialogRef}
@@ -206,7 +288,7 @@ const ProjectGallery = ({ images }) => {
           aria-modal="true"
           aria-labelledby={titleId}
           tabIndex={-1}
-          className="fixed inset-0 z-[80] flex flex-col bg-black/95 text-white outline-none"
+          className="fixed inset-0 z-[80] flex flex-col bg-black text-white outline-none"
         >
           <div className="flex items-center gap-3 px-4 py-3">
             <p id={titleId} className="min-w-0 flex-1 truncate text-sm font-medium">
@@ -228,12 +310,53 @@ const ProjectGallery = ({ images }) => {
             <img
               src={current.src}
               alt={current.title}
-              className="absolute inset-0 h-full w-full object-contain px-14 py-3"
+              className="absolute inset-0 h-full w-full object-contain px-4 py-3 sm:px-14"
             />
-            {renderArrows()}
+            {count > 1 && (
+              <>
+                <button
+                  type="button"
+                  className={`${controlClass} absolute left-3 top-1/2 z-10 -translate-y-1/2`}
+                  onClick={() => go(-1)}
+                  data-no-swipe=""
+                  aria-label="Previous image"
+                >
+                  <Icon name="ChevronLeft" size={22} />
+                </button>
+                <button
+                  type="button"
+                  className={`${controlClass} absolute right-3 top-1/2 z-10 -translate-y-1/2`}
+                  onClick={() => go(1)}
+                  data-no-swipe=""
+                  aria-label="Next image"
+                >
+                  <Icon name="ChevronRight" size={22} />
+                </button>
+              </>
+            )}
           </div>
 
-          <div className="px-4 pb-4">{renderThumbnails(true)}</div>
+          <div className="flex gap-2 overflow-x-auto px-4 py-3" role="list">
+            {images.map((image, imageIndex) => {
+              const selected = imageIndex === safeIndex;
+              return (
+                <button
+                  key={image.id}
+                  type="button"
+                  role="listitem"
+                  data-no-swipe=""
+                  aria-label={`Show image ${imageIndex + 1} of ${count}: ${image.title}`}
+                  aria-current={selected ? 'true' : undefined}
+                  onClick={() => setIndex(imageIndex)}
+                  className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-md border-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
+                    selected ? 'border-accent opacity-100' : 'border-transparent opacity-80 hover:opacity-100'
+                  }`}
+                >
+                  <img src={image.src} alt="" className="h-full w-full object-cover" loading="lazy" decoding="async" />
+                </button>
+              );
+            })}
+          </div>
         </div>,
         document.body
       )
@@ -246,33 +369,49 @@ const ProjectGallery = ({ images }) => {
           Gallery
         </h2>
 
-        <div
-          className="relative flex items-center justify-center overflow-hidden rounded-xl bg-primary-900 touch-pan-y"
-          onTouchStart={onTouchStart}
-          onTouchEnd={onTouchEnd}
-        >
-          <img
-            src={current.src}
-            alt=""
-            style={{ maxHeight: 'min(70vh, 720px)' }}
-            className="block h-auto w-auto max-w-full object-contain"
-          />
-          <button
-            type="button"
-            className="absolute inset-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white"
-            onClick={openFromTap}
-            aria-label={`Open ${current.title} full screen`}
-          />
-          {renderArrows()}
-        </div>
+        <div className="space-y-4 rounded-2xl bg-[#0c1222] p-3 shadow-inner ring-1 ring-white/10 sm:p-4">
+          {ready &&
+            scrollShots.map((image) => (
+              <BrowserScrollFrame
+                key={image.id}
+                src={image.src}
+                title={image.title}
+                projectName={projectTitle}
+                paused={open}
+                onOpen={(event) => openAt(image.index, event)}
+              />
+            ))}
 
-        <div className="mt-3 flex items-center justify-between gap-3">
-          <p className="text-sm font-medium text-text-secondary dark:text-white/70">{current.title}</p>
-          <p className="shrink-0 text-sm font-semibold tabular-nums text-text-primary dark:text-white" aria-live="polite" aria-atomic="true">
-            {counter}
-          </p>
+          {!ready && (
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4" aria-hidden="true">
+              {images.map((image) => (
+                <div key={image.id} className="aspect-video animate-pulse rounded-2xl bg-white/10" />
+              ))}
+            </div>
+          )}
+
+          {ready && bento.length > 0 && (
+            <div className="grid grid-cols-2 auto-rows-[132px] gap-3 sm:auto-rows-[148px] md:grid-cols-4 md:auto-rows-[156px] md:gap-4">
+              {bento.map((image) =>
+                image.span === 'phone' ? (
+                  <PhoneTile
+                    key={image.id}
+                    image={image}
+                    onOpen={(event) => openAt(image.index, event)}
+                  />
+                ) : (
+                  <Tile
+                    key={image.id}
+                    image={image}
+                    span={image.span}
+                    reduced={reduced}
+                    onOpen={(event) => openAt(image.index, event)}
+                  />
+                )
+              )}
+            </div>
+          )}
         </div>
-        <div className="mt-4">{renderThumbnails(false)}</div>
       </div>
       {lightbox}
     </section>

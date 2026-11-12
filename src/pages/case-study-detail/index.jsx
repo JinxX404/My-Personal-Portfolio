@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import Icon from "components/AppIcon";
 import Image from "components/AppImage";
@@ -187,7 +187,10 @@ const CaseStudyDetail = () => {
     }
   };
 
-  const galleryImages = normalizeGalleryImages(caseStudy?.screenshots);
+  const galleryImages = useMemo(
+    () => normalizeGalleryImages(caseStudy?.screenshots),
+    [caseStudy]
+  );
 
   // Loading state
   if (isLoading) {
@@ -446,7 +449,9 @@ const CaseStudyDetail = () => {
 
           {/* Main Content */}
           <div className="lg:col-span-3 space-y-8">
-            {galleryImages.length > 0 && <ProjectGallery images={galleryImages} />}
+            {galleryImages.length > 0 && (
+              <ProjectGallery images={galleryImages} projectTitle={caseStudy.title} />
+            )}
 
             {/* Dynamic Content Sections */}
             {caseStudy.content_sections && caseStudy.content_sections.length > 0 && (
