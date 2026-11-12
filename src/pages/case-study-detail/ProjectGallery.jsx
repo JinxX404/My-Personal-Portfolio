@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useId, useLayoutEffect, useRef, useState
 import { createPortal } from 'react-dom';
 import Icon from 'components/AppIcon';
 import { useReducedMotion } from 'hooks/useReducedMotion';
+import manifest from 'data/screenshot-slices.json';
 import { preloadImages } from 'lib/preloadImage.mjs';
 import {
   arrangeBento,
@@ -10,6 +11,7 @@ import {
   scrollFrameUrl,
   splitGallery,
 } from 'lib/screenshotLayout.mjs';
+import { FRAME_SIZES, NARROW_MEDIA, framePartsFor } from 'lib/screenshotSlices.mjs';
 import BrowserScrollFrame from './BrowserScrollFrame';
 
 const FOCUSABLE =
@@ -263,7 +265,19 @@ const ProjectGallery = ({ images, projectTitle = 'Project' }) => {
 
   useLayoutEffect(() => {
     if (!scrollSrcKey) return;
-    preloadImages(scrollSrcKey.split('|'));
+    const entries = scrollSrcKey.split('|').map((src) => {
+      const parts = framePartsFor(src, manifest);
+      const first = parts?.[0];
+      const narrow = typeof window !== 'undefined' && window.matchMedia(NARROW_MEDIA).matches;
+      if (narrow && first?.narrowAvif) return { src: first.narrowAvif, type: 'image/avif' };
+      if (narrow && first?.narrowSrc) return { src: first.narrowSrc };
+      if (first?.avifSrcSet) {
+        return { src: first.avifSrc, srcSet: first.avifSrcSet, sizes: FRAME_SIZES, type: 'image/avif' };
+      }
+      if (first?.src) return { src: first.src, srcSet: first.srcSet, sizes: FRAME_SIZES };
+      return src;
+    });
+    preloadImages(entries);
   }, [scrollSrcKey]);
 
   const safeIndex = count ? ((index % count) + count) % count : 0;
@@ -461,6 +475,7 @@ const ProjectGallery = ({ images, projectTitle = 'Project' }) => {
             <BrowserScrollFrame
               key={image.id}
               src={scrollFrameUrl(image.src)}
+              parts={framePartsFor(scrollFrameUrl(image.src), manifest)}
               title={image.title}
               projectName={projectTitle}
               paused={open}

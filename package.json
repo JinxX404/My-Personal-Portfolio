@@ -20,7 +20,8 @@
   "scripts": {
     "start": "vite",
     "build": "vite build",
-    "test": "node --test src/lib/screenshotLayout.test.mjs src/lib/validation.screenshots.test.mjs",
+    "test": "node --test src/lib/screenshotLayout.test.mjs src/lib/screenshotSlices.test.mjs src/lib/validation.screenshots.test.mjs",
+    "slices:build": "node scripts/build-screenshot-slices.mjs",
     "serve": "vite preview",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
@@ -49,6 +50,7 @@
     "autoprefixer": "10.4.2",
     "playwright": "^1.56.0",
     "postcss": "^8.5.32",
+    "sharp": "^0.35.5",
     "tailwindcss": "3.4.6",
     "vite": "^5.4.21",
     "vite-tsconfig-paths": "3.6.0"
