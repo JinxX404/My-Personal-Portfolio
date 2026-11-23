@@ -21,7 +21,8 @@ const FormField = ({
     w-full px-4 py-3 border rounded-lg
     focus:ring-2 focus:ring-accent focus:border-transparent
     transition-colors
-    ${error ? 'border-error-500' : 'border-primary-200'}
+    dark:bg-surface-elevated dark:text-text-primary
+    ${error ? 'border-error-500 dark:border-error-500' : 'border-primary-200 dark:border-border'}
     ${icon ? 'pl-10' : ''}
     ${className}
   `;
@@ -29,7 +30,7 @@ const FormField = ({
   return (
     <div className="mb-4">
       {label && (
-        <label className="block text-sm font-semibold text-primary-700 dark:text-primary-300 mb-2">
+        <label className="block text-sm font-semibold text-primary-700 dark:text-text-secondary mb-2">
           {label}
           {required && <span className="text-error-500 ml-1">*</span>}
         </label>
@@ -37,7 +38,7 @@ const FormField = ({
 
       <div className="relative">
         {icon && (
-          <Icon name={icon} size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary-400" />
+          <Icon name={icon} size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary-400 dark:text-muted" />
         )}
         {multiline ? (
           <textarea
@@ -70,7 +71,7 @@ const FormField = ({
       )}
 
       {helpText && !error && (
-        <p className="mt-1 text-xs text-secondary-500">{helpText}</p>
+        <p className="mt-1 text-xs text-secondary-500 dark:text-muted">{helpText}</p>
       )}
     </div>
   );

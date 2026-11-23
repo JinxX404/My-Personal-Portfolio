@@ -101,7 +101,7 @@ const AboutStory = () => {
                 <div className="absolute -bottom-4 -right-4 bg-surface dark:bg-background rounded-xl p-4 shadow-lg border border-primary-200 dark:border-border-strong">
                   <div className="flex items-center space-x-2">
                     <div className="w-3 h-3 bg-success rounded-full animate-pulse"></div>
-                    <span className="text-sm font-medium text-primary-700">
+                    <span className="text-sm font-medium text-primary-700 dark:text-text-primary">
                       Available for projects
                     </span>
                   </div>
@@ -112,13 +112,13 @@ const AboutStory = () => {
             {/* Personal Introduction */}
             <motion.div variants={itemVariants} className="space-y-6">
               <div>
-                <h1 className="text-4xl lg:text-5xl font-bold text-primary-800 mb-2">
+                <h1 className="text-4xl lg:text-5xl font-bold text-primary-800 mb-2 dark:text-text-primary">
                   {profile?.full_name || "Moataz Mohammed"}
                 </h1>
-                <p className="text-xl text-cta font-semibold mb-4">
+                <p className="text-xl text-cta font-semibold mb-4 dark:text-accent-text">
                   {profile?.title || "Developer"}
                 </p>
-                <div className="flex flex-wrap gap-4 text-sm text-secondary-600 mb-6">
+                <div className="flex flex-wrap gap-4 text-sm text-secondary-600 mb-6 dark:text-text-secondary">
                   <div className="flex items-center space-x-2">
                     <Icon name="MapPin" size={16} />
                     <span>{profile?.location || "Assiut, Egypt"}</span>
@@ -132,7 +132,7 @@ const AboutStory = () => {
                 </div>
               </div>
 
-              <div className="prose prose-lg max-w-none text-secondary-700">
+              <div className="prose prose-lg max-w-none text-secondary-700 dark:text-text-secondary">
                 <p className="mb-4">{profile?.bio || ""}</p>
               </div>
 
@@ -169,10 +169,10 @@ const AboutStory = () => {
             className="space-y-12"
           >
             <motion.div variants={itemVariants} className="text-center">
-              <h2 className="text-3xl lg:text-4xl font-bold text-primary-800 mb-4">
+              <h2 className="text-3xl lg:text-4xl font-bold text-primary-800 mb-4 dark:text-text-primary">
                 Professional Journey
               </h2>
-              <p className="text-lg text-secondary-600 max-w-2xl mx-auto">
+              <p className="text-lg text-secondary-600 max-w-2xl mx-auto dark:text-text-secondary">
                 Key milestones, achievements, and growth moments that shaped my
                 career path.
               </p>
@@ -231,10 +231,10 @@ const AboutStory = () => {
                     <div className="flex-1 bg-surface dark:bg-background rounded-xl p-6 shadow-sm border border-primary-200 dark:border-border-strong">
                       <div className="flex items-start justify-between mb-2">
                         <div>
-                          <h3 className="text-xl font-bold text-primary-800 mb-1">
+                          <h3 className="text-xl font-bold text-primary-800 mb-1 dark:text-text-primary">
                             {item.title}
                           </h3>
-                          <p className="text-cta font-semibold">
+                          <p className="text-cta font-semibold dark:text-accent-text">
                             {item.company}
                           </p>
                         </div>
@@ -245,13 +245,13 @@ const AboutStory = () => {
                               : "ChevronDown"
                           }
                           size={20}
-                          className="text-secondary-400"
+                          className="text-secondary-400 dark:text-muted"
                         />
                       </div>
 
                       {activeTimelineItem === (item.id || index) && (
                         <>
-                          <p className="text-secondary-600 mb-4">
+                          <p className="text-secondary-600 mb-4 dark:text-text-secondary">
                             {item.description}
                           </p>
                           <motion.div
@@ -264,14 +264,14 @@ const AboutStory = () => {
                             {item.achievements &&
                               item.achievements.length > 0 && (
                               <div>
-                                <h4 className="font-semibold text-primary-800 mb-2">
+                                <h4 className="font-semibold text-primary-800 mb-2 dark:text-text-primary">
                                   Key Achievements:
                                 </h4>
                                 <ul className="space-y-1">
                                   {item.achievements.map((achievement, idx) => (
                                     <li
                                       key={idx}
-                                      className="flex items-center space-x-2 text-secondary-600"
+                                      className="flex items-center space-x-2 text-secondary-600 dark:text-text-secondary"
                                     >
                                       <Icon
                                         name="CheckCircle"
@@ -287,7 +287,7 @@ const AboutStory = () => {
                           {item.technologies &&
                             item.technologies.length > 0 && (
                               <div>
-                                <h4 className="font-semibold text-primary-800 mb-2">
+                                <h4 className="font-semibold text-primary-800 mb-2 dark:text-text-primary">
                                   Technologies:
                                 </h4>
                                 <div className="flex flex-wrap gap-2">
@@ -315,7 +315,7 @@ const AboutStory = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-primary-800 to-accent-800 dark:from-primary-900 ">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-banner-from to-banner-to">
         <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial="hidden"

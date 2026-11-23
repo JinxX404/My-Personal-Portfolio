@@ -37,14 +37,14 @@
   --color-secondary-600: 75 85 99;
   --color-secondary-800: 31 41 55;
 
-  --color-accent: 99 102 241;
-  --color-accent-hover: 79 70 229;
+  --color-accent: 79 70 229;
+  --color-accent-hover: 67 56 202;
   --color-accent-50: 238 242 255;
   --color-accent-100: 224 231 255;
   --color-accent-200: 199 210 254;
   --color-accent-300: 165 180 252;
   --color-accent-400: 129 140 248;
-  --color-accent-500: 99 102 241;
+  --color-accent-500: 79 70 229;
   --color-accent-600: 79 70 229;
   --color-accent-700: 67 56 202;
   --color-accent-800: 55 48 163;
@@ -74,14 +74,28 @@
   --color-error-700: 185 28 28;
   --color-error-800: 153 27 27;
 
-  --color-cta: 99 102 241;
+  --color-cta: 79 70 229;
   --color-cta-50: 238 242 255;
   --color-cta-100: 224 231 255;
   --color-cta-200: 199 210 254;
   --color-cta-400: 165 180 252;
-  --color-cta-600: 79 70 229;
+  --color-cta-600: 67 56 202;
   --color-cta-700: 67 56 202;
   --color-cta-800: 55 48 163;
+
+  --color-surface-elevated: 255 255 255;
+  --color-accent-fill: 79 70 229;
+  --color-accent-fill-hover: 67 56 202;
+  --color-accent-text: 79 70 229;
+  --color-accent-subtle: 238 242 255;
+  --color-success-fill: 56 161 105;
+  --color-success-text: 47 133 90;
+  --color-banner-from: 30 41 59;
+  --color-banner-to: 55 48 163;
+  --color-success-900: 6 78 59;
+  --color-warning-900: 69 26 3;
+  --color-error-900: 69 10 10;
+  --color-cta-900: 49 46 129;
 
   --shadow-color: 0 0 0;
   --shadow-sm: 0 1px 2px 0 rgba(var(--shadow-color) / 0.05);
@@ -95,88 +109,104 @@
 .dark {
   color-scheme: dark;
 
-  --color-background: 15 20 35;
-  --color-surface: 25 32 50;
-  --color-overlay: 5 10 20;
-  --color-border: 45 60 90;
-  --color-border-strong: 65 85 120;
+  --color-background: 11 16 32;
+  --color-surface: 21 27 43;
+  --color-surface-elevated: 28 36 56;
+  --color-overlay: 5 8 16;
+  --color-border: 42 53 80;
+  --color-border-strong: 61 77 107;
 
-  --color-text-primary: 235 240 250;
-  --color-text-secondary: 175 190 215;
-  --color-muted: 125 140 165;
+  --color-text-primary: 241 245 249;
+  --color-text-secondary: 203 213 225;
+  --color-muted: 148 163 184;
 
-  --color-primary: 135 155 185;
-  --color-primary-50: 20 28 50;
-  --color-primary-100: 30 40 65;
-  --color-primary-200: 45 60 90;
-  --color-primary-300: 75 95 135;
-  --color-primary-400: 105 125 160;
-  --color-primary-500: 135 155 185;
-  --color-primary-600: 160 175 205;
-  --color-primary-700: 185 200 220;
-  --color-primary-800: 210 220 235;
-  --color-primary-900: 235 240 250;
+  /* Numeric scales keep 50 = lightest and 900 = darkest (not inverted). */
+  --color-primary: 203 213 225;
+  --color-primary-50: 241 245 249;
+  --color-primary-100: 226 232 240;
+  --color-primary-200: 203 213 225;
+  --color-primary-300: 148 163 184;
+  --color-primary-400: 100 116 139;
+  --color-primary-500: 71 85 105;
+  --color-primary-600: 51 65 85;
+  --color-primary-700: 30 41 59;
+  --color-primary-800: 15 23 42;
+  --color-primary-900: 2 6 23;
 
-  --color-secondary: 165 180 205;
-  --color-secondary-50: 20 28 50;
-  --color-secondary-100: 30 40 65;
-  --color-secondary-200: 45 60 90;
-  --color-secondary-300: 75 95 135;
-  --color-secondary-400: 115 135 165;
-  --color-secondary-500: 165 180 205;
-  --color-secondary-600: 185 200 220;
-  --color-secondary-700: 200 215 230;
-  --color-secondary-800: 225 235 248;
+  --color-secondary: 203 213 225;
+  --color-secondary-50: 248 250 252;
+  --color-secondary-100: 241 245 249;
+  --color-secondary-200: 226 232 240;
+  --color-secondary-300: 203 213 225;
+  --color-secondary-400: 148 163 184;
+  --color-secondary-500: 100 116 139;
+  --color-secondary-600: 71 85 105;
+  --color-secondary-700: 51 65 85;
+  --color-secondary-800: 30 41 59;
 
-  --color-accent: 135 145 255;
-  --color-accent-hover: 160 170 255;
-  --color-accent-50: 22 28 55;
-  --color-accent-100: 32 40 75;
-  --color-accent-200: 48 58 105;
-  --color-accent-300: 72 85 155;
-  --color-accent-400: 108 120 225;
-  --color-accent-500: 135 145 255;
-  --color-accent-600: 160 170 255;
-  --color-accent-700: 185 195 255;
-  --color-accent-800: 205 215 255;
-  --color-accent-900: 225 230 255;
+  --color-accent: 79 70 229;
+  --color-accent-hover: 67 56 202;
+  --color-accent-50: 238 242 255;
+  --color-accent-100: 224 231 255;
+  --color-accent-200: 199 210 254;
+  --color-accent-300: 165 180 252;
+  --color-accent-400: 129 140 248;
+  --color-accent-500: 79 70 229;
+  --color-accent-600: 67 56 202;
+  --color-accent-700: 55 48 163;
+  --color-accent-800: 49 46 129;
+  --color-accent-900: 30 27 75;
 
   --color-success: 52 211 153;
-  --color-success-50: 8 35 28;
-  --color-success-100: 12 55 45;
-  --color-success-200: 18 80 65;
-  --color-success-500: 52 211 153;
-  --color-success-600: 72 225 175;
-  --color-success-700: 100 240 195;
-  --color-success-800: 125 245 205;
+  --color-success-50: 236 253 245;
+  --color-success-100: 209 250 229;
+  --color-success-200: 167 243 208;
+  --color-success-500: 16 185 129;
+  --color-success-600: 5 150 105;
+  --color-success-700: 4 120 87;
+  --color-success-800: 6 95 70;
+  --color-success-900: 6 78 59;
 
   --color-warning: 251 191 36;
-  --color-warning-50: 42 28 5;
-  --color-warning-100: 62 42 8;
-  --color-warning-200: 85 55 10;
-  --color-warning-500: 251 191 36;
-  --color-warning-600: 252 210 80;
-  --color-warning-700: 252 225 120;
-  --color-warning-800: 253 235 160;
+  --color-warning-50: 255 251 235;
+  --color-warning-100: 254 243 199;
+  --color-warning-200: 253 230 138;
+  --color-warning-500: 245 158 11;
+  --color-warning-600: 217 119 6;
+  --color-warning-700: 180 83 9;
+  --color-warning-800: 146 64 14;
+  --color-warning-900: 69 26 3;
 
-  --color-error: 252 115 115;
-  --color-error-50: 45 8 8;
-  --color-error-100: 68 12 12;
-  --color-error-200: 95 18 18;
-  --color-error-500: 252 115 115;
-  --color-error-600: 252 145 145;
-  --color-error-700: 252 170 170;
-  --color-error-800: 253 190 190;
+  --color-error: 248 113 113;
+  --color-error-50: 254 242 242;
+  --color-error-100: 254 226 226;
+  --color-error-200: 254 202 202;
+  --color-error-500: 239 68 68;
+  --color-error-600: 220 38 38;
+  --color-error-700: 185 28 28;
+  --color-error-800: 153 27 27;
+  --color-error-900: 69 10 10;
 
-  --color-cta: 135 145 255;
-  --color-cta-50: 22 28 55;
-  --color-cta-100: 32 40 75;
-  --color-cta-200: 48 58 105;
-  --color-cta-400: 108 120 225;
-  --color-cta-500: 135 145 255;
-  --color-cta-600: 160 170 255;
-  --color-cta-700: 185 195 255;
-  --color-cta-800: 205 215 255;
+  --color-cta: 79 70 229;
+  --color-cta-50: 238 242 255;
+  --color-cta-100: 224 231 255;
+  --color-cta-200: 199 210 254;
+  --color-cta-400: 129 140 248;
+  --color-cta-500: 79 70 229;
+  --color-cta-600: 67 56 202;
+  --color-cta-700: 55 48 163;
+  --color-cta-800: 49 46 129;
+  --color-cta-900: 30 27 75;
+
+  --color-surface-elevated: 28 36 56;
+  --color-accent-fill: 79 70 229;
+  --color-accent-fill-hover: 67 56 202;
+  --color-accent-text: 165 180 252;
+  --color-accent-subtle: 30 27 75;
+  --color-success-fill: 5 150 105;
+  --color-success-text: 52 211 153;
+  --color-banner-from: 30 41 59;
+  --color-banner-to: 49 46 129;
 
   --shadow-color: 0 0 0;
   --shadow-sm: 0 1px 2px 0 rgba(var(--shadow-color) / 0.25);
@@ -224,14 +254,28 @@
   }
 
   ::selection {
-    background-color: rgba(var(--color-accent) / 0.18);
+    background-color: rgba(var(--color-accent-fill) / 0.18);
     color: rgb(var(--color-text-primary) / 1);
+  }
+
+  .dark input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not([type="range"]):not([type="color"]),
+  .dark textarea,
+  .dark select {
+    background-color: rgb(var(--color-surface-elevated) / 1);
+    color: rgb(var(--color-text-primary) / 1);
+    border-color: rgb(var(--color-border) / 1);
+  }
+
+  .dark input::placeholder,
+  .dark textarea::placeholder {
+    color: rgb(var(--color-muted) / 1);
+    opacity: 1;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 bg-cta hover:bg-cta-600 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-200 focus-visible:ring-offset-2 focus-visible:ring-offset-background transform hover:-translate-y-0.5;
+    @apply inline-flex items-center justify-center gap-2 bg-accent-fill hover:bg-accent-fill-hover text-white font-semibold py-3 px-6 rounded-xl shadow-md transition-all duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-200 dark:focus-visible:ring-accent-text/40 focus-visible:ring-offset-2 focus-visible:ring-offset-background transform hover:-translate-y-0.5;
   }
 
   .btn-secondary {
@@ -247,7 +291,7 @@
   }
 
   .text-gradient {
-    @apply bg-gradient-to-r from-accent-500 via-accent-400 to-accent-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-accent-500 via-accent-400 to-accent-600 dark:from-accent-text dark:via-accent-300 dark:to-accent-fill bg-clip-text text-transparent;
   }
 }
 

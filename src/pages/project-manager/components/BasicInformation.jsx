@@ -43,10 +43,10 @@ const BasicInformation = ({ formData, setFormData }) => {
   return (
     <div className="bg-surface dark:bg-surface rounded-xl shadow-md p-6 mb-6 border border-border dark:border-border-strong">
       <div className="flex items-center mb-6">
-        <div className="p-2 bg-success-100 dark:bg-success-50 rounded-lg mr-3">
+        <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg mr-3">
           <Icon name="Info" size={20} className="text-success-600 dark:text-success-500" />
         </div>
-        <h2 className="text-2xl font-bold text-text-primary dark:text-primary-800">Basic Information</h2>
+        <h2 className="text-2xl font-bold text-text-primary dark:text-text-primary">Basic Information</h2>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -60,11 +60,11 @@ const BasicInformation = ({ formData, setFormData }) => {
               type="text"
               value={formData?.title || ''}
               onChange={(e) => handleInputChange('title', e.target.value)}
-              className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors"
+              className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
               placeholder="Enter project title"
               maxLength={100}
             />
-            <div className="absolute right-3 top-3 text-xs text-secondary-500">
+            <div className="absolute right-3 top-3 text-xs text-secondary-500 dark:text-muted">
               {characterCounts.title}/100
             </div>
           </div>
@@ -79,7 +79,7 @@ const BasicInformation = ({ formData, setFormData }) => {
             type="text"
             value={formData?.client || ''}
             onChange={(e) => handleInputChange('client', e.target.value)}
-            className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors"
+            className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
             placeholder="Client or company name"
           />
         </div>
@@ -87,12 +87,12 @@ const BasicInformation = ({ formData, setFormData }) => {
         {/* Project Type */}
         <div>
           <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
-            Project Type <span className="text-secondary-400 font-normal">(optional)</span>
+            Project Type <span className="text-secondary-600 font-normal dark:text-muted">(optional)</span>
           </label>
           <select
             value={formData?.projectType || ''}
             onChange={(e) => handleInputChange('projectType', e.target.value)}
-            className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors"
+            className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
           >
             <option value="">Select project type</option>
             {projectTypes.map(type => (
@@ -110,7 +110,7 @@ const BasicInformation = ({ formData, setFormData }) => {
             type="date"
             value={formData?.startDate || ''}
             onChange={(e) => handleInputChange('startDate', e.target.value)}
-            className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors"
+            className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
           />
         </div>
 
@@ -123,14 +123,14 @@ const BasicInformation = ({ formData, setFormData }) => {
             type="date"
             value={formData?.endDate || ''}
             onChange={(e) => handleInputChange('endDate', e.target.value)}
-            className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors"
+            className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
           />
         </div>
 
         {/* Project Status */}
         <div className="md:col-span-2">
           <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
-            Project Status <span className="text-secondary-400 font-normal">(optional)</span>
+            Project Status <span className="text-secondary-600 font-normal dark:text-muted">(optional)</span>
           </label>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {statusOptions.map(status => {
@@ -157,18 +157,18 @@ const BasicInformation = ({ formData, setFormData }) => {
         {/* Description */}
         <div className="md:col-span-2">
           <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
-            Short Summary <span className="text-secondary-400 font-normal">(shown in project cards)</span>
+            Short Summary <span className="text-secondary-600 font-normal dark:text-muted">(shown in project cards)</span>
           </label>
           <div className="relative">
             <textarea
               value={formData?.description || ''}
               onChange={(e) => handleInputChange('description', e.target.value)}
-              className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none"
+              className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none dark:border-border"
               rows={3}
               placeholder="Brief summary shown in project cards (you can add detailed content in Content Sections below)..."
               maxLength={500}
             />
-            <div className="absolute right-3 bottom-3 text-xs text-secondary-500">
+            <div className="absolute right-3 bottom-3 text-xs text-secondary-500 dark:text-muted">
               {characterCounts.description}/500
             </div>
           </div>

@@ -14,11 +14,11 @@ const MetricCard = ({
   const getChangeColor = () => {
     switch (changeType) {
       case 'positive':
-        return 'text-success-600 bg-success-50';
+        return 'text-success-600 bg-success-50 dark:text-success-text dark:bg-success-900/30';
       case 'negative':
-        return 'text-error-600 bg-error-50';
+        return 'text-error-600 bg-error-50 dark:text-error dark:bg-error-900/40';
       default:
-        return 'text-secondary-600 bg-secondary-50';
+        return 'text-secondary-600 bg-secondary-50 dark:text-muted dark:bg-surface-elevated';
     }
   };
 
@@ -48,18 +48,18 @@ const MetricCard = ({
                 name={icon} 
                 size={24} 
                 strokeWidth={2} 
-                className="text-accent"
+                className="text-accent dark:text-accent-text"
               />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-secondary-600">{title}</h3>
-              <p className="text-2xl font-bold text-primary-800 mt-1">{value}</p>
+              <h3 className="text-sm font-medium text-secondary-600 dark:text-text-secondary">{title}</h3>
+              <p className="text-2xl font-bold text-primary-800 mt-1 dark:text-text-primary">{value}</p>
             </div>
           </div>
         </div>
         
         <div className="flex items-center justify-between">
-          <p className="text-xs text-secondary-500">{description}</p>
+          <p className="text-xs text-secondary-500 dark:text-muted">{description}</p>
           {change && (
             <div className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${
               getChangeColor()

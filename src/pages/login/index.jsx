@@ -57,7 +57,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-accent-50 pt-16 pb-8 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-accent-50 pt-16 pb-8 px-4 dark:from-background dark:to-background">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -71,18 +71,18 @@ const Login = () => {
               <Icon name="Lock" size={32} className="text-white" />
             </div>
           </Link>
-          <h1 className="text-3xl font-bold text-primary-800 mb-2">Admin Login</h1>
-          <p className="text-secondary-600">Sign in to manage your portfolio</p>
+          <h1 className="text-3xl font-bold text-primary-800 mb-2 dark:text-text-primary">Admin Login</h1>
+          <p className="text-secondary-600 dark:text-text-secondary">Sign in to manage your portfolio</p>
         </div>
 
         {/* Not Configured Warning */}
         {!isConfigured && (
-          <div className="bg-warning-50 border border-warning-200 rounded-lg p-4 mb-6">
+          <div className="bg-warning-50 border border-warning-200 rounded-lg p-4 mb-6 dark:bg-warning-900/40 dark:border-warning-800">
             <div className="flex items-start gap-3">
-              <Icon name="AlertTriangle" size={20} className="text-warning-600 flex-shrink-0 mt-0.5" />
+              <Icon name="AlertTriangle" size={20} className="text-warning-600 flex-shrink-0 mt-0.5 dark:text-warning" />
               <div>
-                <h3 className="font-semibold text-warning-800 text-sm">Supabase Not Configured</h3>
-                <p className="text-warning-700 text-xs mt-1">
+                <h3 className="font-semibold text-warning-800 text-sm dark:text-warning">Supabase Not Configured</h3>
+                <p className="text-warning-700 text-xs mt-1 dark:text-warning">
                   Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file.
                 </p>
               </div>
@@ -99,18 +99,18 @@ const Login = () => {
         )}
 
         {/* Login Form */}
-        <div className="bg-white rounded-xl shadow-xl p-8">
+        <div className="bg-white rounded-xl shadow-xl p-8 dark:bg-surface">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-secondary-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-secondary-700 mb-2 dark:text-text-secondary">
                 Email Address
               </label>
               <div className="relative">
                 <Icon 
                   name="Mail" 
                   size={20} 
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary-400" 
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary-400 dark:text-muted" 
                 />
                 <input
                   id="email"
@@ -118,7 +118,7 @@ const Login = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@example.com"
-                  className="w-full pl-10 pr-4 py-3 border border-secondary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 py-3 border border-secondary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent transition-all dark:border-border"
                   disabled={isLoading || !isConfigured}
                   autoComplete="email"
                 />
@@ -127,14 +127,14 @@ const Login = () => {
 
             {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-secondary-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-secondary-700 mb-2 dark:text-text-secondary">
                 Password
               </label>
               <div className="relative">
                 <Icon 
                   name="Lock" 
                   size={20} 
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary-400" 
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary-400 dark:text-muted" 
                 />
                 <input
                   id="password"
@@ -142,14 +142,14 @@ const Login = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-10 pr-12 py-3 border border-secondary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-12 py-3 border border-secondary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent transition-all dark:border-border"
                   disabled={isLoading || !isConfigured}
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-400 hover:text-secondary-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-secondary-400 hover:text-secondary-600 dark:text-muted"
                   tabIndex={-1}
                 >
                   <Icon name={showPassword ? 'EyeOff' : 'Eye'} size={20} />
@@ -181,7 +181,7 @@ const Login = () => {
           <div className="text-center mt-4">
             <Link
               to="/forgot-password"
-              className="text-sm text-accent hover:text-accent-700 transition-colors"
+              className="text-sm text-accent hover:text-accent-700 transition-colors dark:text-accent-text dark:hover:text-accent-text"
             >
               Forgot your password?
             </Link>
@@ -192,7 +192,7 @@ const Login = () => {
         <div className="text-center mt-6">
           <Link 
             to="/" 
-            className="text-secondary-600 hover:text-accent transition-colors inline-flex items-center gap-2"
+            className="text-secondary-600 hover:text-accent transition-colors inline-flex items-center gap-2 dark:text-text-secondary dark:hover:text-accent-text"
           >
             <Icon name="ArrowLeft" size={16} />
             Back to Home

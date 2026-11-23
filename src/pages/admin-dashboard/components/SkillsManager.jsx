@@ -7,11 +7,11 @@ import { useSkills } from 'context/SkillsContext';
 import { useToast } from 'context/ToastContext';
 
 const skillColorMap = {
-  accent:  { bg100: 'bg-accent-100',  bg500: 'bg-accent-500' },
-  cta:     { bg100: 'bg-cta-100',     bg500: 'bg-cta-500' },
-  success: { bg100: 'bg-success-100', bg500: 'bg-success-500' },
-  primary: { bg100: 'bg-primary-100', bg500: 'bg-primary-500' },
-  warning: { bg100: 'bg-warning-100', bg500: 'bg-warning-500' },
+  accent:  { bg100: 'bg-accent-100 dark:bg-accent-subtle',  bg500: 'bg-accent-500 dark:bg-accent-fill' },
+  cta:     { bg100: 'bg-cta-100 dark:bg-accent-subtle',     bg500: 'bg-cta-500 dark:bg-accent-fill' },
+  success: { bg100: 'bg-success-100 dark:bg-success-900/30', bg500: 'bg-success-500 dark:bg-success-fill' },
+  primary: { bg100: 'bg-primary-100 dark:bg-surface-elevated', bg500: 'bg-primary-500 dark:bg-surface-elevated' },
+  warning: { bg100: 'bg-warning-100 dark:bg-warning-900/40', bg500: 'bg-warning-500' },
 };
 
 const SkillsManager = () => {
@@ -199,11 +199,11 @@ const SkillsManager = () => {
           { label: 'Skills Management' }
         ]} />
         {/* Header */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+        <div className="bg-white rounded-xl shadow-sm p-6 mb-6 dark:bg-surface">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-primary-800">Skills Management</h1>
-              <p className="text-secondary-600 mt-1">Manage your skill categories, individual skills, and tech stack</p>
+              <h1 className="text-3xl font-bold text-primary-800 dark:text-text-primary">Skills Management</h1>
+              <p className="text-secondary-600 mt-1 dark:text-text-secondary">Manage your skill categories, individual skills, and tech stack</p>
             </div>
             <div className="flex items-center space-x-2">
               <button
@@ -225,7 +225,7 @@ const SkillsManager = () => {
                     resetToDefaults();
                   }
                 }}
-                className="flex items-center space-x-2 px-4 py-2 bg-warning-100 text-warning-700 rounded-lg hover:bg-warning-200 transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 bg-warning-100 text-warning-700 rounded-lg hover:bg-warning-200 transition-colors dark:bg-warning-900/40 dark:text-warning"
               >
                 <Icon name="RotateCcw" size={18} strokeWidth={2} />
                 <span className="font-medium">Reset to Defaults</span>
@@ -234,13 +234,13 @@ const SkillsManager = () => {
           </div>
 
           {/* Tabs */}
-          <div className="flex space-x-2 border-b border-primary-200">
+          <div className="flex space-x-2 border-b border-primary-200 dark:border-border">
             <button
               onClick={() => setActiveTab('categories')}
               className={`px-4 py-2 font-medium transition-colors ${
                 activeTab === 'categories'
-                  ? 'text-accent border-b-2 border-accent'
-                  : 'text-secondary-600 hover:text-primary-800'
+                  ? 'text-accent border-b-2 border-accent dark:text-accent-text dark:border-accent-text'
+                  : 'text-secondary-600 hover:text-primary-800 dark:text-text-secondary dark:hover:text-text-primary'
               }`}
             >
               Skill Categories
@@ -249,8 +249,8 @@ const SkillsManager = () => {
               onClick={() => setActiveTab('techstack')}
               className={`px-4 py-2 font-medium transition-colors ${
                 activeTab === 'techstack'
-                  ? 'text-accent border-b-2 border-accent'
-                  : 'text-secondary-600 hover:text-primary-800'
+                  ? 'text-accent border-b-2 border-accent dark:text-accent-text dark:border-accent-text'
+                  : 'text-secondary-600 hover:text-primary-800 dark:text-text-secondary dark:hover:text-text-primary'
               }`}
             >
               Tech Stack
@@ -290,21 +290,21 @@ const SkillsManager = () => {
             ) : (
             <div className="grid gap-6">
               {Object.entries(skillCategories).map(([key, category]) => (
-                <div key={key} className="bg-white rounded-xl shadow-sm p-6">
+                <div key={key} className="bg-white rounded-xl shadow-sm p-6 dark:bg-surface">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center space-x-3">
                       <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${skillColorMap[category.color]?.bg100 || 'bg-accent-100'}`}>
                         <Icon name={category.icon} size={24} strokeWidth={2} />
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-primary-800">{category.title}</h3>
-                        <p className="text-sm text-secondary-600">Key: {key}</p>
+                        <h3 className="text-xl font-bold text-primary-800 dark:text-text-primary">{category.title}</h3>
+                        <p className="text-sm text-secondary-600 dark:text-text-secondary">Key: {key}</p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => openAddSkill(key)}
-                        className="p-2 text-success-600 hover:bg-success-50 rounded-lg transition-colors"
+                        className="p-2 text-success-600 hover:bg-success-50 rounded-lg transition-colors dark:text-success-text"
                         aria-label={`Add skill to ${category.title}`}
                         title="Add Skill"
                       >
@@ -312,7 +312,7 @@ const SkillsManager = () => {
                       </button>
                       <button
                         onClick={() => openEditCategory(key)}
-                        className="p-2 text-accent hover:bg-accent-50 rounded-lg transition-colors"
+                        className="p-2 text-accent hover:bg-accent-50 rounded-lg transition-colors dark:text-accent-text dark:hover:bg-accent-subtle"
                         aria-label={`Edit ${category.title}`}
                         title="Edit Category"
                       >
@@ -320,7 +320,7 @@ const SkillsManager = () => {
                       </button>
                       <button
                         onClick={() => handleDeleteCategory(key)}
-                        className="p-2 text-error-600 hover:bg-error-50 rounded-lg transition-colors"
+                        className="p-2 text-error-600 hover:bg-error-50 rounded-lg transition-colors dark:text-error"
                         aria-label={`Delete ${category.title}`}
                         title="Delete Category"
                       >
@@ -335,25 +335,25 @@ const SkillsManager = () => {
                       category.skills.map((skill) => (
                         <div
                           key={skill.id}
-                          className="flex items-center justify-between p-3 bg-primary-50 rounded-lg hover:bg-primary-100 transition-colors"
+                          className="flex items-center justify-between p-3 bg-primary-50 rounded-lg hover:bg-primary-100 transition-colors dark:bg-background dark:hover:bg-surface-elevated"
                         >
                           <div className="flex items-center space-x-3 flex-1">
                             <Icon name={skill.icon} size={18} strokeWidth={2} />
-                            <span className="font-medium text-primary-800">{skill.name}</span>
+                            <span className="font-medium text-primary-800 dark:text-text-primary">{skill.name}</span>
                             <div className="flex-1 max-w-xs">
-                              <div className="w-full bg-white rounded-full h-2">
+                              <div className="w-full bg-white rounded-full h-2 dark:bg-surface">
                                 <div
                                   className={`h-full rounded-full ${skillColorMap[category.color]?.bg500 || 'bg-accent-500'}`}
                                   style={{ width: `${skill.level}%` }}
                                 ></div>
                               </div>
                             </div>
-                            <span className="text-sm font-semibold text-secondary-600">{skill.level}%</span>
+                            <span className="text-sm font-semibold text-secondary-600 dark:text-text-secondary">{skill.level}%</span>
                           </div>
                           <div className="flex items-center space-x-1 ml-4">
                             <button
                               onClick={() => openEditSkill(key, skill)}
-                              className="p-1.5 text-accent hover:bg-accent-50 rounded transition-colors"
+                              className="p-1.5 text-accent hover:bg-accent-50 rounded transition-colors dark:text-accent-text dark:hover:bg-accent-subtle"
                               aria-label={`Edit ${skill.name}`}
                               title={`Edit ${skill.name}`}
                             >
@@ -361,7 +361,7 @@ const SkillsManager = () => {
                             </button>
                             <button
                               onClick={() => handleDeleteSkill(key, skill.id)}
-                              className="p-1.5 text-error-600 hover:bg-error-50 rounded transition-colors"
+                              className="p-1.5 text-error-600 hover:bg-error-50 rounded transition-colors dark:text-error"
                               aria-label={`Delete ${skill.name}`}
                               title={`Delete ${skill.name}`}
                             >
@@ -371,7 +371,7 @@ const SkillsManager = () => {
                         </div>
                       ))
                     ) : (
-                      <p className="text-secondary-500 text-center py-4">No skills yet. Add some!</p>
+                      <p className="text-secondary-500 text-center py-4 dark:text-muted">No skills yet. Add some!</p>
                     )}
                   </div>
                 </div>
@@ -398,8 +398,8 @@ const SkillsManager = () => {
               </button>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h3 className="text-xl font-bold text-primary-800 mb-4">Technologies I Work With</h3>
+            <div className="bg-white rounded-xl shadow-sm p-6 dark:bg-surface">
+              <h3 className="text-xl font-bold text-primary-800 mb-4 dark:text-text-primary">Technologies I Work With</h3>
               {techStack.length === 0 ? (
                 <EmptyState
                   icon="Code"
@@ -417,7 +417,7 @@ const SkillsManager = () => {
                 {techStack.map((tech, index) => (
                   <div
                     key={index}
-                    className="group flex items-center space-x-2 px-4 py-2 bg-primary-50 text-primary-700 rounded-full hover:bg-accent-50 hover:text-accent-700 transition-all"
+                    className="group flex items-center space-x-2 px-4 py-2 bg-primary-50 text-primary-700 rounded-full hover:bg-accent-50 hover:text-accent-700 transition-all dark:bg-background dark:text-text-primary dark:hover:bg-accent-subtle dark:hover:text-accent-text"
                   >
                     <span className="font-medium">{tech}</span>
                     <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -431,7 +431,7 @@ const SkillsManager = () => {
                       </button>
                       <button
                         onClick={() => handleDeleteTech(index)}
-                        className="p-1 hover:bg-error-100 rounded-full transition-colors text-error-600"
+                        className="p-1 hover:bg-error-100 rounded-full transition-colors text-error-600 dark:text-error"
                         aria-label={`Remove ${tech}`}
                         title={`Remove ${tech}`}
                       >
@@ -456,7 +456,7 @@ const SkillsManager = () => {
           <>
             <button
               onClick={() => { setShowCategoryModal(false); setEditingCategory(null); setCategoryForm({ key: '', title: '', icon: 'Code', color: 'accent' }); }}
-              className="flex-1 px-4 py-2 border border-primary-200 text-primary-700 rounded-lg hover:bg-primary-50 transition-colors"
+              className="flex-1 px-4 py-2 border border-primary-200 text-primary-700 rounded-lg hover:bg-primary-50 transition-colors dark:border-border dark:text-text-primary dark:hover:bg-surface-elevated"
             >
               Cancel
             </button>
@@ -472,32 +472,32 @@ const SkillsManager = () => {
         <div className="space-y-4">
           {!editingCategory && (
             <div>
-              <label className="block text-sm font-medium text-primary-700 mb-1">Category Key</label>
+              <label className="block text-sm font-medium text-primary-700 mb-1 dark:text-text-primary">Category Key</label>
               <input
                 type="text"
                 value={categoryForm.key}
                 onChange={(e) => setCategoryForm({ ...categoryForm, key: e.target.value })}
                 placeholder="e.g., frontend"
-                className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+                className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
               />
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium text-primary-700 mb-1">Title</label>
+            <label className="block text-sm font-medium text-primary-700 mb-1 dark:text-text-primary">Title</label>
             <input
               type="text"
               value={categoryForm.title}
               onChange={(e) => setCategoryForm({ ...categoryForm, title: e.target.value })}
               placeholder="e.g., Frontend Development"
-              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-primary-700 mb-1">Icon</label>
+            <label className="block text-sm font-medium text-primary-700 mb-1 dark:text-text-primary">Icon</label>
             <select
               value={categoryForm.icon}
               onChange={(e) => setCategoryForm({ ...categoryForm, icon: e.target.value })}
-              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
             >
               {iconOptions.map((icon) => (
                 <option key={icon} value={icon}>{icon}</option>
@@ -505,11 +505,11 @@ const SkillsManager = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-primary-700 mb-1">Color</label>
+            <label className="block text-sm font-medium text-primary-700 mb-1 dark:text-text-primary">Color</label>
             <select
               value={categoryForm.color}
               onChange={(e) => setCategoryForm({ ...categoryForm, color: e.target.value })}
-              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
             >
               {colorOptions.map((color) => (
                 <option key={color} value={color}>{color}</option>
@@ -528,7 +528,7 @@ const SkillsManager = () => {
           <>
             <button
               onClick={() => { setShowSkillModal(false); setEditingSkill(null); setSkillForm({ name: '', level: 50, icon: 'Code' }); }}
-              className="flex-1 px-4 py-2 border border-primary-200 text-primary-700 rounded-lg hover:bg-primary-50 transition-colors"
+              className="flex-1 px-4 py-2 border border-primary-200 text-primary-700 rounded-lg hover:bg-primary-50 transition-colors dark:border-border dark:text-text-primary dark:hover:bg-surface-elevated"
             >
               Cancel
             </button>
@@ -543,17 +543,17 @@ const SkillsManager = () => {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-primary-700 mb-1">Skill Name</label>
+            <label className="block text-sm font-medium text-primary-700 mb-1 dark:text-text-primary">Skill Name</label>
             <input
               type="text"
               value={skillForm.name}
               onChange={(e) => setSkillForm({ ...skillForm, name: e.target.value })}
               placeholder="e.g., React.js"
-              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-primary-700 mb-1">
+            <label className="block text-sm font-medium text-primary-700 mb-1 dark:text-text-primary">
               Level: {skillForm.level}%
             </label>
             <input
@@ -566,11 +566,11 @@ const SkillsManager = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-primary-700 mb-1">Icon</label>
+            <label className="block text-sm font-medium text-primary-700 mb-1 dark:text-text-primary">Icon</label>
             <select
               value={skillForm.icon}
               onChange={(e) => setSkillForm({ ...skillForm, icon: e.target.value })}
-              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
             >
               {iconOptions.map((icon) => (
                 <option key={icon} value={icon}>{icon}</option>
@@ -589,7 +589,7 @@ const SkillsManager = () => {
           <>
             <button
               onClick={() => { setShowTechModal(false); setEditingTech(null); setTechForm(''); }}
-              className="flex-1 px-4 py-2 border border-primary-200 text-primary-700 rounded-lg hover:bg-primary-50 transition-colors"
+              className="flex-1 px-4 py-2 border border-primary-200 text-primary-700 rounded-lg hover:bg-primary-50 transition-colors dark:border-border dark:text-text-primary dark:hover:bg-surface-elevated"
             >
               Cancel
             </button>
@@ -604,13 +604,13 @@ const SkillsManager = () => {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-primary-700 mb-1">Technology Name</label>
+            <label className="block text-sm font-medium text-primary-700 mb-1 dark:text-text-primary">Technology Name</label>
             <input
               type="text"
               value={techForm}
               onChange={(e) => setTechForm(e.target.value)}
               placeholder="e.g., React"
-              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
             />
           </div>
         </div>

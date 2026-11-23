@@ -22,10 +22,10 @@ export const COLORS = {
       600: '75 85 99', 800: '31 41 55'
     }},
 
-    accent: { base: '99 102 241', name: 'Indigo 500', palette: {
+    accent: { base: '79 70 229', name: 'Accent fill #4F46E5', palette: {
       50: '238 242 255', 100: '224 231 255', 200: '199 210 254',
-      300: '165 180 252', 400: '129 140 248', 500: '99 102 241',
-      600: '79 70 229', 700: '67 56 202', 800: '55 48 163', 900: '49 46 129'
+      300: '165 180 252', 400: '129 140 248', 500: '79 70 229',
+      600: '67 56 202', 700: '55 48 163', 800: '49 46 129', 900: '49 46 129'
     }},
 
     success: { base: '56 161 105', name: 'Emerald 500', palette: {
@@ -43,73 +43,84 @@ export const COLORS = {
       500: '239 68 68', 700: '185 28 28', 800: '153 27 27'
     }},
 
-    cta: { base: '99 102 241', name: 'Indigo 500', palette: {
+    cta: { base: '79 70 229', name: 'CTA fill #4F46E5', palette: {
       50: '238 242 255', 100: '224 231 255', 200: '199 210 254',
-      400: '165 180 252', 600: '79 70 229', 700: '67 56 202', 800: '55 48 163'
+      400: '165 180 252', 600: '67 56 202', 700: '55 48 163', 800: '49 46 129'
     }}
   },
 
   dark: {
-    background: { base: '10 15 30', name: 'Custom Dark Blue' },
-    surface: { base: '18 25 42', name: 'Custom Dark Surface' },
-    overlay: { base: '5 10 20', name: 'Custom Dark Overlay' },
-    border: { base: '40 55 80', name: 'Custom Dark Border' },
-    borderStrong: { base: '60 80 110', name: 'Custom Dark Border Strong' },
+    background: { base: '11 16 32', name: 'Background #0B1020' },
+    surface: { base: '21 27 43', name: 'Surface #151B2B' },
+    surfaceElevated: { base: '28 36 56', name: 'Surface elevated #1C2438' },
+    overlay: { base: '5 8 16', name: 'Overlay' },
+    border: { base: '42 53 80', name: 'Border #2A3550' },
+    borderStrong: { base: '61 77 107', name: 'Border strong #3D4D6B' },
 
-    textPrimary: { base: '235 240 250', name: 'Light Blue White' },
-    textSecondary: { base: '170 185 210', name: 'Muted Light Blue' },
-    muted: { base: '120 135 160', name: 'Dark Mode Muted' },
+    textPrimary: { base: '241 245 249', name: 'Text primary #F1F5F9' },
+    textSecondary: { base: '203 213 225', name: 'Text secondary #CBD5E1' },
+    muted: { base: '148 163 184', name: 'Muted #94A3B8' },
 
-    primary: { base: '130 150 180', name: 'Light Slate', palette: {
-      50: '18 25 42', 100: '28 38 58', 200: '40 55 80',
-      500: '100 120 155', 600: '130 150 180', 700: '170 185 210',
-      800: '210 220 235', 900: '235 240 250'
+    // 50 = lightest, 900 = darkest (not inverted)
+    primary: { base: '203 213 225', name: 'Slate 300', palette: {
+      50: '241 245 249', 100: '226 232 240', 200: '203 213 225',
+      300: '148 163 184', 400: '100 116 139', 500: '71 85 105',
+      600: '51 65 85', 700: '30 41 59', 800: '15 23 42', 900: '2 6 23'
     }},
 
-    secondary: { base: '160 175 200', name: 'Light Secondary', palette: {
-      50: '18 25 42', 100: '28 38 58', 200: '40 55 80',
-      300: '60 80 110', 400: '110 130 160', 500: '160 175 200',
-      600: '190 200 220', 800: '225 230 242'
+    secondary: { base: '203 213 225', name: 'Slate 300', palette: {
+      50: '248 250 252', 100: '241 245 249', 200: '226 232 240',
+      300: '203 213 225', 400: '148 163 184', 500: '100 116 139',
+      600: '71 85 105', 800: '30 41 59'
     }},
 
-    accent: { base: '130 140 250', name: 'Light Indigo', palette: {
-      50: '25 30 60', 100: '35 42 80', 200: '50 58 110',
-      300: '75 85 160', 400: '110 120 220', 500: '130 140 250',
-      600: '155 165 255', 700: '180 190 255', 800: '200 210 255', 900: '220 225 255'
+    accent: { base: '79 70 229', name: 'Accent fill #4F46E5', palette: {
+      50: '238 242 255', 100: '224 231 255', 200: '199 210 254',
+      300: '165 180 252', 400: '129 140 248', 500: '79 70 229',
+      600: '67 56 202', 700: '55 48 163', 800: '49 46 129', 900: '30 27 75'
     }},
 
-    success: { base: '52 211 153', name: 'Emerald 400', palette: {
-      50: '10 40 35', 100: '15 65 55', 200: '20 90 75',
-      500: '52 211 153', 700: '80 230 180', 800: '120 240 200'
+    accentFill: { base: '79 70 229', name: 'Accent fill #4F46E5' },
+    accentFillHover: { base: '67 56 202', name: 'Accent fill hover #4338CA' },
+    accentText: { base: '165 180 252', name: 'Accent text #A5B4FC' },
+    accentSubtle: { base: '30 27 75', name: 'Accent subtle #1E1B4B' },
+    bannerFrom: { base: '30 41 59', name: 'Banner from #1E293B' },
+    bannerTo: { base: '49 46 129', name: 'Banner to #312E81' },
+
+    success: { base: '52 211 153', name: 'Success text #34D399', palette: {
+      50: '236 253 245', 100: '209 250 229', 200: '167 243 208',
+      500: '16 185 129', 600: '5 150 105', 700: '4 120 87', 800: '6 95 70', 900: '6 78 59'
     }},
+    successFill: { base: '5 150 105', name: 'Success fill #059669' },
+    successText: { base: '52 211 153', name: 'Success text #34D399' },
 
     warning: { base: '251 191 36', name: 'Amber 400', palette: {
-      50: '45 30 5', 100: '65 45 8', 200: '90 60 10',
-      500: '251 191 36', 700: '252 210 80', 800: '253 225 130'
+      50: '255 251 235', 100: '254 243 199', 200: '253 230 138',
+      500: '245 158 11', 700: '180 83 9', 800: '146 64 14', 900: '69 26 3'
     }},
 
     error: { base: '248 113 113', name: 'Red 400', palette: {
-      50: '50 10 10', 100: '75 15 15', 200: '100 20 20',
-      500: '248 113 113', 700: '250 140 140', 800: '252 170 170'
+      50: '254 242 242', 100: '254 226 226', 200: '254 202 202',
+      500: '239 68 68', 700: '185 28 28', 800: '153 27 27', 900: '69 10 10'
     }},
 
-    cta: { base: '130 140 250', name: 'Light CTA', palette: {
-      50: '25 30 60', 100: '35 42 80', 200: '50 58 110',
-      400: '110 120 220', 600: '155 165 255', 700: '180 190 255', 800: '200 210 255'
+    cta: { base: '79 70 229', name: 'CTA fill #4F46E5', palette: {
+      50: '238 242 255', 100: '224 231 255', 200: '199 210 254',
+      400: '129 140 248', 600: '67 56 202', 700: '55 48 163', 800: '49 46 129'
     }}
   },
 
   chart: {
-    primary: '#6366f1',
+    primary: '#4F46E5',
     secondary: '#10b981',
     tertiary: '#f59e0b',
     quaternary: '#ef4444',
     fifth: '#8b5cf6',
     sixth: '#06b6d4',
     gridLight: '#e2e8f0',
-    gridDark: '#475569',
+    gridDark: '#2A3550',
     textLight: '#64748b',
-    textDark: '#94a3b8'
+    textDark: '#94A3B8'
   },
 
   social: {
@@ -142,13 +153,17 @@ export const SEMANTIC_COLORS = {
     secondary: 'var(--color-text-secondary)',
     muted: 'var(--color-muted)',
     inverse: 'var(--color-background)',
-    accent: 'var(--color-accent-600)'
+    accent: 'var(--color-accent-text)'
   },
   background: {
     primary: 'var(--color-background)',
     secondary: 'var(--color-surface)',
+    elevated: 'var(--color-surface-elevated)',
     overlay: 'var(--color-overlay)',
-    muted: 'var(--color-primary-100)'
+    muted: 'var(--color-primary-100)',
+    accentSubtle: 'var(--color-accent-subtle)',
+    bannerFrom: 'var(--color-banner-from)',
+    bannerTo: 'var(--color-banner-to)'
   },
   border: {
     default: 'var(--color-border)',
@@ -156,10 +171,11 @@ export const SEMANTIC_COLORS = {
     accent: 'var(--color-accent-300)'
   },
   interactive: {
-    primary: 'var(--color-accent)',
-    primaryHover: 'var(--color-accent-hover)',
+    primary: 'var(--color-accent-fill)',
+    primaryHover: 'var(--color-accent-fill-hover)',
     secondary: 'var(--color-secondary)',
-    success: 'var(--color-success)',
+    success: 'var(--color-success-fill)',
+    successText: 'var(--color-success-text)',
     warning: 'var(--color-warning)',
     error: 'var(--color-error)'
   }

@@ -14,10 +14,10 @@ const PublishingOptions = ({ formData, setFormData }) => {
   ];
 
   const workflowColorMap = {
-    secondary: { border: 'border-secondary-500', bg: 'bg-secondary-50', iconBg: 'bg-secondary-100', iconText: 'text-secondary-600' },
-    warning:   { border: 'border-warning-500',   bg: 'bg-warning-50',   iconBg: 'bg-warning-100',   iconText: 'text-warning-600' },
-    success:   { border: 'border-success-500',   bg: 'bg-success-50',   iconBg: 'bg-success-100',   iconText: 'text-success-600' },
-    accent:    { border: 'border-accent-500',    bg: 'bg-accent-50',    iconBg: 'bg-accent-100',    iconText: 'text-accent-600' },
+    secondary: { border: 'border-secondary-500 dark:border-border-strong', bg: 'bg-secondary-50 dark:bg-surface-elevated', iconBg: 'bg-secondary-100 dark:bg-surface', iconText: 'text-secondary-600 dark:text-muted' },
+    warning:   { border: 'border-warning-500',   bg: 'bg-warning-50 dark:bg-warning-900/40',   iconBg: 'bg-warning-100 dark:bg-warning-800/40',   iconText: 'text-warning-600 dark:text-warning' },
+    success:   { border: 'border-success-500 dark:border-success-fill',   bg: 'bg-success-50 dark:bg-success-900/30',   iconBg: 'bg-success-100 dark:bg-success-800/40',   iconText: 'text-success-600 dark:text-success-text' },
+    accent:    { border: 'border-accent-500 dark:border-accent-fill',    bg: 'bg-accent-50 dark:bg-accent-subtle',    iconBg: 'bg-accent-100 dark:bg-accent-fill/30',    iconText: 'text-accent-600 dark:text-accent-text' },
   };
 
   const visibilityOptions = [
@@ -60,17 +60,17 @@ const PublishingOptions = ({ formData, setFormData }) => {
   return (
     <div className="bg-surface dark:bg-surface rounded-xl shadow-md p-6 mb-6 border border-border dark:border-border-strong">
       <div className="flex items-center mb-6">
-        <div className="p-2 bg-success-100 dark:bg-success-50 rounded-lg mr-3">
+        <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg mr-3">
           <Icon name="Settings" size={20} className="text-success-600 dark:text-success-500" />
         </div>
-        <h2 className="text-2xl font-bold text-text-primary dark:text-primary-800">Publishing Options</h2>
+        <h2 className="text-2xl font-bold text-text-primary dark:text-text-primary">Publishing Options</h2>
       </div>
 
       <div className="space-y-6">
         {/* Workflow Status */}
         <div>
           <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-3">
-            Workflow Status <span className="text-secondary-400 font-normal">(optional)</span>
+            Workflow Status <span className="text-secondary-600 font-normal dark:text-muted">(optional)</span>
           </label>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {workflowStages.map(stage => {
@@ -94,7 +94,7 @@ const PublishingOptions = ({ formData, setFormData }) => {
                       className={colors.iconText}
                     />
                   </div>
-                  <span className="text-sm font-medium text-text-primary dark:text-primary-700">{stage.label}</span>
+                  <span className="text-sm font-medium text-text-primary dark:text-text-primary">{stage.label}</span>
                 </div>
               </button>
               );
@@ -105,26 +105,26 @@ const PublishingOptions = ({ formData, setFormData }) => {
         {/* Visibility Settings */}
         <div>
           <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-3">
-            Visibility Settings <span className="text-secondary-400 font-normal">(optional, defaults to Public)</span>
+            Visibility Settings <span className="text-secondary-600 font-normal dark:text-muted">(optional, defaults to Public)</span>
           </label>
           <div className="space-y-3">
             {visibilityOptions.map(option => (
-              <label key={option.value} className="flex items-center p-3 border border-secondary-200 rounded-lg hover:bg-secondary-50 cursor-pointer transition-colors">
+              <label key={option.value} className="flex items-center p-3 border border-secondary-200 rounded-lg hover:bg-secondary-50 cursor-pointer transition-colors dark:border-border dark:hover:bg-surface-elevated">
                 <input
                   type="radio"
                   name="visibility"
                   value={option.value}
                   checked={formData?.visibility === option.value}
                   onChange={(e) => setFormData(prev => ({ ...prev, visibility: e.target.value }))}
-                  className="mr-3 text-accent-600 focus:ring-accent-500"
+                  className="mr-3 text-accent-600 focus:ring-accent-500 dark:text-accent-text"
                 />
                 <div className="flex items-center flex-1">
-                  <div className="p-2 bg-accent-100 rounded-lg mr-3">
-                    <Icon name={option.icon} size={16} className="text-accent-600" />
+                  <div className="p-2 bg-accent-100 rounded-lg mr-3 dark:bg-accent-subtle">
+                    <Icon name={option.icon} size={16} className="text-accent-600 dark:text-accent-text" />
                   </div>
                   <div>
-                    <p className="font-medium text-text-primary dark:text-primary-700">{option.label}</p>
-                    <p className="text-sm text-secondary-600">{option.description}</p>
+                    <p className="font-medium text-text-primary dark:text-text-primary">{option.label}</p>
+                    <p className="text-sm text-secondary-600 dark:text-text-secondary">{option.description}</p>
                   </div>
                 </div>
               </label>
@@ -138,7 +138,7 @@ const PublishingOptions = ({ formData, setFormData }) => {
                 type="password"
                 value={formData?.password || ''}
                 onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors"
+                className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
                 placeholder="Enter password for protected access"
               />
             </div>
@@ -155,7 +155,7 @@ const PublishingOptions = ({ formData, setFormData }) => {
             <select
               value={formData?.category || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-              className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors"
+              className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
             >
               <option value="">Select category</option>
               {categories.map(category => (
@@ -169,12 +169,12 @@ const PublishingOptions = ({ formData, setFormData }) => {
             <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
               Featured Project
             </label>
-            <label className="flex items-center p-3 border border-secondary-200 rounded-lg cursor-pointer hover:bg-secondary-50 transition-colors">
+            <label className="flex items-center p-3 border border-secondary-200 rounded-lg cursor-pointer hover:bg-secondary-50 transition-colors dark:border-border dark:hover:bg-surface-elevated">
               <input
                 type="checkbox"
                 checked={formData?.featured || false}
                 onChange={(e) => setFormData(prev => ({ ...prev, featured: e.target.checked }))}
-                className="mr-3 text-accent-600 focus:ring-accent-500"
+                className="mr-3 text-accent-600 focus:ring-accent-500 dark:text-accent-text"
               />
               <div className="flex items-center">
                 <Icon name="Star" size={16} className="text-warning-500 mr-2" />
@@ -199,7 +199,7 @@ const PublishingOptions = ({ formData, setFormData }) => {
                   onClick={() => toggleTag(tag)}
                   className={`px-3 py-1 text-sm rounded-full border transition-colors ${
                     isSelected
-                      ? 'bg-accent-100 text-accent-800 border-accent-300' :'bg-white text-secondary-600 border-secondary-300 hover:border-secondary-400'
+                      ? 'bg-accent-100 text-accent-800 border-accent-300 dark:bg-accent-subtle dark:text-accent-text dark:border-accent-fill/50' :'bg-white text-secondary-600 border-secondary-300 hover:border-secondary-400 dark:bg-surface-elevated dark:text-text-secondary dark:border-border'
                   }`}
                 >
                   {tag}
@@ -210,8 +210,8 @@ const PublishingOptions = ({ formData, setFormData }) => {
         </div>
 
         {/* SEO Settings */}
-        <div className="p-4 bg-secondary-50 rounded-lg">
-          <h3 className="text-lg font-semibold text-text-primary dark:text-primary-700 mb-4 flex items-center">
+        <div className="p-4 bg-secondary-50 rounded-lg dark:bg-surface">
+          <h3 className="text-lg font-semibold text-text-primary dark:text-text-primary mb-4 flex items-center">
             <Icon name="Search" size={18} className="mr-2" />
             SEO Settings
           </h3>
@@ -224,7 +224,7 @@ const PublishingOptions = ({ formData, setFormData }) => {
                 type="text"
                 value={formData?.metaTitle || ''}
                 onChange={(e) => setFormData(prev => ({ ...prev, metaTitle: e.target.value }))}
-                className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors"
+                className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
                 placeholder="Optimized title for search engines"
                 maxLength={60}
               />
@@ -236,7 +236,7 @@ const PublishingOptions = ({ formData, setFormData }) => {
               <textarea
                 value={formData?.metaDescription || ''}
                 onChange={(e) => setFormData(prev => ({ ...prev, metaDescription: e.target.value }))}
-                className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none"
+                className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none dark:border-border"
                 rows={3}
                 placeholder="Brief description for search engine results"
                 maxLength={160}
@@ -248,7 +248,7 @@ const PublishingOptions = ({ formData, setFormData }) => {
         {/* Preview Section */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-text-primary dark:text-primary-700 flex items-center">
+            <h3 className="text-lg font-semibold text-text-primary dark:text-text-primary flex items-center">
               <Icon name="Eye" size={18} className="mr-2" />
               Preview
             </h3>
@@ -260,7 +260,7 @@ const PublishingOptions = ({ formData, setFormData }) => {
                   onClick={() => setPreviewMode(breakpoint.id)}
                   className={`p-2 rounded-lg transition-colors ${
                     previewMode === breakpoint.id
-                      ? 'bg-accent-100 text-accent-600' :'bg-secondary-100 text-secondary-600 hover:bg-secondary-200'
+                      ? 'bg-accent-100 text-accent-600 dark:bg-accent-subtle dark:text-accent-text' :'bg-secondary-100 text-secondary-600 hover:bg-secondary-200 dark:bg-surface-elevated dark:text-text-secondary dark:hover:bg-surface'
                   }`}
                   title={`${breakpoint.label} (${breakpoint.width})`}
                 >
@@ -270,12 +270,12 @@ const PublishingOptions = ({ formData, setFormData }) => {
             </div>
           </div>
           
-          <div className="border border-secondary-200 rounded-lg p-4 bg-secondary-50">
+          <div className="border border-secondary-200 rounded-lg p-4 bg-secondary-50 dark:border-border dark:bg-surface">
             <div className="flex items-center justify-center min-h-48">
               <div className="text-center">
-                <Icon name="Monitor" size={48} className="text-secondary-400 mx-auto mb-4" />
-                <p className="text-secondary-600 mb-2">Preview Mode: {breakpoints.find(b => b.id === previewMode)?.label}</p>
-                <p className="text-sm text-secondary-500">
+                <Icon name="Monitor" size={48} className="text-secondary-400 mx-auto mb-4 dark:text-muted" />
+                <p className="text-secondary-600 mb-2 dark:text-text-secondary">Preview Mode: {breakpoints.find(b => b.id === previewMode)?.label}</p>
+                <p className="text-sm text-secondary-500 dark:text-muted">
                   This is where your project preview will appear
                 </p>
                 <button

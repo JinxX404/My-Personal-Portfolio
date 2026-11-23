@@ -195,9 +195,9 @@ const CaseStudyDetail = () => {
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-primary-50">
+      <div className="min-h-screen bg-primary-50 dark:bg-background">
         {/* Skeleton Hero */}
-        <section className="relative bg-primary-800 pt-20 pb-16">
+        <section className="relative bg-gradient-to-br from-banner-from to-banner-to pt-20 pb-16">
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div className="space-y-6">
@@ -225,7 +225,7 @@ const CaseStudyDetail = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="lg:grid lg:grid-cols-4 lg:gap-8">
             <div className="lg:col-span-1">
-              <div className="sticky top-24 bg-white rounded-lg shadow-sm border border-primary-200 p-6 mb-8 lg:mb-0">
+              <div className="sticky top-24 bg-white rounded-lg shadow-sm border border-primary-200 p-6 mb-8 lg:mb-0 dark:bg-surface dark:border-border">
                 <SkeletonText width="w-24" height="h-5" />
                 <div className="space-y-2 mt-4">
                   <SkeletonText width="w-full" height="h-10" />
@@ -235,7 +235,7 @@ const CaseStudyDetail = () => {
               </div>
             </div>
             <div className="lg:col-span-3 space-y-16">
-              <div className="bg-white rounded-lg shadow-sm border border-primary-200 p-8">
+              <div className="bg-white rounded-lg shadow-sm border border-primary-200 p-8 dark:bg-surface dark:border-border">
                 <SkeletonText width="w-48" height="h-8" />
                 <div className="space-y-4 mt-6">
                   <SkeletonText width="w-full" height="h-4" />
@@ -243,7 +243,7 @@ const CaseStudyDetail = () => {
                   <SkeletonText width="w-4/6" height="h-4" />
                 </div>
               </div>
-              <div className="bg-white rounded-lg shadow-sm border border-primary-200 p-8">
+              <div className="bg-white rounded-lg shadow-sm border border-primary-200 p-8 dark:bg-surface dark:border-border">
                 <SkeletonText width="w-36" height="h-8" />
                 <div className="space-y-4 mt-6">
                   <SkeletonText width="w-full" height="h-4" />
@@ -264,7 +264,7 @@ const CaseStudyDetail = () => {
         <div className="max-w-lg w-full">
           <LoadError message={loadError} onRetry={() => setReloadKey((value) => value + 1)} />
           <div className="text-center mt-6">
-            <Link to="/portfolio-gallery" className="text-accent font-semibold">
+            <Link to="/portfolio-gallery" className="text-accent font-semibold dark:text-accent-text">
               Back to portfolio
             </Link>
           </div>
@@ -305,7 +305,7 @@ const CaseStudyDetail = () => {
         image={caseStudy.heroImage}
       />
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-primary-800 text-white pt-20 pb-16 dark:from-primary-900 from-primary-900 to-accent-900 ">
+      <section className="relative bg-gradient-to-br from-banner-from to-banner-to text-white pt-20 pb-16">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -333,7 +333,7 @@ const CaseStudyDetail = () => {
                     <h3 className="text-sm font-semibold text-accent-200 uppercase tracking-wide mb-2">
                       Category
                     </h3>
-                    <p className="text-lg">{caseStudy.category}</p>
+                    <p className="text-lg text-white">{caseStudy.category}</p>
                   </div>
                 )}
                 {caseStudy.status && (
@@ -341,7 +341,7 @@ const CaseStudyDetail = () => {
                     <h3 className="text-sm font-semibold text-accent-200 uppercase tracking-wide mb-2">
                       Status
                     </h3>
-                    <p className="text-lg capitalize">
+                    <p className="text-lg capitalize text-white">
                       {caseStudy.status.replace("-", " ")}
                     </p>
                   </div>
@@ -351,7 +351,7 @@ const CaseStudyDetail = () => {
                     <h3 className="text-sm font-semibold text-accent-200 uppercase tracking-wide mb-2">
                       Client
                     </h3>
-                    <p className="text-lg">{caseStudy.client}</p>
+                    <p className="text-lg text-white">{caseStudy.client}</p>
                   </div>
                 )}
                 {caseStudy.duration && (
@@ -359,7 +359,7 @@ const CaseStudyDetail = () => {
                     <h3 className="text-sm font-semibold text-accent-200 uppercase tracking-wide mb-2">
                       Duration
                     </h3>
-                    <p className="text-lg">{caseStudy.duration}</p>
+                    <p className="text-lg text-white">{caseStudy.duration}</p>
                   </div>
                 )}
               </div>
@@ -396,7 +396,7 @@ const CaseStudyDetail = () => {
                 {caseStudy.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="px-3 py-1 bg-accent/20 text-accent-100 rounded-full text-sm font-medium"
+                    className="px-3 py-1 bg-white/15 text-white rounded-full text-sm font-medium"
                   >
                     {tag}
                   </span>
@@ -504,7 +504,7 @@ const CaseStudyDetail = () => {
                             <Icon
                               name="Lightbulb"
                               size={20}
-                              className="mr-2 text-accent"
+                              className="mr-2 text-accent dark:text-accent-text"
                               strokeWidth={2}
                             />
                             The Solution
@@ -549,7 +549,7 @@ const CaseStudyDetail = () => {
                       <Icon
                         name="Quote"
                         size={48}
-                        className="text-accent mx-auto mb-6"
+                        className="text-accent mx-auto mb-6 dark:text-accent-text"
                         strokeWidth={1}
                       />
                       <blockquote className="text-xl text-text-primary dark:text-white leading-relaxed mb-8 italic">

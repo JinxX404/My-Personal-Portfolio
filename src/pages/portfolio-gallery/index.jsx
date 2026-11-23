@@ -274,10 +274,10 @@ const PortfolioGallery = () => {
       <div className="flex flex-1 flex-col p-6">
         <div>
           <div className="flex items-start justify-between mb-3">
-            <h3 className="text-xl font-bold text-text-primary group-hover:text-accent transition-colors duration-200">
+            <h3 className="text-xl font-bold text-text-primary group-hover:text-accent dark:group-hover:text-accent-text transition-colors duration-200">
               {project.title}
             </h3>
-            <span className="text-sm font-medium text-cta bg-cta-50 dark:bg-cta-900/30 px-2 py-1 rounded-full">
+            <span className="text-sm font-medium text-accent-700 bg-cta-50 dark:bg-accent-subtle dark:text-accent-text px-2 py-1 rounded-full">
               {project.category}
             </span>
           </div>
@@ -291,7 +291,7 @@ const PortfolioGallery = () => {
             {project.technologies.map((tech, techIndex) => (
               <span
                 key={techIndex}
-                className="text-xs font-medium text-accent bg-accent-50 dark:bg-accent-900/30 px-2 py-1 rounded-full"
+                className="text-xs font-medium text-accent-700 bg-accent-50 dark:bg-accent-900/30 px-2 py-1 rounded-full dark:text-accent-text"
               >
                 {tech}
               </span>
@@ -302,7 +302,7 @@ const PortfolioGallery = () => {
         {/* Action Button */}
         <Link
           to={`/projects/${project.id}`}
-          className="mt-auto inline-flex items-center space-x-2 text-accent hover:text-accent-700 font-semibold transition-colors duration-200"
+          className="mt-auto inline-flex items-center space-x-2 text-accent hover:text-accent-700 font-semibold transition-colors duration-200 dark:text-accent-text dark:hover:text-accent-text"
         >
           <span>View Project</span>
           <Icon name="ArrowRight" size={16} strokeWidth={2} />
@@ -387,7 +387,7 @@ const PortfolioGallery = () => {
                   <span>{category.name}</span>
                   <span className={`text-xs px-2 py-0.5 rounded-full ${
                     activeFilter === category.name
-                      ? 'bg-white/20 text-white' : 'bg-primary-100 dark:bg-primary-800/30 text-text-secondary dark:text-muted'
+                      ? 'bg-black/20 text-white' : 'bg-primary-100 dark:bg-primary-800/30 text-text-secondary dark:text-muted'
                   }`}>
                     {category.count}
                   </span>
@@ -402,7 +402,7 @@ const PortfolioGallery = () => {
                 <button
                   key={tech}
                   onClick={() => setSearchQuery(tech)}
-                  className="text-xs font-medium text-accent bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-800/30 px-3 py-1 rounded-full transition-colors duration-200"
+                  className="text-xs font-medium text-accent-700 bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-800/30 px-3 py-1 rounded-full transition-colors duration-200 dark:text-accent-text"
                 >
                   {tech}
                 </button>
@@ -556,7 +556,7 @@ const PortfolioGallery = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedProject(null)}
-                  className="absolute top-4 right-4 bg-white/90 hover:bg-white text-primary-800 p-2 rounded-full shadow-lg transition-all duration-200"
+                  className="absolute top-4 right-4 bg-white/90 hover:bg-white text-primary-800 p-2 rounded-full shadow-lg transition-all duration-200 dark:bg-surface-elevated dark:hover:bg-surface dark:text-text-primary"
                   aria-label="Close preview"
                   title="Close preview"
                 >
@@ -567,16 +567,16 @@ const PortfolioGallery = () => {
               <div className="p-8">
                 <div className="flex items-start justify-between mb-6">
                   <div>
-                    <h2 className="text-3xl font-bold text-primary-800 mb-2">
+                    <h2 className="text-3xl font-bold text-primary-800 mb-2 dark:text-text-primary">
                       {selectedProject.title}
                     </h2>
-                    <span className="text-cta bg-cta-50 px-3 py-1 rounded-full text-sm font-semibold">
+                    <span className="text-accent-700 bg-cta-50 px-3 py-1 rounded-full text-sm font-semibold dark:bg-accent-subtle dark:text-accent-text">
                       {selectedProject.category}
                     </span>
                   </div>
                 </div>
 
-                <p className="text-secondary-600 text-lg mb-6">
+                <p className="text-secondary-600 text-lg mb-6 dark:text-text-secondary">
                   {selectedProject.description}
                 </p>
 
@@ -584,7 +584,7 @@ const PortfolioGallery = () => {
                   {selectedProject.technologies.map((tech, index) => (
                     <span
                       key={index}
-                      className="text-sm font-medium text-accent bg-accent-50 px-3 py-2 rounded-lg"
+                      className="text-sm font-medium text-accent-700 bg-accent-50 px-3 py-2 rounded-lg dark:text-accent-text dark:bg-accent-subtle"
                     >
                       {tech}
                     </span>
@@ -616,7 +616,7 @@ const PortfolioGallery = () => {
                     href={selectedProject.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-2 px-6 py-3 border border-primary-300 text-primary-700 hover:bg-primary-50 rounded-lg transition-colors duration-200"
+                    className="flex items-center space-x-2 px-6 py-3 border border-primary-300 text-primary-700 hover:bg-primary-50 rounded-lg transition-colors duration-200 dark:text-text-primary dark:hover:bg-surface-elevated"
                   >
                     <Icon name="Github" size={18} strokeWidth={2} />
                     <span>Source Code</span>
@@ -654,7 +654,7 @@ const PortfolioGallery = () => {
               </Link>
               <Link
                 to="/about-story"
-                className="bg-transparent border-2 border-border dark:border-border-strong text-text-primary dark:text-text-primary hover:bg-primary-50 dark:hover:bg-primary-900/30 font-semibold py-4 px-8 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2"
+                className="bg-transparent border-2 border-border dark:border-border-strong text-text-primary dark:text-text-primary hover:bg-primary-50 dark:hover:bg-primary-900/30 font-semibold py-4 px-8 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 dark:hover:bg-surface-elevated"
               >
                 <Icon name="User" size={20} strokeWidth={2} />
                 <span>Learn More About Me</span>

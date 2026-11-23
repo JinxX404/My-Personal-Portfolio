@@ -161,13 +161,13 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
       >
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center bg-secondary-100 dark:bg-primary-800">
-            <Icon name="Upload" size={24} className="text-secondary-600" />
+            <Icon name="Upload" size={24} className="text-secondary-600 dark:text-text-secondary" />
           </div>
           <p className="text-secondary-700 dark:text-secondary-300 mb-2">{description}</p>
-          <p className="text-sm text-secondary-500 mb-4">
+          <p className="text-sm text-secondary-500 mb-4 dark:text-muted">
             Drag and drop files here, or{' '}
             <span 
-              className="text-accent-600 cursor-pointer hover:text-accent-700"
+              className="text-accent-600 cursor-pointer hover:text-accent-700 dark:text-accent-text dark:hover:text-accent-text"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -184,7 +184,7 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
               browse
             </span>
           </p>
-          <p className="text-xs text-secondary-400">
+          <p className="text-xs text-secondary-600 dark:text-muted">
             Supports JPG, PNG, WebP up to 10MB each ({images.length}/{maxFiles} files)
           </p>
         </div>
@@ -242,7 +242,7 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
                       type="button"
                       disabled={idx === 0}
                       onClick={() => moveImage(idx, -1)}
-                      className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-secondary-200 bg-white text-secondary-700 hover:bg-secondary-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-primary-700 dark:bg-primary-800 dark:text-secondary-200"
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-secondary-200 bg-white text-secondary-700 hover:bg-secondary-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-primary-700 dark:bg-primary-800 dark:text-secondary-200 dark:hover:bg-surface-elevated"
                       aria-label={`Move ${label} up`}
                       title="Move up"
                     >
@@ -252,7 +252,7 @@ const DropZone = ({ zone, title, description, accept, maxFiles = 5, formData, se
                       type="button"
                       disabled={idx === images.length - 1}
                       onClick={() => moveImage(idx, 1)}
-                      className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-secondary-200 bg-white text-secondary-700 hover:bg-secondary-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-primary-700 dark:bg-primary-800 dark:text-secondary-200"
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-secondary-200 bg-white text-secondary-700 hover:bg-secondary-50 disabled:cursor-not-allowed disabled:opacity-40 dark:border-primary-700 dark:bg-primary-800 dark:text-secondary-200 dark:hover:bg-surface-elevated"
                       aria-label={`Move ${label} down`}
                       title="Move down"
                     >
@@ -292,20 +292,20 @@ const VisualAssets = ({ formData, setFormData }) => {
 
       <div className="mt-6 p-4 bg-secondary-50 dark:bg-primary-900/20 rounded-lg">
         <div className="flex items-center mb-3">
-          <Icon name="Settings" size={16} className="text-secondary-600 mr-2" />
+          <Icon name="Settings" size={16} className="text-secondary-600 mr-2 dark:text-text-secondary" />
           <h4 className="text-sm font-semibold text-secondary-700 dark:text-secondary-300">Optimization Settings</h4>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <label className="flex items-center">
-            <input type="checkbox" checked={formData?.autoOptimize ?? true} onChange={(e) => setFormData(prev => ({ ...prev, autoOptimize: e.target.checked }))} className="mr-2 text-accent-600 focus:ring-accent-500" />
+            <input type="checkbox" checked={formData?.autoOptimize ?? true} onChange={(e) => setFormData(prev => ({ ...prev, autoOptimize: e.target.checked }))} className="mr-2 text-accent-600 focus:ring-accent-500 dark:text-accent-text" />
             <span className="text-sm text-secondary-700 dark:text-secondary-300">Auto-optimize images</span>
           </label>
           <label className="flex items-center">
-            <input type="checkbox" checked={formData?.generateWebP ?? true} onChange={(e) => setFormData(prev => ({ ...prev, generateWebP: e.target.checked }))} className="mr-2 text-accent-600 focus:ring-accent-500" />
+            <input type="checkbox" checked={formData?.generateWebP ?? true} onChange={(e) => setFormData(prev => ({ ...prev, generateWebP: e.target.checked }))} className="mr-2 text-accent-600 focus:ring-accent-500 dark:text-accent-text" />
             <span className="text-sm text-secondary-700 dark:text-secondary-300">Generate WebP format</span>
           </label>
           <label className="flex items-center">
-            <input type="checkbox" checked={formData?.responsiveImages ?? true} onChange={(e) => setFormData(prev => ({ ...prev, responsiveImages: e.target.checked }))} className="mr-2 text-accent-600 focus:ring-accent-500" />
+            <input type="checkbox" checked={formData?.responsiveImages ?? true} onChange={(e) => setFormData(prev => ({ ...prev, responsiveImages: e.target.checked }))} className="mr-2 text-accent-600 focus:ring-accent-500 dark:text-accent-text" />
             <span className="text-sm text-secondary-700 dark:text-secondary-300">Create responsive sizes</span>
           </label>
         </div>

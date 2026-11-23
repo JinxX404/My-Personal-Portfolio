@@ -16,10 +16,10 @@ const Toast = () => {
   };
 
   const colorMap = {
-    success: 'bg-success-500',
+    success: 'bg-success-500 dark:bg-success-700',
     error: 'bg-error-500',
-    warning: 'bg-warning-500',
-    info: 'bg-accent-500',
+    warning: 'bg-warning-700',
+    info: 'bg-accent-500 dark:bg-accent-fill',
   };
 
   const visibleToasts = toasts.slice(-5);

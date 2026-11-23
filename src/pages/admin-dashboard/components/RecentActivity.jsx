@@ -21,11 +21,11 @@ const RecentActivity = ({ activities }) => {
   const getActivityColor = (type) => {
     switch (type) {
       case 'comment':
-        return 'bg-accent-100 dark:bg-accent-900/30 text-accent-600';
+        return 'bg-accent-100 dark:bg-accent-900/30 text-accent-600 dark:text-accent-text';
       case 'project':
         return 'bg-cta-100 dark:bg-cta-900/30 text-cta-600';
       case 'form':
-        return 'bg-success-100 dark:bg-success-900/30 text-success-600';
+        return 'bg-success-100 dark:bg-success-900/30 text-success-600 dark:text-success-text';
       case 'system':
         return 'bg-secondary-100 dark:bg-secondary-900/30 text-secondary-600';
       default:
@@ -37,7 +37,7 @@ const RecentActivity = ({ activities }) => {
     <div className="card">
       <div className="card-header">
         <div className="flex items-center space-x-2">
-          <Icon name="Activity" size={20} strokeWidth={2} className="text-accent" />
+          <Icon name="Activity" size={20} strokeWidth={2} className="text-accent dark:text-accent-text" />
           <h2 className="text-lg font-semibold text-primary-800 dark:text-primary-200">Recent Activity</h2>
         </div>
         <p className="text-sm text-secondary-600 dark:text-secondary-400 mt-1">Latest updates</p>
@@ -64,7 +64,7 @@ const RecentActivity = ({ activities }) => {
                 <p className="text-sm text-secondary-700 dark:text-secondary-300">
                   {activity.message}
                 </p>
-                <p className="text-xs text-secondary-500 mt-1">{activity.time}</p>
+                <p className="text-xs text-secondary-500 mt-1 dark:text-muted">{activity.time}</p>
               </div>
             </div>
           ))}
@@ -73,7 +73,7 @@ const RecentActivity = ({ activities }) => {
         {(!activities || activities.length === 0) && (
           <div className="text-center py-8">
             <Icon name="Inbox" size={48} className="text-secondary-300 dark:text-secondary-600 mx-auto mb-4" strokeWidth={1} />
-            <p className="text-secondary-500 text-sm">No recent activity</p>
+            <p className="text-secondary-500 text-sm dark:text-muted">No recent activity</p>
           </div>
         )}
       </div>

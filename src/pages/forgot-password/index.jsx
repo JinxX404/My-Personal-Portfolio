@@ -46,15 +46,15 @@ const ForgotPassword = () => {
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link to="/login" className="inline-flex items-center text-secondary-600 hover:text-accent transition-colors mb-6">
+          <Link to="/login" className="inline-flex items-center text-secondary-600 hover:text-accent transition-colors mb-6 dark:text-text-secondary dark:hover:text-accent-text">
             <Icon name="ArrowLeft" size={16} className="mr-1" />
             Back to Login
           </Link>
           <div className="w-16 h-16 bg-accent-100 dark:bg-accent-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Icon name="Key" size={32} className="text-accent" />
+            <Icon name="Key" size={32} className="text-accent dark:text-accent-text" />
           </div>
           <h1 className="text-2xl font-bold text-primary-800 dark:text-primary-200">Forgot Password?</h1>
-          <p className="text-secondary-600 mt-2">No worries, we'll send you reset instructions.</p>
+          <p className="text-secondary-600 mt-2 dark:text-text-secondary">No worries, we'll send you reset instructions.</p>
         </div>
 
         {isSubmitted ? (
@@ -63,12 +63,12 @@ const ForgotPassword = () => {
               <Icon name="Mail" size={32} className="text-success" />
             </div>
             <h2 className="text-xl font-bold text-primary-800 dark:text-primary-200 mb-2">Check Your Email</h2>
-            <p className="text-secondary-600 mb-6">
+            <p className="text-secondary-600 mb-6 dark:text-text-secondary">
               We've sent a password reset link to <strong>{email}</strong>. Click the link to reset your password.
             </p>
             <button
               onClick={() => { setIsSubmitted(false); setEmail(''); }}
-              className="text-accent hover:text-accent-700 font-medium"
+              className="text-accent hover:text-accent-700 font-medium dark:text-accent-text dark:hover:text-accent-text"
             >
               Didn't receive the email? Try again
             </button>

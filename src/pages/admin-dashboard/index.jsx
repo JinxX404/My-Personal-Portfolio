@@ -91,7 +91,7 @@ const AdminDashboard = () => {
   return (
     <>
       {/* Top Header */}
-      <header className="bg-white dark:bg-surface shadow-sm border-b border-primary-100 dark:border-primary-800">
+      <header className="bg-white dark:bg-surface shadow-sm border-b border-primary-100 dark:border-border">
         <div className="flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <div>
             <h1 className="text-2xl font-bold text-primary-800 dark:text-primary-200">Admin Dashboard</h1>

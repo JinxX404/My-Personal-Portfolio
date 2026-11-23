@@ -10,7 +10,7 @@ const AdminLayout = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-primary-50">
+    <div className="min-h-screen bg-primary-50 dark:bg-background">
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div 
@@ -25,10 +25,10 @@ const AdminLayout = ({ children }) => {
       {/* Main Content */}
       <div className="lg:ml-64 min-h-screen flex flex-col">
         {/* Mobile Header Toggle */}
-        <div className="lg:hidden bg-white shadow-sm border-b border-primary-100 p-4 sticky top-0 z-30">
+        <div className="lg:hidden bg-white shadow-sm border-b border-primary-100 p-4 sticky top-0 z-30 dark:bg-surface dark:border-border">
             <button
             onClick={toggleSidebar}
-            className="p-2 rounded-lg text-primary-600 hover:bg-primary-50 transition-colors duration-200"
+            className="p-2 rounded-lg text-primary-600 hover:bg-primary-50 transition-colors duration-200 dark:text-text-secondary dark:hover:bg-surface-elevated"
             aria-label="Open sidebar navigation"
             title="Open sidebar navigation"
             >

@@ -13,7 +13,7 @@ const SEOSettingsTab = ({ settings, onChange }) => {
     <div className="space-y-8">
       <div>
         <h2 className="text-2xl font-bold text-primary-800 dark:text-primary-200 mb-2 flex items-center space-x-3">
-          <Icon name="TrendingUp" size={24} className="text-accent" />
+          <Icon name="TrendingUp" size={24} className="text-accent dark:text-accent-text" />
           <span>SEO & Analytics</span>
         </h2>
         <p className="text-secondary-600 dark:text-secondary-400 mb-6">
@@ -35,7 +35,7 @@ const SEOSettingsTab = ({ settings, onChange }) => {
               className="w-full px-4 py-3 border border-primary-200 dark:border-primary-700 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:bg-background dark:text-primary-200"
             />
             <div className="flex items-center justify-between mt-1">
-              <p className="text-xs text-secondary-500">{metaTitle.length}/60 characters</p>
+              <p className="text-xs text-secondary-500 dark:text-muted">{metaTitle.length}/60 characters</p>
               {metaTitle.length > 60 && (
                 <p className="text-xs text-error-500 flex items-center space-x-1">
                   <Icon name="AlertCircle" size={12} />
@@ -59,7 +59,7 @@ const SEOSettingsTab = ({ settings, onChange }) => {
               className="w-full px-4 py-3 border border-primary-200 dark:border-primary-700 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:bg-background dark:text-primary-200"
             />
             <div className="flex items-center justify-between mt-1">
-              <p className="text-xs text-secondary-500">{metaDescription.length}/160 characters</p>
+              <p className="text-xs text-secondary-500 dark:text-muted">{metaDescription.length}/160 characters</p>
               {metaDescription.length > 160 && (
                 <p className="text-xs text-error-500 flex items-center space-x-1">
                   <Icon name="AlertCircle" size={12} />
@@ -81,7 +81,7 @@ const SEOSettingsTab = ({ settings, onChange }) => {
               placeholder="https://example.com/og-image.jpg"
               className="w-full px-4 py-3 border border-primary-200 dark:border-primary-700 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:bg-background dark:text-primary-200"
             />
-            <p className="text-xs text-secondary-500 mt-1 flex items-center space-x-1">
+            <p className="text-xs text-secondary-500 mt-1 flex items-center space-x-1 dark:text-muted">
               <Icon name="Info" size={12} />
               <span>Recommended size: 1200x630px. Used when sharing on social media.</span>
             </p>
@@ -100,7 +100,7 @@ const SEOSettingsTab = ({ settings, onChange }) => {
                 placeholder="@username"
                 className="w-full pl-10 pr-4 py-3 border border-primary-200 dark:border-primary-700 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:bg-background dark:text-primary-200"
               />
-              <Icon name="X" size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400" />
+              <Icon name="X" size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400 dark:text-muted" />
             </div>
           </div>
 
@@ -108,7 +108,7 @@ const SEOSettingsTab = ({ settings, onChange }) => {
           <div className="md:col-span-2 mt-4">
             <div className="bg-gradient-to-br from-accent-50 to-cta-50 dark:from-accent-900/20 dark:to-cta-900/20 border-2 border-dashed border-accent-300 dark:border-accent-700 rounded-xl p-6">
               <h3 className="text-lg font-bold text-primary-800 dark:text-primary-200 mb-4 flex items-center space-x-2">
-                <Icon name="BarChart" size={20} className="text-accent" />
+                <Icon name="BarChart" size={20} className="text-accent dark:text-accent-text" />
                 <span>Analytics & Tracking</span>
               </h3>
               
@@ -125,7 +125,7 @@ const SEOSettingsTab = ({ settings, onChange }) => {
                     placeholder="G-XXXXXXXXXX"
                     className="w-full px-4 py-3 border border-primary-200 dark:border-primary-700 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent bg-white dark:bg-background dark:text-primary-200"
                   />
-                  <p className="text-xs text-secondary-500 mt-1">
+                  <p className="text-xs text-secondary-600 mt-1 dark:text-muted">
                     Find this in your Google Analytics property settings
                   </p>
                 </div>
@@ -142,7 +142,7 @@ const SEOSettingsTab = ({ settings, onChange }) => {
                     placeholder="abcdefghijklmnopqrstuvwxyz"
                     className="w-full px-4 py-3 border border-primary-200 dark:border-primary-700 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent bg-white dark:bg-background dark:text-primary-200"
                   />
-                  <p className="text-xs text-secondary-500 mt-1">
+                  <p className="text-xs text-secondary-600 mt-1 dark:text-muted">
                     Required for Google Search Console verification
                   </p>
                 </div>
@@ -154,17 +154,17 @@ const SEOSettingsTab = ({ settings, onChange }) => {
           <div className="md:col-span-2 mt-4">
             <div className="bg-white dark:bg-surface border-2 border-primary-200 dark:border-primary-700 rounded-xl p-6">
               <h3 className="text-lg font-bold text-primary-800 dark:text-primary-200 mb-4 flex items-center space-x-2">
-                <Icon name="Lightbulb" size={20} className="text-accent" />
+                <Icon name="Lightbulb" size={20} className="text-accent dark:text-accent-text" />
                 <span>SEO Best Practices</span>
               </h3>
               
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-3">
-                  <h4 className="font-semibold text-primary-700 flex items-center space-x-2">
+                  <h4 className="font-semibold text-primary-700 flex items-center space-x-2 dark:text-text-primary">
                     <Icon name="CheckCircle" size={16} className="text-success" />
                     <span>Do's</span>
                   </h4>
-                  <ul className="space-y-2 text-sm text-secondary-700">
+                  <ul className="space-y-2 text-sm text-secondary-700 dark:text-text-secondary">
                     <li className="flex items-start space-x-2">
                       <span className="text-success mt-0.5">•</span>
                       <span>Use descriptive, keyword-rich titles</span>
@@ -185,11 +185,11 @@ const SEOSettingsTab = ({ settings, onChange }) => {
                 </div>
                 
                 <div className="space-y-3">
-                  <h4 className="font-semibold text-primary-700 flex items-center space-x-2">
+                  <h4 className="font-semibold text-primary-700 flex items-center space-x-2 dark:text-text-primary">
                     <Icon name="XCircle" size={16} className="text-error" />
                     <span>Don'ts</span>
                   </h4>
-                  <ul className="space-y-2 text-sm text-secondary-700">
+                  <ul className="space-y-2 text-sm text-secondary-700 dark:text-text-secondary">
                     <li className="flex items-start space-x-2">
                       <span className="text-error mt-0.5">•</span>
                       <span>Don't keyword stuff or spam</span>

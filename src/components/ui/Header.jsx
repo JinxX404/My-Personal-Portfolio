@@ -101,7 +101,7 @@ const Header = () => {
                 to={item.path}
                 className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-theme group ${
                   isActivePath(item.path)
-                    ? 'text-accent-500 bg-accent-500/10 dark:bg-accent-500/15'
+                    ? 'text-accent-500 bg-accent-500/10 dark:text-accent-text dark:bg-accent-subtle'
                     : 'text-text-secondary hover:text-text-primary hover:bg-surface/60 dark:hover:bg-background/60'
                 }`}
               >
@@ -126,7 +126,7 @@ const Header = () => {
             <button
               type="button"
               onClick={toggleTheme}
-              className="relative inline-flex items-center justify-center w-10 h-10 rounded-full border border-border dark:border-border-strong transition-theme hover:border-accent-500 hover:text-accent-500"
+              className="relative inline-flex items-center justify-center w-10 h-10 rounded-full border border-border dark:border-border-strong transition-theme hover:border-accent-500 hover:text-accent-500 dark:hover:text-accent-text"
               aria-label="Toggle theme"
             >
               <span className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ${isDark ? 'rotate-0 opacity-100' : '-rotate-90 opacity-0'}`}>
@@ -152,7 +152,7 @@ const Header = () => {
           <button
             type="button"
             onClick={toggleMobileMenu}
-            className="lg:hidden p-2.5 rounded-lg text-text-primary hover:text-accent-500 hover:bg-surface/80 dark:hover:bg-background/60 transition-theme"
+            className="lg:hidden p-2.5 rounded-lg text-text-primary hover:text-accent-500 hover:bg-surface/80 dark:hover:bg-background/60 transition-theme dark:hover:text-accent-text"
             aria-label="Toggle mobile menu"
           >
             <Icon 
@@ -180,7 +180,7 @@ const Header = () => {
                 onClick={closeMobileMenu}
                 className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium transition-theme ${
                   isActivePath(item.path)
-                    ? 'text-accent-500 bg-accent-500/10 border border-accent-500/20'
+                    ? 'text-accent-500 bg-accent-500/10 border border-accent-500/20 dark:text-accent-text dark:bg-accent-subtle dark:border-accent-fill/40'
                     : 'text-text-secondary hover:text-text-primary hover:bg-surface/70 dark:hover:bg-background/60'
                 }`}
                 style={{ animationDelay: `${index * 50}ms` }}
@@ -214,7 +214,7 @@ const Header = () => {
                   toggleTheme();
                   closeMobileMenu();
                 }}
-                className="mt-4 w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-lg border border-border dark:border-border-strong/60 text-text-primary dark:text-text-secondary hover:text-accent-500 hover:border-accent-500 transition-theme"
+                className="mt-4 w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-lg border border-border dark:border-border-strong/60 text-text-primary dark:text-text-secondary hover:text-accent-500 hover:border-accent-500 transition-theme dark:hover:text-accent-text"
                 aria-label="Toggle theme"
               >
                 <Icon name={isDark ? 'Moon' : 'Sun'} size={18} strokeWidth={2.5} />

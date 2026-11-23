@@ -65,7 +65,7 @@ const ProjectsManager = () => {
     return (
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="flex items-center justify-center h-64">
-          <Icon name="Loader" size={32} className="animate-spin text-accent" />
+          <Icon name="Loader" size={32} className="animate-spin text-accent dark:text-accent-text" />
         </div>
       </div>
     );
@@ -79,11 +79,11 @@ const ProjectsManager = () => {
           { label: 'Projects Management' }
         ]} />
         {/* Header */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+        <div className="bg-white rounded-xl shadow-sm p-6 mb-6 dark:bg-surface">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-primary-800">Projects Management</h1>
-              <p className="text-secondary-600 mt-1">Manage your portfolio projects</p>
+              <h1 className="text-3xl font-bold text-primary-800 dark:text-text-primary">Projects Management</h1>
+              <p className="text-secondary-600 mt-1 dark:text-text-secondary">Manage your portfolio projects</p>
             </div>
             <Link
               to="/project-manager"
@@ -100,21 +100,21 @@ const ProjectsManager = () => {
               <Icon 
                 name="Search" 
                 size={20} 
-                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400"
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-secondary-400 dark:text-muted"
               />
               <input
                 type="text"
                 placeholder="Search projects..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
               />
             </div>
             <div className="flex space-x-2">
               <button
                 onClick={() => setFilter('all')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  filter === 'all' ? 'bg-accent text-white' : 'bg-primary-100 text-primary-700 hover:bg-primary-200'
+                  filter === 'all' ? 'bg-accent text-white' : 'bg-primary-100 text-primary-700 hover:bg-primary-200 dark:bg-surface-elevated dark:text-text-secondary dark:hover:bg-surface'
                 }`}
               >
                 All
@@ -122,7 +122,7 @@ const ProjectsManager = () => {
               <button
                 onClick={() => setFilter('published')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  filter === 'published' ? 'bg-success text-white' : 'bg-primary-100 text-primary-700 hover:bg-primary-200'
+                  filter === 'published' ? 'bg-success text-white' : 'bg-primary-100 text-primary-700 hover:bg-primary-200 dark:bg-surface-elevated dark:text-text-secondary dark:hover:bg-surface'
                 }`}
               >
                 Published
@@ -130,7 +130,7 @@ const ProjectsManager = () => {
               <button
                 onClick={() => setFilter('draft')}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                  filter === 'draft' ? 'bg-warning text-white' : 'bg-primary-100 text-primary-700 hover:bg-primary-200'
+                  filter === 'draft' ? 'bg-warning text-white' : 'bg-primary-100 text-primary-700 hover:bg-primary-200 dark:bg-surface-elevated dark:text-text-secondary dark:hover:bg-surface'
                 }`}
               >
                 Drafts
@@ -142,10 +142,10 @@ const ProjectsManager = () => {
         {/* Projects List */}
         <div className="space-y-4">
           {filteredProjects.length === 0 ? (
-            <div className="bg-white rounded-xl shadow-sm p-12 text-center">
+            <div className="bg-white rounded-xl shadow-sm p-12 text-center dark:bg-surface">
               <Icon name="Folder" size={48} className="mx-auto text-secondary-300 mb-4" />
-              <h3 className="text-xl font-semibold text-primary-800 mb-2">No projects found</h3>
-              <p className="text-secondary-600 mb-6">
+              <h3 className="text-xl font-semibold text-primary-800 mb-2 dark:text-text-primary">No projects found</h3>
+              <p className="text-secondary-600 mb-6 dark:text-text-secondary">
                 {searchQuery ? 'Try adjusting your search' : 'Get started by creating your first project'}
               </p>
               <Link to="/project-manager" className="btn-primary inline-flex items-center space-x-2">
@@ -155,33 +155,33 @@ const ProjectsManager = () => {
             </div>
           ) : (
             filteredProjects.map((project) => (
-              <div key={project.id} className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+              <div key={project.id} className="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow dark:bg-surface">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
-                      <h3 className="text-xl font-bold text-primary-800">{project.title}</h3>
+                      <h3 className="text-xl font-bold text-primary-800 dark:text-text-primary">{project.title}</h3>
                       {project.featured && (
-                        <span className="px-2 py-1 bg-cta-100 text-cta-700 text-xs font-semibold rounded-full">
+                        <span className="px-2 py-1 bg-cta-100 text-cta-700 text-xs font-semibold rounded-full dark:bg-accent-subtle dark:text-accent-text">
                           Featured
                         </span>
                       )}
                       <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
                         project.publishing_status === 'published'
-                          ? 'bg-success-100 text-success-700'
-                          : 'bg-warning-100 text-warning-700'
+                          ? 'bg-success-100 text-success-800 dark:bg-success-900/30 dark:text-success-text'
+                          : 'bg-warning-100 text-warning-700 dark:bg-warning-900/40 dark:text-warning'
                       }`}>
                         {project.publishing_status}
                       </span>
                     </div>
-                    <p className="text-secondary-600 mb-3 line-clamp-2">{project.description}</p>
+                    <p className="text-secondary-600 mb-3 line-clamp-2 dark:text-text-secondary">{project.description}</p>
                     <div className="flex flex-wrap gap-2 mb-3">
                       {project.technologies?.slice(0, 5).map((tech, idx) => (
-                        <span key={idx} className="px-2 py-1 bg-accent-50 text-accent-700 text-xs font-medium rounded">
+                        <span key={idx} className="px-2 py-1 bg-accent-50 text-accent-700 text-xs font-medium rounded dark:bg-accent-subtle dark:text-accent-text">
                           {tech}
                         </span>
                       ))}
                     </div>
-                    <div className="flex items-center space-x-4 text-sm text-secondary-500">
+                    <div className="flex items-center space-x-4 text-sm text-secondary-500 dark:text-muted">
                       <span className="flex items-center space-x-1">
                         <Icon name="Tag" size={14} />
                         <span>{project.category}</span>
@@ -198,8 +198,8 @@ const ProjectsManager = () => {
                       onClick={() => handleToggleFeatured(project.id, project.featured)}
                       className={`p-2 rounded-lg transition-colors ${
                         project.featured
-                          ? 'bg-cta-100 text-cta-700 hover:bg-cta-200'
-                          : 'bg-primary-100 text-primary-600 hover:bg-primary-200'
+                          ? 'bg-cta-100 text-cta-700 hover:bg-cta-200 dark:bg-accent-subtle dark:text-accent-text dark:hover:bg-accent-fill/20'
+                          : 'bg-primary-100 text-primary-600 hover:bg-primary-200 dark:bg-surface-elevated dark:text-text-secondary dark:hover:bg-surface'
                       }`}
                       title={project.featured ? 'Remove from featured' : 'Mark as featured'}
                     >
@@ -209,8 +209,8 @@ const ProjectsManager = () => {
                       onClick={() => handleTogglePublish(project.id, project.publishing_status)}
                       className={`p-2 rounded-lg transition-colors ${
                         project.publishing_status === 'published'
-                          ? 'bg-success-100 text-success-700 hover:bg-success-200'
-                          : 'bg-warning-100 text-warning-700 hover:bg-warning-200'
+                          ? 'bg-success-100 text-success-800 hover:bg-success-200 dark:bg-success-900/30 dark:text-success-text dark:hover:bg-success-800/40'
+                          : 'bg-warning-100 text-warning-700 hover:bg-warning-200 dark:bg-warning-900/40 dark:text-warning dark:hover:bg-warning-800/40'
                       }`}
                       title={project.publishing_status === 'published' ? 'Unpublish' : 'Publish'}
                     >
@@ -218,14 +218,14 @@ const ProjectsManager = () => {
                     </button>
                     <Link
                       to={`/project-manager?id=${project.id}`}
-                      className="p-2 bg-accent-100 text-accent-700 hover:bg-accent-200 rounded-lg transition-colors"
+                      className="p-2 bg-accent-100 text-accent-700 hover:bg-accent-200 rounded-lg transition-colors dark:bg-accent-subtle dark:text-accent-text"
                       title="Edit project"
                     >
                       <Icon name="Edit" size={18} strokeWidth={2} />
                     </Link>
                     <button
                       onClick={() => handleDelete(project.id, project.title)}
-                      className="p-2 bg-error-100 text-error-700 hover:bg-error-200 rounded-lg transition-colors"
+                      className="p-2 bg-error-100 text-error-700 hover:bg-error-200 rounded-lg transition-colors dark:bg-error-900/40 dark:text-error"
                       title="Delete project"
                     >
                       <Icon name="Trash2" size={18} strokeWidth={2} />
