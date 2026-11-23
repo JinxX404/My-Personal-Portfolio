@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Icon from 'components/AppIcon';
+import ThemeToggle from 'components/ui/ThemeToggle';
 import { useProjects } from 'context/ProjectsContext';
 
 const Sidebar = ({ isOpen, onClose }) => {
@@ -121,8 +122,9 @@ const Sidebar = ({ isOpen, onClose }) => {
           </div>
         </div>
 
-        {/* Back to Site */}
-        <div className="p-4 mt-4">
+        {/* Theme + Back to Site */}
+        <div className="p-4 mt-4 space-y-3">
+          <ThemeToggle variant="row" />
           <Link
             to="/homepage"
             className="flex items-center justify-center space-x-2 w-full px-4 py-3 bg-primary-800 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 dark:bg-accent-fill dark:hover:bg-accent-fill-hover"

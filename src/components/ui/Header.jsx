@@ -1,16 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Icon from '../AppIcon';
-import { useTheme } from 'context/ThemeContext';
+import ThemeToggle from './ThemeToggle';
 import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { isDark, toggleTheme } = useTheme();
-  const { profile, siteSettings } = usePortfolioSettings();
-  const showThemeToggle = siteSettings?.show_theme_toggle !== false;
+  const { profile } = usePortfolioSettings();
 
   const navigationItems = [
     { name: 'Home', path: '/homepage', icon: 'Home' },
@@ -120,25 +118,9 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* CTA Button + Theme Toggle + User Menu */}
+          {/* CTA Button + Theme Toggle */}
           <div className="hidden lg:flex items-center gap-3">
-            {showThemeToggle && (
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="relative inline-flex items-center justify-center w-10 h-10 rounded-full border border-border dark:border-border-strong transition-theme hover:border-accent-500 hover:text-accent-500 dark:hover:text-accent-text"
-              aria-label="Toggle theme"
-            >
-              <span className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ${isDark ? 'rotate-0 opacity-100' : '-rotate-90 opacity-0'}`}>
-                <Icon name="Moon" size={18} strokeWidth={2.5} />
-              </span>
-              <span className={`absolute inset-0 flex items-center justify-center transition-all duration-500 ${isDark ? 'rotate-90 opacity-0' : 'rotate-0 opacity-100'}`}>
-                <Icon name="Sun" size={18} strokeWidth={2.5} />
-              </span>
-            </button>
-            )}
-
-            {/* Admin menu removed for consistency */}
+            <ThemeToggle />
 
             <Link
               to="/contact-hub"
@@ -148,19 +130,23 @@ const Header = () => {
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            type="button"
-            onClick={toggleMobileMenu}
-            className="lg:hidden p-2.5 rounded-lg text-text-primary hover:text-accent-500 hover:bg-surface/80 dark:hover:bg-background/60 transition-theme dark:hover:text-accent-text"
-            aria-label="Toggle mobile menu"
-          >
-            <Icon 
-              name={isMobileMenuOpen ? "X" : "Menu"} 
-              size={24} 
-              strokeWidth={2}
-            />
-          </button>
+          {/* Mobile theme toggle + menu button */}
+          <div className="flex items-center gap-1 lg:hidden">
+            <ThemeToggle />
+            <button
+              type="button"
+              onClick={toggleMobileMenu}
+              className="p-2.5 rounded-lg text-text-primary hover:text-accent-500 hover:bg-surface/80 dark:hover:bg-background/60 transition-theme dark:hover:text-accent-text"
+              aria-label="Toggle mobile menu"
+              aria-expanded={isMobileMenuOpen}
+            >
+              <Icon
+                name={isMobileMenuOpen ? "X" : "Menu"}
+                size={24}
+                strokeWidth={2}
+              />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -207,20 +193,7 @@ const Header = () => {
                 <Icon name="MessageCircle" size={18} strokeWidth={2} />
                 <span>Let's Talk</span>
               </Link>
-              {showThemeToggle && (
-              <button
-                type="button"
-                onClick={() => {
-                  toggleTheme();
-                  closeMobileMenu();
-                }}
-                className="mt-4 w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-lg border border-border dark:border-border-strong/60 text-text-primary dark:text-text-secondary hover:text-accent-500 hover:border-accent-500 transition-theme dark:hover:text-accent-text"
-                aria-label="Toggle theme"
-              >
-                <Icon name={isDark ? 'Moon' : 'Sun'} size={18} strokeWidth={2.5} />
-                <span>{isDark ? 'Dark mode' : 'Light mode'}</span>
-              </button>
-              )}
+              <ThemeToggle variant="row" className="mt-4" />
             </div>
           </div>
         </div>

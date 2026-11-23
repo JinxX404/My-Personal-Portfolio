@@ -4,9 +4,15 @@
   "description": "Portfolio of Moataz Mohammed, a Full-Stack .NET developer.",
   "icons": [
     {
-      "src": "/favicon.ico",
-      "sizes": "48x48",
-      "type": "image/x-icon"
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
     },
     {
       "src": "/icon-192.png",
@@ -24,6 +30,6 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "theme_color": "#6366f1",
+  "theme_color": "#4f46e5",
   "background_color": "#0f172a"
 }
