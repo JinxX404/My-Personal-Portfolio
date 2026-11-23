@@ -6,15 +6,15 @@ import { safeHref } from "lib/safeUrl";
 import SocialLinks from "./SocialLinks";
 
 const contactMethodColorMap = {
-  accent: { bg10: "bg-accent/10", bg20: "bg-accent/20", text: "text-accent" },
+  accent: { bg10: "bg-accent/10 dark:bg-accent-subtle", bg20: "bg-accent/20 dark:bg-accent-fill/20", text: "text-accent dark:text-accent-text" },
   success: {
-    bg10: "bg-success/10",
-    bg20: "bg-success/20",
-    text: "text-success",
+    bg10: "bg-success/10 dark:bg-success-900/30",
+    bg20: "bg-success/20 dark:bg-success-800/30",
+    text: "text-success dark:text-success-text",
   },
   warning: {
-    bg10: "bg-warning/10",
-    bg20: "bg-warning/20",
+    bg10: "bg-warning/10 dark:bg-warning-900/40",
+    bg20: "bg-warning/20 dark:bg-warning-800/40",
     text: "text-warning",
   },
 };
@@ -65,7 +65,7 @@ const ContactInfo = () => {
       className="bg-surface dark:bg-surface rounded-2xl shadow-lg p-8 border border-border dark:border-border-strong"
     >
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-text-primary dark:text-primary-800 mb-2">
+        <h2 className="text-2xl font-bold text-text-primary dark:text-text-primary mb-2">
           Get in Touch
         </h2>
         <p className="text-text-secondary dark:text-text-secondary">
@@ -119,7 +119,7 @@ const ContactInfo = () => {
               <Icon
                 name="ExternalLink"
                 size={16}
-                className="text-secondary-400 group-hover:text-secondary-600 transition-colors duration-200"
+                className="text-secondary-400 group-hover:text-secondary-600 transition-colors duration-200 dark:text-muted"
                 strokeWidth={2}
               />
             </MotionTag>
@@ -128,8 +128,8 @@ const ContactInfo = () => {
       </div>
 
       {/* Response Time Information */}
-      {/* <div className="mt-8 pt-6 border-t border-primary-200">
-        <h3 className="font-semibold text-text-primary dark:text-primary-800 mb-4">
+      {/* <div className="mt-8 pt-6 border-t border-primary-200 dark:border-border">
+        <h3 className="font-semibold text-text-primary dark:text-text-primary mb-4">
           Response Times
         </h3>
         <div className="space-y-3">
@@ -138,14 +138,14 @@ const ContactInfo = () => {
               <Icon
                 name="Mail"
                 size={14}
-                className="text-accent"
+                className="text-accent dark:text-accent-text"
                 strokeWidth={2}
               />
               <span className="text-text-secondary dark:text-text-secondary">
                 Email inquiries
               </span>
             </div>
-            <span className="font-medium text-text-primary dark:text-primary-700">
+            <span className="font-medium text-text-primary dark:text-text-primary">
               {responseTime.email}
             </span>
           </div>
@@ -161,7 +161,7 @@ const ContactInfo = () => {
                 Phone calls
               </span>
             </div>
-            <span className="font-medium text-text-primary dark:text-primary-700">
+            <span className="font-medium text-text-primary dark:text-text-primary">
               {responseTime.phone}
             </span>
           </div>
@@ -177,7 +177,7 @@ const ContactInfo = () => {
                 Urgent matters
               </span>
             </div>
-            <span className="font-medium text-text-primary dark:text-primary-700">
+            <span className="font-medium text-text-primary dark:text-text-primary">
               {responseTime.urgent}
             </span>
           </div>
@@ -192,7 +192,7 @@ const ContactInfo = () => {
           <Icon name="Calendar" size={18} strokeWidth={2} />
           <span>Schedule a Free Consultation</span>
         </button>
-        <p className="text-xs text-secondary-500 text-center mt-2">
+        <p className="text-xs text-secondary-500 text-center mt-2 dark:text-muted">
           30-minute discovery call to discuss your project
         </p>
       </div>*/}
@@ -203,7 +203,7 @@ const ContactInfo = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-lg bg-accent/10 dark:bg-accent/20 flex items-center justify-center">
-                <Icon name="FileText" size={20} className="text-accent" strokeWidth={2} />
+                <Icon name="FileText" size={20} className="text-accent dark:text-accent-text" strokeWidth={2} />
               </div>
               <div>
                 <p className="font-semibold text-text-primary dark:text-white text-sm">Download My CV</p>
@@ -231,10 +231,10 @@ const ContactInfo = () => {
         <div
           className={`mt-6 p-4 rounded-lg border ${
             profile.availability === "available"
-              ? "bg-success-50 border-success-200"
+              ? "bg-success-50 border-success-200 dark:bg-success-900/30 dark:border-success-800"
               : profile.availability === "busy"
-                ? "bg-warning-50 border-warning-200"
-                : "bg-secondary-50 border-secondary-200"
+                ? "bg-warning-50 border-warning-200 dark:bg-warning-900/40 dark:border-warning-800"
+                : "bg-secondary-50 border-secondary-200 dark:bg-surface-elevated dark:border-border"
           }`}
         >
           <div className="flex items-center space-x-3">
@@ -251,10 +251,10 @@ const ContactInfo = () => {
               <p
                 className={`text-sm font-medium ${
                   profile.availability === "available"
-                    ? "text-success-800"
+                    ? "text-success-800 dark:text-success-text"
                     : profile.availability === "busy"
-                      ? "text-warning-800"
-                      : "text-secondary-800"
+                      ? "text-warning-800 dark:text-warning"
+                      : "text-secondary-800 dark:text-text-primary"
                 }`}
               >
                 {profile.availability === "available"
@@ -266,10 +266,10 @@ const ContactInfo = () => {
               <p
                 className={`text-xs ${
                   profile.availability === "available"
-                    ? "text-success-600"
+                    ? "text-success-600 dark:text-success-text"
                     : profile.availability === "busy"
-                      ? "text-warning-600"
-                      : "text-secondary-600"
+                      ? "text-warning-600 dark:text-warning"
+                      : "text-secondary-600 dark:text-muted"
                 }`}
               >
                 {profile.availability === "available"

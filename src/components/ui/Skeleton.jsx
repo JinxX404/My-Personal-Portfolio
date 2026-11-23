@@ -70,7 +70,7 @@ export const SkeletonImage = ({ aspectRatio = '16/9', className = '' }) => (
 
 // Card skeleton combining image + text
 export const SkeletonCard = ({ className = '' }) => (
-  <div className={`bg-white dark:bg-primary-800 rounded-xl shadow-md overflow-hidden ${className}`}>
+  <div className={`bg-white dark:bg-surface rounded-xl shadow-md overflow-hidden ${className}`}>
     <SkeletonImage aspectRatio="16/9" />
     <div className="p-4 space-y-3">
       <Skeleton height={20} className="w-3/4" />
@@ -85,7 +85,7 @@ export const SkeletonCard = ({ className = '' }) => (
 
 // Project card skeleton
 export const SkeletonProjectCard = ({ className = '' }) => (
-  <div className={`bg-white dark:bg-primary-800 rounded-xl shadow-lg overflow-hidden ${className}`}>
+  <div className={`bg-white dark:bg-surface rounded-xl shadow-lg overflow-hidden ${className}`}>
     <SkeletonImage aspectRatio="4/3" />
     <div className="p-6 space-y-4">
       <Skeleton height={24} className="w-3/4" />
@@ -112,7 +112,7 @@ export const SkeletonTableRow = ({ columns = 4, className = '' }) => (
 
 // Metric card skeleton
 export const SkeletonMetricCard = ({ className = '' }) => (
-  <div className={`bg-white dark:bg-primary-800 rounded-xl shadow-md p-6 ${className}`}>
+  <div className={`bg-white dark:bg-surface rounded-xl shadow-md p-6 ${className}`}>
     <div className="flex items-center justify-between mb-4">
       <Skeleton height={16} width={100} />
       <Skeleton height={40} width={40} rounded="lg" />

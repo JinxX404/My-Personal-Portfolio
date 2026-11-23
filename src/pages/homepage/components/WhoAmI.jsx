@@ -43,7 +43,7 @@ const WhoAmI = () => {
             <h2 className="text-2xl md:text-3xl font-bold text-text-primary dark:text-white mb-2">
               {profile?.full_name || 'Moataz Mohammed'}
             </h2>
-            <p className="text-accent font-medium mb-4">
+            <p className="text-accent font-medium mb-4 dark:text-accent-text">
               {profile?.tagline || 'Full-Stack .NET Developer'}
             </p>
             <p className="text-text-secondary dark:text-white/70 max-w-2xl mb-6">
@@ -59,7 +59,7 @@ const WhoAmI = () => {
               {highlights.map((item, index) => (
                 <div key={index} className="flex items-center space-x-2">
                   <div className="w-10 h-10 bg-accent/10 dark:bg-accent/20 rounded-lg flex items-center justify-center">
-                    <Icon name={item.icon} size={18} className="text-accent" strokeWidth={2} />
+                    <Icon name={item.icon} size={18} className="text-accent dark:text-accent-text" strokeWidth={2} />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-text-primary dark:text-white">{item.text}</p>

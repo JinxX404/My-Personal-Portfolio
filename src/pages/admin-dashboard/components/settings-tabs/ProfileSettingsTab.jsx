@@ -58,15 +58,15 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-2xl font-bold text-primary-800 mb-6 flex items-center space-x-3">
-          <Icon name="User" size={24} className="text-accent" />
+        <h2 className="text-2xl font-bold text-primary-800 mb-6 flex items-center space-x-3 dark:text-text-primary">
+          <Icon name="User" size={24} className="text-accent dark:text-accent-text" />
           <span>Profile Information</span>
         </h2>
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Avatar Upload */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-primary-700 mb-2">
+            <label className="block text-sm font-semibold text-primary-700 mb-2 dark:text-text-primary">
               Profile Avatar
             </label>
             <div className="flex items-center space-x-6">
@@ -95,7 +95,7 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
                 </label>
               </div>
               <div className="flex-1">
-                <p className="text-sm text-secondary-600 mb-2">
+                <p className="text-sm text-secondary-600 mb-2 dark:text-text-secondary">
                   Upload a professional photo. Recommended size: 400x400px
                 </p>
                 <input
@@ -103,7 +103,7 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
                   value={settings.avatar}
                   onChange={(e) => onChange({ ...settings, avatar: e.target.value })}
                   placeholder="Or paste image URL"
-                  className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+                  className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
                 />
               </div>
             </div>
@@ -111,7 +111,7 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
 
           {/* Full Name */}
           <div>
-            <label className="block text-sm font-semibold text-primary-700 mb-2">
+            <label className="block text-sm font-semibold text-primary-700 mb-2 dark:text-text-primary">
               Full Name *
             </label>
             <input
@@ -119,13 +119,13 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
               value={settings.full_name}
               onChange={(e) => onChange({ ...settings, full_name: e.target.value })}
               placeholder="John Doe"
-              className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
             />
           </div>
 
           {/* Title */}
           <div>
-            <label className="block text-sm font-semibold text-primary-700 mb-2">
+            <label className="block text-sm font-semibold text-primary-700 mb-2 dark:text-text-primary">
               Professional Title *
             </label>
             <input
@@ -133,13 +133,13 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
               value={settings.title}
               onChange={(e) => onChange({ ...settings, title: e.target.value })}
               placeholder="Full Stack Developer"
-              className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
             />
           </div>
 
           {/* Tagline */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-primary-700 mb-2">
+            <label className="block text-sm font-semibold text-primary-700 mb-2 dark:text-text-primary">
               Tagline / Headline
             </label>
             <input
@@ -147,13 +147,13 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
               value={settings.tagline}
               onChange={(e) => onChange({ ...settings, tagline: e.target.value })}
               placeholder="Crafting Digital Experiences That Matter"
-              className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
             />
           </div>
 
           {/* Bio */}
           <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-primary-700 mb-2">
+            <label className="block text-sm font-semibold text-primary-700 mb-2 dark:text-text-primary">
               Bio / About
             </label>
             <textarea
@@ -161,13 +161,13 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
               onChange={(e) => onChange({ ...settings, bio: e.target.value })}
               placeholder="Tell your story..."
               rows="6"
-              className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
             />
           </div>
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-semibold text-primary-700 mb-2">
+            <label className="block text-sm font-semibold text-primary-700 mb-2 dark:text-text-primary">
               Email Address *
             </label>
             <div className="relative">
@@ -176,15 +176,15 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
                 value={settings.email}
                 onChange={(e) => onChange({ ...settings, email: e.target.value })}
                 placeholder="john@example.com"
-                className="w-full pl-12 pr-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+                className="w-full pl-12 pr-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
               />
-              <Icon name="Mail" size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary-400" />
+              <Icon name="Mail" size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary-400 dark:text-muted" />
             </div>
           </div>
 
           {/* Phone */}
           <div>
-            <label className="block text-sm font-semibold text-primary-700 mb-2">
+            <label className="block text-sm font-semibold text-primary-700 mb-2 dark:text-text-primary">
               Phone Number
             </label>
             <div className="relative">
@@ -193,15 +193,15 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
                 value={settings.phone}
                 onChange={(e) => onChange({ ...settings, phone: e.target.value })}
                 placeholder="+1 (555) 123-4567"
-                className="w-full pl-12 pr-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+                className="w-full pl-12 pr-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
               />
-              <Icon name="Phone" size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary-400" />
+              <Icon name="Phone" size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary-400 dark:text-muted" />
             </div>
           </div>
 
           {/* Location */}
           <div>
-            <label className="block text-sm font-semibold text-primary-700 mb-2">
+            <label className="block text-sm font-semibold text-primary-700 mb-2 dark:text-text-primary">
               Location
             </label>
             <div className="relative">
@@ -210,21 +210,21 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
                 value={settings.location}
                 onChange={(e) => onChange({ ...settings, location: e.target.value })}
                 placeholder="San Francisco, CA"
-                className="w-full pl-12 pr-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+                className="w-full pl-12 pr-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
               />
-              <Icon name="MapPin" size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary-400" />
+              <Icon name="MapPin" size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary-400 dark:text-muted" />
             </div>
           </div>
 
           {/* Availability Status */}
           <div>
-            <label className="block text-sm font-semibold text-primary-700 mb-2">
+            <label className="block text-sm font-semibold text-primary-700 mb-2 dark:text-text-primary">
               Availability Status
             </label>
             <select
               value={settings.availability}
               onChange={(e) => onChange({ ...settings, availability: e.target.value })}
-              className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
             >
               <option value="available">✅ Available for hire</option>
               <option value="busy">⚠️ Busy (Limited availability)</option>
@@ -234,7 +234,7 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
 
           {/* Freelance Projects Count */}
           <div>
-            <label className="block text-sm font-semibold text-primary-700 mb-2">
+            <label className="block text-sm font-semibold text-primary-700 mb-2 dark:text-text-primary">
               Freelance Projects Count
             </label>
             <div className="relative">
@@ -244,17 +244,17 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
                 value={freelanceProjects || 0}
                 onChange={(e) => onFreelanceProjectsChange(parseInt(e.target.value) || 0)}
                 placeholder="e.g., 10"
-                className="w-full pl-12 pr-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent"
+                className="w-full pl-12 pr-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
               />
-              <Icon name="Briefcase" size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary-400" />
+              <Icon name="Briefcase" size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary-400 dark:text-muted" />
             </div>
-            <p className="text-xs text-secondary-500 mt-1">Displayed in hero section stats</p>
+            <p className="text-xs text-secondary-500 mt-1 dark:text-muted">Displayed in hero section stats</p>
           </div>
 
           {/* Resume/CV URLs */}
           <div className="md:col-span-2 bg-gradient-to-br from-accent-50 to-cta-50 dark:from-accent-900/20 dark:to-cta-900/20 border-2 border-dashed border-accent-300 dark:border-accent/30 rounded-xl p-6">
             <h3 className="text-lg font-bold text-primary-800 dark:text-white mb-4 flex items-center space-x-2">
-              <Icon name="FileText" size={20} className="text-accent" />
+              <Icon name="FileText" size={20} className="text-accent dark:text-accent-text" />
               <span>CV / Resume</span>
             </h3>
             
@@ -268,13 +268,13 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
                   <div className={`flex items-center justify-center px-6 py-4 border-2 border-dashed border-accent-300 dark:border-accent/50 rounded-lg bg-white dark:bg-white/5 hover:bg-accent-50 dark:hover:bg-accent-900/20 transition-colors ${uploadingCv ? 'opacity-50' : ''}`}>
                     {uploadingCv ? (
                       <div className="flex items-center space-x-2">
-                        <Icon name="Loader" size={20} className="animate-spin text-accent" />
-                        <span className="text-sm text-secondary-600">Uploading...</span>
+                        <Icon name="Loader" size={20} className="animate-spin text-accent dark:text-accent-text" />
+                        <span className="text-sm text-secondary-600 dark:text-text-secondary">Uploading...</span>
                       </div>
                     ) : (
                       <div className="flex items-center space-x-2">
-                        <Icon name="Upload" size={20} className="text-accent" />
-                        <span className="text-sm text-secondary-600">
+                        <Icon name="Upload" size={20} className="text-accent dark:text-accent-text" />
+                        <span className="text-sm text-secondary-600 dark:text-text-secondary">
                           {settings.cv_url ? 'Replace CV' : 'Choose PDF file'}
                         </span>
                       </div>
@@ -306,7 +306,7 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
                   <span className="text-sm text-success-700 dark:text-success-400">CV uploaded successfully</span>
                 </div>
               )}
-              <p className="text-xs text-secondary-600 mt-2">PDF only, max 10MB</p>
+              <p className="text-xs text-secondary-600 mt-2 dark:text-text-secondary">PDF only, max 10MB</p>
             </div>
             
             {/* Manual URL input as fallback */}

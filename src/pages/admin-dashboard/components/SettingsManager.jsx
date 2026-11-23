@@ -84,7 +84,7 @@ const SettingsManager = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-accent-50 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-accent-50 p-6 dark:from-background dark:to-background">
       <div className="max-w-7xl mx-auto">
         <Breadcrumb items={[
           { href: '/admin-dashboard', label: 'Dashboard' },
@@ -92,8 +92,8 @@ const SettingsManager = () => {
         ]} />
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-primary-800 mb-2">Portfolio Settings</h1>
-          <p className="text-secondary-600">Manage your portfolio information, social links, and site configuration</p>
+          <h1 className="text-4xl font-bold text-primary-800 mb-2 dark:text-text-primary">Portfolio Settings</h1>
+          <p className="text-secondary-600 dark:text-text-secondary">Manage your portfolio information, social links, and site configuration</p>
         </div>
 
         {/* Save Message */}
@@ -103,8 +103,8 @@ const SettingsManager = () => {
             animate={{ opacity: 1, y: 0 }}
             className={`mb-6 p-4 rounded-lg flex items-center space-x-3 ${
               saveMessage.type === 'success' 
-                ? 'bg-success-50 text-success-700 border border-success-200' 
-                : 'bg-error-50 text-error-700 border border-error-200'
+                ? 'bg-success-50 text-success-800 border border-success-200 dark:bg-success-900/30 dark:text-success-text dark:border-success-800' 
+                : 'bg-error-50 text-error-700 border border-error-200 dark:bg-error-900/40 dark:text-error dark:border-error-800'
             }`}
           >
             <Icon name={saveMessage.type === 'success' ? 'CheckCircle' : 'AlertCircle'} size={20} />
@@ -113,8 +113,8 @@ const SettingsManager = () => {
         )}
 
         {/* Tabs */}
-        <div className="bg-white rounded-xl shadow-lg mb-6 p-2">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+        <div className="bg-white rounded-xl shadow-lg mb-6 p-2 dark:bg-surface">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
@@ -122,7 +122,7 @@ const SettingsManager = () => {
                 className={`flex items-center justify-center space-x-2 px-6 py-4 rounded-lg font-semibold transition-all duration-200 ${
                   activeTab === tab.id
                     ? 'bg-gradient-to-r from-accent to-cta text-white shadow-lg'
-                    : 'text-secondary-600 hover:bg-primary-50'
+                    : 'text-secondary-600 hover:bg-primary-50 dark:text-text-secondary dark:hover:bg-surface-elevated'
                 }`}
               >
                 <Icon name={tab.icon} size={20} />
@@ -133,7 +133,7 @@ const SettingsManager = () => {
         </div>
 
         {/* Content */}
-        <div className="bg-white rounded-xl shadow-lg p-8">
+        <div className="bg-white rounded-xl shadow-lg p-8 dark:bg-surface">
           {activeTab === 'profile' && (
             <ProfileSettingsTab 
               settings={profileSettings}
@@ -176,7 +176,7 @@ const SettingsManager = () => {
         <div className="mt-8 flex justify-end space-x-4">
           <button
             onClick={handleReset}
-            className="px-8 py-4 bg-secondary-100 text-secondary-700 rounded-lg font-semibold hover:bg-secondary-200 transition-colors duration-200"
+            className="px-8 py-4 bg-secondary-100 text-secondary-700 rounded-lg font-semibold hover:bg-secondary-200 transition-colors duration-200 dark:bg-surface dark:text-text-secondary dark:hover:bg-surface-elevated"
           >
             Reset Changes
           </button>

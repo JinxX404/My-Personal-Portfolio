@@ -32,7 +32,7 @@ const Homepage = () => {
   return (
     <div className="min-h-screen bg-background text-text-primary transition-theme">
       {/* Progress Bar */}
-      <div className="fixed top-0 left-0 w-full h-1 bg-primary-100 dark:bg-primary-200/30 z-50 transition-theme">
+      <div className="fixed top-0 left-0 w-full h-1 bg-primary-100 dark:bg-accent-fill/40 z-50 transition-theme">
         <div 
           className="h-full bg-gradient-to-r from-accent-500 via-accent-400 to-cta transition-all duration-300 ease-out dark:from-accent-400 dark:via-accent-500 dark:to-cta"
           style={{ width: `${scrollProgress}%` }}
@@ -103,7 +103,7 @@ const Homepage = () => {
                 href={cvUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center space-x-2 border border-accent text-accent hover:bg-accent hover:text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300"
+                className="inline-flex items-center justify-center space-x-2 border border-accent text-accent hover:bg-accent hover:text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 dark:text-accent-text"
               >
                 <Icon name="Download" size={20} strokeWidth={2} />
                 <span>Download CV</span>

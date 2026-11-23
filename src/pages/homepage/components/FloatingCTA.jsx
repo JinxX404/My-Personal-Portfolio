@@ -39,20 +39,20 @@ const FloatingCTA = () => {
       >
         {/* Expanded CTA Card */}
         {isExpanded && (
-          <div className="bg-white rounded-lg shadow-2xl p-6 mb-4 border border-primary-100 animate-fade-in">
+          <div className="bg-white rounded-lg shadow-2xl p-6 mb-4 border border-primary-100 animate-fade-in dark:bg-surface dark:border-border">
             <div className="flex items-start justify-between mb-4">
               <div>
-                <h4 className="font-bold text-primary-800 mb-1">
+                <h4 className="font-bold text-primary-800 mb-1 dark:text-text-primary">
                   Ready to Start Your Project?
                 </h4>
-                <p className="text-sm text-secondary-600">
+                <p className="text-sm text-secondary-600 dark:text-text-secondary">
                   Let's discuss how I can help bring your ideas to life.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={toggleExpanded}
-                className="text-secondary-400 hover:text-secondary-600 transition-colors duration-200"
+                className="text-secondary-400 hover:text-secondary-600 transition-colors duration-200 dark:text-muted"
                 aria-label="Close contact panel"
               >
                 <Icon name="X" size={18} strokeWidth={2} />
@@ -71,7 +71,7 @@ const FloatingCTA = () => {
 
               <Link
                 to="/portfolio-gallery"
-                className="w-full bg-transparent border border-accent text-accent hover:bg-accent hover:text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2"
+                className="w-full bg-transparent border border-accent text-accent hover:bg-accent hover:text-white font-semibold py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 dark:text-accent-text"
                 onClick={() => setIsExpanded(false)}
               >
                 <Icon name="Eye" size={18} strokeWidth={2} />
@@ -92,13 +92,13 @@ const FloatingCTA = () => {
             </div>
 
             {/* Quick Contact Options */}
-            <div className="mt-4 pt-4 border-t border-primary-100">
-              <p className="text-xs text-secondary-500 mb-2">Quick Connect:</p>
+            <div className="mt-4 pt-4 border-t border-primary-100 dark:border-border">
+              <p className="text-xs text-secondary-500 mb-2 dark:text-muted">Quick Connect:</p>
               <div className="flex space-x-2">
                 {emailHref && (
                   <a
                     href={emailHref}
-                    className="flex-1 bg-primary-50 hover:bg-primary-100 text-primary-600 p-2 rounded text-center transition-colors duration-200"
+                    className="flex-1 bg-primary-50 hover:bg-primary-100 text-primary-600 p-2 rounded text-center transition-colors duration-200 dark:bg-background dark:hover:bg-surface-elevated dark:text-text-secondary"
                     aria-label="Email"
                     title="Email"
                   >
@@ -115,7 +115,7 @@ const FloatingCTA = () => {
                     href={linkedinHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 bg-primary-50 hover:bg-primary-100 text-primary-600 p-2 rounded text-center transition-colors duration-200"
+                    className="flex-1 bg-primary-50 hover:bg-primary-100 text-primary-600 p-2 rounded text-center transition-colors duration-200 dark:bg-background dark:hover:bg-surface-elevated dark:text-text-secondary"
                     aria-label="LinkedIn"
                     title="LinkedIn"
                   >
@@ -132,7 +132,7 @@ const FloatingCTA = () => {
                     href={githubHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 bg-primary-50 hover:bg-primary-100 text-primary-600 p-2 rounded text-center transition-colors duration-200"
+                    className="flex-1 bg-primary-50 hover:bg-primary-100 text-primary-600 p-2 rounded text-center transition-colors duration-200 dark:bg-background dark:hover:bg-surface-elevated dark:text-text-secondary"
                     aria-label="GitHub"
                     title="GitHub"
                   >

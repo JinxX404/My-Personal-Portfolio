@@ -51,11 +51,11 @@ const ContentSections = ({ formData, setFormData }) => {
     <div className="bg-surface dark:bg-surface rounded-xl shadow-md p-6 mb-6 border border-border dark:border-border-strong">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
-          <div className="p-2 bg-accent-100 dark:bg-accent-50 rounded-lg mr-3">
+          <div className="p-2 bg-accent-100 dark:bg-accent-subtle rounded-lg mr-3">
             <Icon name="FileText" size={20} className="text-accent-600 dark:text-accent-500" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-text-primary dark:text-primary-800">Content Sections</h2>
+            <h2 className="text-2xl font-bold text-text-primary dark:text-text-primary">Content Sections</h2>
             <p className="text-sm text-text-secondary dark:text-text-secondary mt-1">
               Add custom sections to showcase your project details
             </p>
@@ -73,7 +73,7 @@ const ContentSections = ({ formData, setFormData }) => {
 
       {sections.length === 0 ? (
         <div className="text-center py-12 border-2 border-dashed border-secondary-300 dark:border-secondary-700 rounded-lg">
-          <Icon name="LayoutList" size={48} className="mx-auto text-secondary-400 mb-4" />
+          <Icon name="LayoutList" size={48} className="mx-auto text-secondary-400 mb-4 dark:text-muted" />
           <p className="text-text-secondary dark:text-text-secondary mb-4">
             No content sections yet. Add sections to describe your project in detail.
           </p>
@@ -104,7 +104,7 @@ const ContentSections = ({ formData, setFormData }) => {
                     type="button"
                     onClick={() => handleMoveSection(section.id, 'up')}
                     disabled={index === 0}
-                    className="p-2 hover:bg-secondary-200 dark:hover:bg-primary-800 rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="p-2 hover:bg-secondary-200 dark:hover:bg-primary-800 rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed dark:hover:bg-surface-elevated"
                     title="Move up"
                   >
                     <Icon name="ChevronUp" size={16} />
@@ -113,7 +113,7 @@ const ContentSections = ({ formData, setFormData }) => {
                     type="button"
                     onClick={() => handleMoveSection(section.id, 'down')}
                     disabled={index === sections.length - 1}
-                    className="p-2 hover:bg-secondary-200 dark:hover:bg-primary-800 rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                    className="p-2 hover:bg-secondary-200 dark:hover:bg-primary-800 rounded-md transition-colors disabled:opacity-30 disabled:cursor-not-allowed dark:hover:bg-surface-elevated"
                     title="Move down"
                   >
                     <Icon name="ChevronDown" size={16} />
@@ -138,7 +138,7 @@ const ContentSections = ({ formData, setFormData }) => {
                     type="text"
                     value={section.title || ''}
                     onChange={(e) => handleUpdateSection(section.id, 'title', e.target.value)}
-                    className="w-full px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:bg-primary-900 dark:border-primary-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:bg-surface-elevated dark:border-border dark:text-text-primary"
                     placeholder="e.g., Overview"
                   />
                 </div>
@@ -149,7 +149,7 @@ const ContentSections = ({ formData, setFormData }) => {
                   <textarea
                     value={section.content || ''}
                     onChange={(e) => handleUpdateSection(section.id, 'content', e.target.value)}
-                    className="w-full px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none dark:bg-primary-900 dark:border-primary-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none dark:bg-surface-elevated dark:border-border dark:text-text-primary"
                     rows={4}
                     placeholder="Write your section content here..."
                   />

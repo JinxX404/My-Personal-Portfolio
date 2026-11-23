@@ -29,7 +29,7 @@ const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-background pt-20">
     <div className="text-center">
       <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-      <p className="text-secondary-600">Loading...</p>
+      <p className="text-secondary-600 dark:text-text-secondary">Loading...</p>
     </div>
   </div>
 );

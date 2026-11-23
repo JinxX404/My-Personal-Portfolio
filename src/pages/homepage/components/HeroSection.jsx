@@ -92,8 +92,8 @@ const HeroSection = ({ shouldReduceMotion }) => {
                   {currentSnippet.language}
                 </div>
                 <div className="flex items-center space-x-2">
-                  <Icon name="Play" size={16} className="text-success-500" strokeWidth={2} />
-                  <span className="text-xs text-success-500 hidden sm:inline">Running</span>
+                  <Icon name="Play" size={16} className="text-success-800 dark:text-success-text" strokeWidth={2} />
+                  <span className="text-xs text-success-800 dark:text-success-text hidden sm:inline">Running</span>
                 </div>
               </div>
 
@@ -103,7 +103,7 @@ const HeroSection = ({ shouldReduceMotion }) => {
                   <code>{currentSnippet.code}</code>
                 </pre>
                 <div className="mt-4 pt-4 border-t border-border dark:border-border-strong/40">
-                  <p className="text-success-500 text-xs">{currentSnippet.output}</p>
+                  <p className="text-success-800 dark:text-success-text text-xs">{currentSnippet.output}</p>
                 </div>
               </div>
 
@@ -131,7 +131,7 @@ const HeroSection = ({ shouldReduceMotion }) => {
           {/* Right Side - Hero Content */}
           <div className="order-1 lg:order-2 text-center lg:text-left transition-theme">
             <div className="mb-6">
-              <div className="inline-flex items-center px-4 py-2 bg-accent-500/10 text-accent-500 rounded-full text-sm font-medium mb-4">
+              <div className="inline-flex items-center px-4 py-2 bg-accent-500/10 text-accent-500 rounded-full text-sm font-medium mb-4 dark:text-accent-text">
                 <Icon name="Code2" size={16} strokeWidth={2} className="mr-2" />
                 {profile?.availability === 'available' ? 'Available for new opportunities' : 
                  profile?.availability === 'busy' ? 'Limited availability' : 'Currently unavailable'}
@@ -179,11 +179,11 @@ const HeroSection = ({ shouldReduceMotion }) => {
             {/* Quick Stats */}
             <div className="grid grid-cols-3 gap-6 max-w-xl mx-auto lg:mx-0">
               <div className="text-center lg:text-left">
-                <div className="text-2xl font-bold text-accent-500">{profile?.experience_years ? `${profile.experience_years}+` : '—'}</div>
+                <div className="text-2xl font-bold text-accent-500 dark:text-accent-text">{profile?.experience_years ? `${profile.experience_years}+` : '—'}</div>
                 <div className="text-sm text-text-secondary">Years Experience</div>
               </div>
               <div className="text-center lg:text-left">
-                <div className="text-2xl font-bold text-accent-500">{projects?.filter(p => p.publishing_status === 'published').length || 0}+</div>
+                <div className="text-2xl font-bold text-accent-500 dark:text-accent-text">{projects?.filter(p => p.publishing_status === 'published').length || 0}+</div>
                 <div className="text-sm text-text-secondary">Projects Delivered</div>
               </div>
               <div className="text-center lg:text-left">

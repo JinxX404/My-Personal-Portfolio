@@ -157,7 +157,7 @@ const ContactHub = () => {
                     {type.description}
                   </p>
                   {selectedInquiryType === type.id && (
-                    <div className="mt-3 flex items-center text-sm font-medium text-accent">
+                    <div className="mt-3 flex items-center text-sm font-medium text-accent dark:text-accent-text">
                       <span>Selected</span>
                       <Icon
                         name="Check"

@@ -122,7 +122,7 @@ const CaseStudyContent = ({ formData, setFormData }) => {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
           <div className="p-2 bg-primary-100 dark:bg-primary-900/30 rounded-lg mr-3">
-            <Icon name="FileText" size={20} className="text-primary-600" />
+            <Icon name="FileText" size={20} className="text-primary-600 dark:text-text-secondary" />
           </div>
           <h2 className="text-2xl font-bold text-primary-800 dark:text-primary-200">Project Details</h2>
         </div>
@@ -144,7 +144,7 @@ const CaseStudyContent = ({ formData, setFormData }) => {
             }`}></div>
           </div>
           <span className={`ml-3 text-sm font-medium ${
-            isCaseStudyEnabled ? 'text-accent-700' : 'text-secondary-600'
+            isCaseStudyEnabled ? 'text-accent-700 dark:text-accent-text' : 'text-secondary-600 dark:text-muted'
           }`}>
             {isCaseStudyEnabled ? 'Enabled' : 'Disabled'}
           </span>
@@ -152,13 +152,13 @@ const CaseStudyContent = ({ formData, setFormData }) => {
       </div>
 
       {!isCaseStudyEnabled && (
-        <div className="text-center py-12 bg-secondary-50 rounded-lg border-2 border-dashed border-secondary-300">
-          <Icon name="FileText" size={48} className="text-secondary-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-secondary-700 mb-2">Project Details Off</h3>
-          <p className="text-secondary-600 mb-4">
+        <div className="text-center py-12 bg-secondary-50 rounded-lg border-2 border-dashed border-secondary-300 dark:bg-surface dark:border-border">
+          <Icon name="FileText" size={48} className="text-secondary-400 mx-auto mb-4 dark:text-muted" />
+          <h3 className="text-lg font-semibold text-secondary-700 mb-2 dark:text-text-secondary">Project Details Off</h3>
+          <p className="text-secondary-600 mb-4 dark:text-text-secondary">
             Enable the toggle above to add a detailed write-up for this project.
           </p>
-          <p className="text-sm text-secondary-500">
+          <p className="text-sm text-secondary-500 dark:text-muted">
             Sections include problem definition, solution approach, results, testimonials, and more.
           </p>
         </div>
@@ -210,63 +210,63 @@ const CaseStudyContent = ({ formData, setFormData }) => {
 
           {/* Prototype Embedding */}
           <div>
-            <label className="block text-sm font-semibold text-secondary-700 mb-2">
+            <label className="block text-sm font-semibold text-secondary-700 mb-2 dark:text-text-secondary">
               Interactive Prototype Embed
             </label>
             <input
               type="url"
               value={formData?.prototypeUrl || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, prototypeUrl: e.target.value }))}
-              className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors mb-2"
+              className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors mb-2 dark:border-border"
               placeholder="https://figma.com/proto/... or https://invision.com/..."
             />
-            <p className="text-xs text-secondary-500">
+            <p className="text-xs text-secondary-500 dark:text-muted">
               Supports Figma, InVision, Adobe XD, and other prototype sharing URLs
             </p>
           </div>
 
           {/* Testimonials */}
           <div>
-            <label className="block text-sm font-semibold text-secondary-700 mb-3">
+            <label className="block text-sm font-semibold text-secondary-700 mb-3 dark:text-text-secondary">
               Client Testimonials
             </label>
             
             {/* Add Testimonial Form */}
-            <div className="p-4 bg-secondary-50 rounded-lg mb-4">
+            <div className="p-4 bg-secondary-50 rounded-lg mb-4 dark:bg-surface">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <input
                   type="text"
                   value={testimonial.name}
                   onChange={(e) => setTestimonial(prev => ({ ...prev, name: e.target.value }))}
-                  className="px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors"
+                  className="px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
                   placeholder="Client name"
                 />
                 <input
                   type="text"
                   value={testimonial.role}
                   onChange={(e) => setTestimonial(prev => ({ ...prev, role: e.target.value }))}
-                  className="px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors"
+                  className="px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
                   placeholder="Role/Position"
                 />
                 <input
                   type="text"
                   value={testimonial.company}
                   onChange={(e) => setTestimonial(prev => ({ ...prev, company: e.target.value }))}
-                  className="px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors"
+                  className="px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
                   placeholder="Company"
                 />
                 <input
                   type="url"
                   value={testimonial.avatar}
                   onChange={(e) => setTestimonial(prev => ({ ...prev, avatar: e.target.value }))}
-                  className="px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors"
+                  className="px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
                   placeholder="Avatar URL (optional)"
                 />
               </div>
               <textarea
                 value={testimonial.content}
                 onChange={(e) => setTestimonial(prev => ({ ...prev, content: e.target.value }))}
-                className="w-full px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none mb-3"
+                className="w-full px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none mb-3 dark:border-border"
                 rows={3}
                 placeholder="Testimonial content..."
               />
@@ -283,7 +283,7 @@ const CaseStudyContent = ({ formData, setFormData }) => {
             {formData?.testimonials?.length > 0 && (
               <div className="space-y-3">
                 {formData.testimonials.map(testimonial => (
-                  <div key={testimonial.id} className="p-4 border border-secondary-200 rounded-lg">
+                  <div key={testimonial.id} className="p-4 border border-secondary-200 rounded-lg dark:border-border">
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex items-center">
                         {testimonial.avatar && (
@@ -294,8 +294,8 @@ const CaseStudyContent = ({ formData, setFormData }) => {
                           />
                         )}
                         <div>
-                          <p className="font-semibold text-secondary-800">{testimonial.name}</p>
-                          <p className="text-sm text-secondary-600">
+                          <p className="font-semibold text-secondary-800 dark:text-text-primary">{testimonial.name}</p>
+                          <p className="text-sm text-secondary-600 dark:text-text-secondary">
                             {testimonial.role}{testimonial.company && ` at ${testimonial.company}`}
                           </p>
                         </div>
@@ -303,12 +303,12 @@ const CaseStudyContent = ({ formData, setFormData }) => {
                       <button
                         type="button"
                         onClick={() => removeTestimonial(testimonial.id)}
-                        className="text-error-600 hover:text-error-800 transition-colors"
+                        className="text-error-600 hover:text-error-800 transition-colors dark:text-error"
                       >
                         <Icon name="Trash2" size={16} />
                       </button>
                     </div>
-                    <p className="text-secondary-700 italic">"{testimonial.content}"</p>
+                    <p className="text-secondary-700 italic dark:text-text-secondary">"{testimonial.content}"</p>
                   </div>
                 ))}
               </div>

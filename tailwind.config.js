@@ -85,6 +85,7 @@ module.exports = {
         'success-600': withOpacity('--color-success-600'),
         'success-700': withOpacity('--color-success-700'),
         'success-800': withOpacity('--color-success-800'),
+        'success-900': withOpacity('--color-success-900'),
 
         warning: withOpacity('--color-warning'),
         'warning-50': withOpacity('--color-warning-50'),
@@ -94,6 +95,7 @@ module.exports = {
         'warning-600': withOpacity('--color-warning-600'),
         'warning-700': withOpacity('--color-warning-700'),
         'warning-800': withOpacity('--color-warning-800'),
+        'warning-900': withOpacity('--color-warning-900'),
 
         error: withOpacity('--color-error'),
         'error-50': withOpacity('--color-error-50'),
@@ -103,6 +105,7 @@ module.exports = {
         'error-600': withOpacity('--color-error-600'),
         'error-700': withOpacity('--color-error-700'),
         'error-800': withOpacity('--color-error-800'),
+        'error-900': withOpacity('--color-error-900'),
 
         cta: withOpacity('--color-cta'),
         'cta-50': withOpacity('--color-cta-50'),
@@ -111,7 +114,19 @@ module.exports = {
         'cta-400': withOpacity('--color-cta-400'),
         'cta-600': withOpacity('--color-cta-600'),
         'cta-700': withOpacity('--color-cta-700'),
+        'cta-500': withOpacity('--color-cta-500'),
         'cta-800': withOpacity('--color-cta-800'),
+        'cta-900': withOpacity('--color-cta-900'),
+
+        'surface-elevated': withOpacity('--color-surface-elevated'),
+        'accent-fill': withOpacity('--color-accent-fill'),
+        'accent-fill-hover': withOpacity('--color-accent-fill-hover'),
+        'accent-text': withOpacity('--color-accent-text'),
+        'accent-subtle': withOpacity('--color-accent-subtle'),
+        'success-fill': withOpacity('--color-success-fill'),
+        'success-text': withOpacity('--color-success-text'),
+        'banner-from': withOpacity('--color-banner-from'),
+        'banner-to': withOpacity('--color-banner-to'),
       },
       fontFamily: {
         'sans': ['Inter', 'system-ui', 'sans-serif'],

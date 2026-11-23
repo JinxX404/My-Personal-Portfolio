@@ -92,7 +92,7 @@ const CareerDataTab = ({ careerData, onChange }) => {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-primary-800 dark:text-primary-200">Timeline</h3>
-          <button onClick={addTimelineItem} className="text-sm text-accent hover:text-accent-700 flex items-center gap-1">
+          <button onClick={addTimelineItem} className="text-sm text-accent hover:text-accent-700 flex items-center gap-1 dark:text-accent-text dark:hover:text-accent-text">
             <Icon name="Plus" size={16} /> Add Item
           </button>
         </div>
@@ -135,7 +135,7 @@ const CareerDataTab = ({ careerData, onChange }) => {
             </div>
           ))}
           {timeline.length === 0 && (
-            <p className="text-sm text-secondary-500 text-center py-4">No timeline items yet. Click "Add Item" to start.</p>
+            <p className="text-sm text-secondary-500 text-center py-4 dark:text-muted">No timeline items yet. Click "Add Item" to start.</p>
           )}
         </div>
       </div>
@@ -144,7 +144,7 @@ const CareerDataTab = ({ careerData, onChange }) => {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-primary-800 dark:text-primary-200">Values</h3>
-          <button onClick={addValue} className="text-sm text-accent hover:text-accent-700 flex items-center gap-1">
+          <button onClick={addValue} className="text-sm text-accent hover:text-accent-700 flex items-center gap-1 dark:text-accent-text dark:hover:text-accent-text">
             <Icon name="Plus" size={16} /> Add Value
           </button>
         </div>
@@ -184,7 +184,7 @@ const CareerDataTab = ({ careerData, onChange }) => {
             </div>
           ))}
           {values.length === 0 && (
-            <p className="text-sm text-secondary-500 text-center py-4">No values yet. Click "Add Value" to start.</p>
+            <p className="text-sm text-secondary-500 text-center py-4 dark:text-muted">No values yet. Click "Add Value" to start.</p>
           )}
         </div>
       </div>
@@ -193,7 +193,7 @@ const CareerDataTab = ({ careerData, onChange }) => {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-primary-800 dark:text-primary-200">Interests</h3>
-          <button onClick={addInterest} className="text-sm text-accent hover:text-accent-700 flex items-center gap-1">
+          <button onClick={addInterest} className="text-sm text-accent hover:text-accent-700 flex items-center gap-1 dark:text-accent-text dark:hover:text-accent-text">
             <Icon name="Plus" size={16} /> Add Interest
           </button>
         </div>
@@ -221,7 +221,7 @@ const CareerDataTab = ({ careerData, onChange }) => {
             </div>
           ))}
           {interests.length === 0 && (
-            <p className="text-sm text-secondary-500 text-center py-4">No interests yet. Click "Add Interest" to start.</p>
+            <p className="text-sm text-secondary-500 text-center py-4 dark:text-muted">No interests yet. Click "Add Interest" to start.</p>
           )}
         </div>
       </div>

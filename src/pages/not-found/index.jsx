@@ -4,7 +4,7 @@ import Icon from 'components/AppIcon';
 
 const NotFound = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-accent-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-accent-50 flex items-center justify-center px-4 dark:from-background dark:to-background">
       <div className="max-w-2xl mx-auto text-center">
         {/* 404 Animation */}
         <div className="relative mb-8">
@@ -20,10 +20,10 @@ const NotFound = () => {
 
         {/* Error Message */}
         <div className="mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-primary-800 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-primary-800 mb-4 dark:text-text-primary">
             Page Not Found
           </h1>
-          <p className="text-lg text-secondary-600 mb-6 max-w-md mx-auto">
+          <p className="text-lg text-secondary-600 mb-6 max-w-md mx-auto dark:text-text-secondary">
             Oops! The page you're looking for seems to have wandered off into the digital void.
           </p>
         </div>
@@ -48,18 +48,18 @@ const NotFound = () => {
         </div>
 
         {/* Helpful Links */}
-        <div className="text-sm text-secondary-500">
+        <div className="text-sm text-secondary-500 dark:text-muted">
           <p className="mb-4">Or try one of these popular pages:</p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link 
               to="/about-story" 
-              className="text-accent hover:text-accent-700 transition-colors duration-200"
+              className="text-accent hover:text-accent-700 transition-colors duration-200 dark:text-accent-text dark:hover:text-accent-text"
             >
               About
             </Link>
             <Link 
               to="/contact-hub" 
-              className="text-accent hover:text-accent-700 transition-colors duration-200"
+              className="text-accent hover:text-accent-700 transition-colors duration-200 dark:text-accent-text dark:hover:text-accent-text"
             >
               Contact
             </Link>
@@ -67,9 +67,9 @@ const NotFound = () => {
         </div>
 
         {/* Decorative Elements */}
-        <div className="absolute top-20 left-10 w-20 h-20 bg-accent-100 rounded-full opacity-50 animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-16 h-16 bg-cta-100 rounded-full opacity-50 animate-pulse animation-delay-400"></div>
-        <div className="absolute top-1/2 left-5 w-12 h-12 bg-success-100 rounded-full opacity-50 animate-pulse animation-delay-200"></div>
+        <div className="absolute top-20 left-10 w-20 h-20 bg-accent-100 rounded-full opacity-50 animate-pulse dark:bg-accent-subtle"></div>
+        <div className="absolute bottom-20 right-10 w-16 h-16 bg-cta-100 rounded-full opacity-50 animate-pulse animation-delay-400 dark:bg-accent-subtle"></div>
+        <div className="absolute top-1/2 left-5 w-12 h-12 bg-success-100 rounded-full opacity-50 animate-pulse animation-delay-200 dark:bg-success-900/30"></div>
       </div>
     </div>
   );

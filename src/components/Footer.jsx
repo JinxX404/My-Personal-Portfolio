@@ -84,7 +84,7 @@ const Footer = () => {
             {profile?.email && safeHref(`mailto:${profile.email}`) && (
               <a 
                 href={safeHref(`mailto:${profile.email}`)}
-                className="hover:text-accent-500 dark:hover:text-accent-400 transition-colors flex items-center space-x-2"
+                className="hover:text-accent-500 dark:hover:text-accent-400 transition-colors flex items-center space-x-2 dark:hover:text-accent-text"
               >
                 <Icon name="Mail" size={16} className="text-accent-500 dark:text-accent-400 flex-shrink-0" />
                 <span className="text-gray-600 dark:text-white/80">{profile.email}</span>

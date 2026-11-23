@@ -102,7 +102,7 @@ const FeaturedWork = () => {
     return (
       <div className="text-center text-text-secondary">
         <p>Published projects will show up here.</p>
-        <Link to="/portfolio-gallery" className="inline-flex items-center space-x-2 mt-4 text-accent-500 font-semibold">
+        <Link to="/portfolio-gallery" className="inline-flex items-center space-x-2 mt-4 text-accent-500 font-semibold dark:text-accent-text">
           <span>Browse the portfolio</span>
           <Icon name="ArrowRight" size={18} />
         </Link>
@@ -142,7 +142,7 @@ const FeaturedWork = () => {
                   href={current.liveUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-10 h-10 bg-surface dark:bg-background/80 rounded-full flex items-center justify-center text-text-primary hover:text-accent-500 hover:shadow-xl transition-all duration-200"
+                  className="w-10 h-10 bg-surface dark:bg-background/80 rounded-full flex items-center justify-center text-text-primary hover:text-accent-500 hover:shadow-xl transition-all duration-200 dark:hover:text-accent-text"
                   aria-label={`Open live demo of ${current.title}`}
                 >
                   <Icon name="ExternalLink" size={18} strokeWidth={2} />
@@ -150,7 +150,7 @@ const FeaturedWork = () => {
               )}
               <Link
                 to={`/projects/${current.id}`}
-                className="w-10 h-10 bg-surface dark:bg-background/80 rounded-full flex items-center justify-center text-text-primary hover:text-accent-500 hover:shadow-xl transition-all duration-200"
+                className="w-10 h-10 bg-surface dark:bg-background/80 rounded-full flex items-center justify-center text-text-primary hover:text-accent-500 hover:shadow-xl transition-all duration-200 dark:hover:text-accent-text"
                 aria-label={`Open project details for ${current.title}`}
               >
                 <Icon name="FileText" size={18} strokeWidth={2} />
@@ -175,7 +175,7 @@ const FeaturedWork = () => {
                   {current.technologies.map((tech) => (
                     <span
                       key={tech}
-                      className="px-3 py-1 bg-primary-100 dark:bg-primary-200/20 text-primary-700 dark:text-primary-200 text-sm font-medium rounded-lg"
+                      className="px-3 py-1 bg-primary-100 dark:bg-accent-subtle text-primary-700 dark:text-accent-text text-sm font-medium rounded-lg"
                     >
                       {tech}
                     </span>
@@ -224,7 +224,7 @@ const FeaturedWork = () => {
           <button
             type="button"
             onClick={prevProject}
-            className="w-12 h-12 bg-surface dark:bg-background/80 rounded-full shadow-lg flex items-center justify-center text-text-primary hover:text-accent-500"
+            className="w-12 h-12 bg-surface dark:bg-background/80 rounded-full shadow-lg flex items-center justify-center text-text-primary hover:text-accent-500 dark:hover:text-accent-text"
             aria-label="Previous project"
           >
             <Icon name="ChevronLeft" size={24} strokeWidth={2} />
@@ -249,7 +249,7 @@ const FeaturedWork = () => {
           <button
             type="button"
             onClick={nextProject}
-            className="w-12 h-12 bg-surface dark:bg-background/80 rounded-full shadow-lg flex items-center justify-center text-text-primary hover:text-accent-500"
+            className="w-12 h-12 bg-surface dark:bg-background/80 rounded-full shadow-lg flex items-center justify-center text-text-primary hover:text-accent-500 dark:hover:text-accent-text"
             aria-label="Next project"
           >
             <Icon name="ChevronRight" size={24} strokeWidth={2} />
@@ -260,7 +260,7 @@ const FeaturedWork = () => {
       <div className="text-center mt-12">
         <Link
           to="/portfolio-gallery"
-          className="inline-flex items-center space-x-2 text-accent-500 hover:text-accent-600 font-semibold transition-theme"
+          className="inline-flex items-center space-x-2 text-accent-500 hover:text-accent-600 font-semibold transition-theme dark:text-accent-text"
         >
           <span>View all projects</span>
           <Icon name="ArrowRight" size={18} strokeWidth={2} />

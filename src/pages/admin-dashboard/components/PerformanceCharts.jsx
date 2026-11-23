@@ -16,9 +16,9 @@ const PerformanceCharts = ({ data }) => {
     text: isDark ? CHART_COLORS.chart.textDark : CHART_COLORS.chart.textLight,
     cursor: isDark ? 'rgba(100, 116, 139, 0.2)' : 'rgba(241, 245, 249, 0.8)',
     published: CHART_COLORS.chart.secondary,
-    draft: isDark ? '#4a5568' : '#e2e8f0',
-    tooltipBg: isDark ? '#1e293b' : '#ffffff',
-    tooltipBorder: isDark ? '#334155' : '#e2e8f0'
+    draft: isDark ? '#2A3550' : '#e2e8f0',
+    tooltipBg: isDark ? '#1C2438' : '#ffffff',
+    tooltipBorder: isDark ? '#2A3550' : '#e2e8f0'
   }), [isDark]);
 
   const composition = data?.composition || [];
@@ -29,7 +29,7 @@ const PerformanceCharts = ({ data }) => {
 
   const renderCompositionChart = () => {
     if (composition.length === 0) {
-      return <div className="flex h-full items-center justify-center text-sm text-secondary-500">No data available</div>;
+      return <div className="flex h-full items-center justify-center text-sm text-secondary-500 dark:text-muted">No data available</div>;
     }
 
     return (
@@ -62,7 +62,7 @@ const PerformanceCharts = ({ data }) => {
       <div className="card-header shrink-0">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center space-x-2">
-            <Icon name="BarChart3" size={20} strokeWidth={2} className="text-accent" />
+            <Icon name="BarChart3" size={20} strokeWidth={2} className="text-accent dark:text-accent-text" />
             <h2 className="text-lg font-semibold text-primary-800 dark:text-primary-200">Performance & Analytics</h2>
           </div>
           
@@ -73,8 +73,8 @@ const PerformanceCharts = ({ data }) => {
                 onClick={() => setActiveChart(tab.id)}
                 className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                   activeChart === tab.id
-                    ? 'bg-white dark:bg-surface text-accent-600 shadow-sm'
-                    : 'text-secondary-600 hover:text-primary-600'
+                    ? 'bg-white dark:bg-surface text-accent-600 dark:text-accent-text shadow-sm'
+                    : 'text-secondary-600 hover:text-primary-600 dark:text-muted dark:hover:text-text-primary'
                 }`}
                 title={tab.name}
               >

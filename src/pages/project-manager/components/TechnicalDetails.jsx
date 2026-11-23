@@ -60,19 +60,19 @@ const TechnicalDetails = ({ formData, setFormData }) => {
   ];
 
   const complexityColorMap = {
-    success: { border: 'border-success-500', bg: 'bg-success-50', dot: 'bg-success-500' },
-    warning: { border: 'border-warning-500', bg: 'bg-warning-50', dot: 'bg-warning-500' },
-    error:   { border: 'border-error-500',   bg: 'bg-error-50',   dot: 'bg-error-500' },
-    primary: { border: 'border-primary-500',  bg: 'bg-primary-50',  dot: 'bg-primary-500' },
+    success: { border: 'border-success-500 dark:border-success-fill', bg: 'bg-success-50 dark:bg-success-900/30', dot: 'bg-success-500 dark:bg-success-fill' },
+    warning: { border: 'border-warning-500', bg: 'bg-warning-50 dark:bg-warning-900/40', dot: 'bg-warning-500' },
+    error:   { border: 'border-error-500',   bg: 'bg-error-50 dark:bg-error-900/40',   dot: 'bg-error-500' },
+    primary: { border: 'border-primary-500 dark:border-border-strong',  bg: 'bg-primary-50 dark:bg-surface-elevated',  dot: 'bg-primary-500' },
   };
 
   return (
     <div className="bg-surface dark:bg-surface rounded-xl shadow-md p-6 mb-6 border border-border dark:border-border-strong">
       <div className="flex items-center mb-6">
-        <div className="p-2 bg-success-100 dark:bg-success-50 rounded-lg mr-3">
+        <div className="p-2 bg-success-100 dark:bg-success-900/30 rounded-lg mr-3">
           <Icon name="Code" size={20} className="text-success-600 dark:text-success-500" />
         </div>
-        <h2 className="text-2xl font-bold text-text-primary dark:text-primary-800">Technical Details</h2>
+        <h2 className="text-2xl font-bold text-text-primary dark:text-text-primary">Technical Details</h2>
       </div>
 
       <div className="space-y-6">
@@ -94,7 +94,7 @@ const TechnicalDetails = ({ formData, setFormData }) => {
                   addTechnology(newTag);
                 }
               }}
-              className="flex-1 min-w-48 px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors"
+              className="flex-1 min-w-48 px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
               placeholder="Type technology name and press Enter"
             />
             <button
@@ -108,7 +108,7 @@ const TechnicalDetails = ({ formData, setFormData }) => {
 
           {/* Common Technologies */}
           <div className="mb-4">
-            <p className="text-sm text-secondary-600 mb-2">Common technologies:</p>
+            <p className="text-sm text-secondary-600 mb-2 dark:text-text-secondary">Common technologies:</p>
             <div className="flex flex-wrap gap-2">
               {commonTechnologies.map(tech => (
                 <button
@@ -118,7 +118,7 @@ const TechnicalDetails = ({ formData, setFormData }) => {
                   disabled={technologies.includes(tech)}
                   className={`px-3 py-1 text-sm rounded-full border transition-colors ${
                     technologies.includes(tech)
-                      ? 'bg-secondary-100 text-secondary-400 border-secondary-200 cursor-not-allowed' :'bg-white text-accent-600 border-accent-200 hover:bg-accent-50'
+                      ? 'bg-secondary-100 text-secondary-600 border-secondary-200 cursor-not-allowed dark:bg-surface dark:text-muted dark:border-border' :'bg-white text-accent-600 border-accent-200 hover:bg-accent-50 dark:bg-surface-elevated dark:text-accent-text dark:border-border dark:hover:bg-accent-subtle'
                   }`}
                 >
                   {tech}
@@ -130,18 +130,18 @@ const TechnicalDetails = ({ formData, setFormData }) => {
           {/* Selected Technologies */}
           {technologies.length > 0 && (
             <div>
-              <p className="text-sm text-secondary-600 mb-2">Selected technologies:</p>
+              <p className="text-sm text-secondary-600 mb-2 dark:text-text-secondary">Selected technologies:</p>
               <div className="flex flex-wrap gap-2">
                 {technologies.map(tech => (
                   <span
                     key={tech}
-                    className="inline-flex items-center px-3 py-1 bg-accent-100 text-accent-800 rounded-full text-sm"
+                    className="inline-flex items-center px-3 py-1 bg-accent-100 text-accent-800 rounded-full text-sm dark:bg-accent-subtle dark:text-accent-text"
                   >
                     {tech}
                     <button
                       type="button"
                       onClick={() => removeTechnology(tech)}
-                      className="ml-2 text-accent-600 hover:text-accent-800"
+                      className="ml-2 text-accent-600 hover:text-accent-800 dark:text-accent-text"
                     >
                       <Icon name="X" size={14} />
                     </button>
@@ -172,8 +172,8 @@ const TechnicalDetails = ({ formData, setFormData }) => {
                 }`}
               >
                 <div className={`w-4 h-4 rounded-full mb-2 ${colors.dot}`}></div>
-                <p className="font-semibold text-text-primary dark:text-primary-700 mb-1">{level.label}</p>
-                <p className="text-xs text-secondary-600">{level.description}</p>
+                <p className="font-semibold text-text-primary dark:text-text-primary mb-1">{level.label}</p>
+                <p className="text-xs text-secondary-600 dark:text-text-secondary">{level.description}</p>
               </button>
               );
             })}
@@ -192,20 +192,20 @@ const TechnicalDetails = ({ formData, setFormData }) => {
               type="text"
               value={newMetric.name}
               onChange={(e) => setNewMetric(prev => ({ ...prev, name: e.target.value }))}
-              className="px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors"
+              className="px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
               placeholder="Metric name"
             />
             <input
               type="text"
               value={newMetric.value}
               onChange={(e) => setNewMetric(prev => ({ ...prev, value: e.target.value }))}
-              className="px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors"
+              className="px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
               placeholder="Value"
             />
             <select
               value={newMetric.unit}
               onChange={(e) => setNewMetric(prev => ({ ...prev, unit: e.target.value }))}
-              className="px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors"
+              className="px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
             >
               <option value="">Select unit</option>
               {metricUnits.map(unit => (
@@ -215,7 +215,7 @@ const TechnicalDetails = ({ formData, setFormData }) => {
             <button
               type="button"
               onClick={addMetric}
-              className="px-4 py-2 bg-success-600 text-white rounded-lg hover:bg-success-700 transition-colors"
+              className="px-4 py-2 bg-success-700 text-white rounded-lg hover:bg-success-800 transition-colors"
             >
               Add Metric
             </button>
@@ -225,16 +225,16 @@ const TechnicalDetails = ({ formData, setFormData }) => {
           {metrics.length > 0 && (
             <div className="space-y-2">
               {metrics.map(metric => (
-                <div key={metric.id} className="flex items-center justify-between p-3 bg-secondary-50 rounded-lg">
+                <div key={metric.id} className="flex items-center justify-between p-3 bg-secondary-50 rounded-lg dark:bg-surface">
                   <div>
-                    <span className="font-medium text-text-primary dark:text-primary-700">{metric.name}:</span>
+                    <span className="font-medium text-text-primary dark:text-text-primary">{metric.name}:</span>
                     <span className="ml-2 text-text-secondary dark:text-text-secondary">{metric.value}</span>
-                    {metric.unit && <span className="ml-1 text-secondary-600">{metric.unit}</span>}
+                    {metric.unit && <span className="ml-1 text-secondary-600 dark:text-text-secondary">{metric.unit}</span>}
                   </div>
                   <button
                     type="button"
                     onClick={() => removeMetric(metric.id)}
-                    className="text-error-600 hover:text-error-800 transition-colors"
+                    className="text-error-600 hover:text-error-800 transition-colors dark:text-error"
                   >
                     <Icon name="Trash2" size={16} />
                   </button>
@@ -255,7 +255,7 @@ const TechnicalDetails = ({ formData, setFormData }) => {
               type="url"
               value={formData?.repositoryUrl || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, repositoryUrl: e.target.value }))}
-              className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors"
+              className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
               placeholder="https://github.com/username/repository"
             />
           </div>
@@ -269,7 +269,7 @@ const TechnicalDetails = ({ formData, setFormData }) => {
               type="url"
               value={formData?.demoUrl || ''}
               onChange={(e) => setFormData(prev => ({ ...prev, demoUrl: e.target.value }))}
-              className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors"
+              className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
               placeholder="https://example.com/demo"
             />
           </div>
