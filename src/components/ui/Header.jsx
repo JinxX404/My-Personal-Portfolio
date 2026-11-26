@@ -112,9 +112,9 @@ const Header = () => {
             </div>
             <div className="hidden sm:block">
               <span className="block text-xl font-bold text-text-primary group-hover:text-accent-500 transition-colors duration-200">
-                {profile?.full_name || t('site.defaultName')}
+                <bdi>{profile?.full_name || t('site.defaultName')}</bdi>
               </span>
-              <p className="text-xs text-text-secondary font-mono transition-theme">{profile?.title || t('site.defaultRole')}</p>
+              <p className="text-xs text-text-secondary font-mono transition-theme"><bdi>{profile?.title || t('site.defaultRole')}</bdi></p>
             </div>
           </Link>
 

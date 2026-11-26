@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Icon from 'components/AppIcon';
+import BilingualField, { ArabicMissingBadge } from 'components/admin/BilingualField';
+import { missingArabic, SKILL_CATEGORY_SPEC } from '../../../i18n/content.mjs';
 import Modal from 'components/ui/Modal';
 import EmptyState from 'components/ui/EmptyState';
 import Breadcrumb from 'components/ui/Breadcrumb';
@@ -45,12 +47,14 @@ const SkillsManager = () => {
   const [categoryForm, setCategoryForm] = useState({
     key: '',
     title: '',
+    title_ar: '',
     icon: 'Code',
     color: 'accent'
   });
 
   const [skillForm, setSkillForm] = useState({
     name: '',
+    name_ar: '',
     level: 50,
     icon: 'Code'
   });
@@ -76,11 +80,12 @@ const SkillsManager = () => {
     if (categoryForm.key && categoryForm.title) {
       addCategory(categoryForm.key, {
         title: categoryForm.title,
+        title_ar: categoryForm.title_ar,
         icon: categoryForm.icon,
         color: categoryForm.color,
         skills: []
       });
-      setCategoryForm({ key: '', title: '', icon: 'Code', color: 'accent' });
+      setCategoryForm({ key: '', title: '', title_ar: '', icon: 'Code', color: 'accent' });
       setShowCategoryModal(false);
     }
   };
@@ -89,11 +94,12 @@ const SkillsManager = () => {
     if (editingCategory) {
       updateCategory(editingCategory, {
         title: categoryForm.title,
+        title_ar: categoryForm.title_ar || null,
         icon: categoryForm.icon,
         color: categoryForm.color
       });
       setEditingCategory(null);
-      setCategoryForm({ key: '', title: '', icon: 'Code', color: 'accent' });
+      setCategoryForm({ key: '', title: '', title_ar: '', icon: 'Code', color: 'accent' });
       setShowCategoryModal(false);
     }
   };
@@ -109,6 +115,7 @@ const SkillsManager = () => {
     setCategoryForm({
       key: categoryKey,
       title: category.title,
+      title_ar: category.title_ar || '',
       icon: category.icon,
       color: category.color
     });
@@ -120,7 +127,7 @@ const SkillsManager = () => {
   const handleAddSkill = () => {
     if (skillForm.name && selectedCategory) {
       addSkill(selectedCategory, skillForm);
-      setSkillForm({ name: '', level: 50, icon: 'Code' });
+      setSkillForm({ name: '', name_ar: '', level: 50, icon: 'Code' });
       setShowSkillModal(false);
     }
   };
@@ -129,7 +136,7 @@ const SkillsManager = () => {
     if (editingSkill && selectedCategory) {
       updateSkill(selectedCategory, editingSkill.id, skillForm);
       setEditingSkill(null);
-      setSkillForm({ name: '', level: 50, icon: 'Code' });
+      setSkillForm({ name: '', name_ar: '', level: 50, icon: 'Code' });
       setShowSkillModal(false);
     }
   };
@@ -145,6 +152,7 @@ const SkillsManager = () => {
   const openEditSkill = (categoryKey, skill) => {
     setSkillForm({
       name: skill.name,
+      name_ar: skill.name_ar || '',
       level: skill.level,
       icon: skill.icon
     });
@@ -154,7 +162,7 @@ const SkillsManager = () => {
   };
 
   const openAddSkill = (categoryKey) => {
-    setSkillForm({ name: '', level: 50, icon: 'Code' });
+    setSkillForm({ name: '', name_ar: '', level: 50, icon: 'Code' });
     setEditingSkill(null);
     setSelectedCategory(categoryKey);
     setShowSkillModal(true);
@@ -264,7 +272,7 @@ const SkillsManager = () => {
             <div className="flex justify-end">
               <button
                 onClick={() => {
-                  setCategoryForm({ key: '', title: '', icon: 'Code', color: 'accent' });
+                  setCategoryForm({ key: '', title: '', title_ar: '', icon: 'Code', color: 'accent' });
                   setEditingCategory(null);
                   setShowCategoryModal(true);
                 }}
@@ -282,7 +290,7 @@ const SkillsManager = () => {
                 description="Start organizing your skills by creating your first category."
                 actionLabel="Add Category"
                 onAction={() => {
-                  setCategoryForm({ key: '', title: '', icon: 'Code', color: 'accent' });
+                  setCategoryForm({ key: '', title: '', title_ar: '', icon: 'Code', color: 'accent' });
                   setEditingCategory(null);
                   setShowCategoryModal(true);
                 }}
@@ -298,7 +306,13 @@ const SkillsManager = () => {
                       </div>
                       <div>
                         <h3 className="text-xl font-bold text-primary-800 dark:text-text-primary">{category.title}</h3>
-                        <p className="text-sm text-secondary-600 dark:text-text-secondary">Key: {key}</p>
+                        {category.title_ar && (
+                          <p dir="rtl" lang="ar" className="text-sm text-secondary-700 dark:text-text-secondary">{category.title_ar}</p>
+                        )}
+                        <p className="text-sm text-secondary-600 dark:text-text-secondary">
+                          Key: {key}
+                          {missingArabic(category, SKILL_CATEGORY_SPEC).length > 0 && <ArabicMissingBadge className="ms-2" />}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -450,12 +464,12 @@ const SkillsManager = () => {
       {/* Category Modal */}
       <Modal
         isOpen={showCategoryModal}
-        onClose={() => { setShowCategoryModal(false); setEditingCategory(null); setCategoryForm({ key: '', title: '', icon: 'Code', color: 'accent' }); }}
+        onClose={() => { setShowCategoryModal(false); setEditingCategory(null); setCategoryForm({ key: '', title: '', title_ar: '', icon: 'Code', color: 'accent' }); }}
         title={editingCategory ? 'Edit Category' : 'Add Category'}
         footer={
           <>
             <button
-              onClick={() => { setShowCategoryModal(false); setEditingCategory(null); setCategoryForm({ key: '', title: '', icon: 'Code', color: 'accent' }); }}
+              onClick={() => { setShowCategoryModal(false); setEditingCategory(null); setCategoryForm({ key: '', title: '', title_ar: '', icon: 'Code', color: 'accent' }); }}
               className="flex-1 px-4 py-2 border border-primary-200 text-primary-700 rounded-lg hover:bg-primary-50 transition-colors dark:border-border dark:text-text-primary dark:hover:bg-surface-elevated"
             >
               Cancel
@@ -482,16 +496,15 @@ const SkillsManager = () => {
               />
             </div>
           )}
-          <div>
-            <label className="block text-sm font-medium text-primary-700 mb-1 dark:text-text-primary">Title</label>
-            <input
-              type="text"
-              value={categoryForm.title}
-              onChange={(e) => setCategoryForm({ ...categoryForm, title: e.target.value })}
-              placeholder="e.g., Frontend Development"
-              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
-            />
-          </div>
+          <BilingualField
+            label="Title"
+            value={categoryForm.title}
+            valueAr={categoryForm.title_ar}
+            onChange={(value) => setCategoryForm({ ...categoryForm, title: value })}
+            onChangeAr={(value) => setCategoryForm({ ...categoryForm, title_ar: value })}
+            placeholder="e.g., Frontend Development"
+            placeholderAr="مثال: تطوير الواجهات"
+          />
           <div>
             <label className="block text-sm font-medium text-primary-700 mb-1 dark:text-text-primary">Icon</label>
             <select
@@ -522,12 +535,12 @@ const SkillsManager = () => {
       {/* Skill Modal */}
       <Modal
         isOpen={showSkillModal}
-        onClose={() => { setShowSkillModal(false); setEditingSkill(null); setSkillForm({ name: '', level: 50, icon: 'Code' }); }}
+        onClose={() => { setShowSkillModal(false); setEditingSkill(null); setSkillForm({ name: '', name_ar: '', level: 50, icon: 'Code' }); }}
         title={editingSkill ? 'Edit Skill' : 'Add Skill'}
         footer={
           <>
             <button
-              onClick={() => { setShowSkillModal(false); setEditingSkill(null); setSkillForm({ name: '', level: 50, icon: 'Code' }); }}
+              onClick={() => { setShowSkillModal(false); setEditingSkill(null); setSkillForm({ name: '', name_ar: '', level: 50, icon: 'Code' }); }}
               className="flex-1 px-4 py-2 border border-primary-200 text-primary-700 rounded-lg hover:bg-primary-50 transition-colors dark:border-border dark:text-text-primary dark:hover:bg-surface-elevated"
             >
               Cancel
@@ -543,14 +556,19 @@ const SkillsManager = () => {
       >
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-primary-700 mb-1 dark:text-text-primary">Skill Name</label>
-            <input
-              type="text"
+            <BilingualField
+              label="Skill Name"
               value={skillForm.name}
-              onChange={(e) => setSkillForm({ ...skillForm, name: e.target.value })}
+              flagMissing={false}
+              valueAr={skillForm.name_ar}
+              onChange={(value) => setSkillForm({ ...skillForm, name: value })}
+              onChangeAr={(value) => setSkillForm({ ...skillForm, name_ar: value })}
               placeholder="e.g., React.js"
-              className="w-full px-4 py-2 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
+              placeholderAr="اتركه فارغًا لأسماء التقنيات"
             />
+            <p className="mt-1 text-xs text-secondary-500 dark:text-muted">
+              Technology names (React, Docker…) stay in English; add Arabic only for words such as "Design Patterns".
+            </p>
           </div>
           <div>
             <label className="block text-sm font-medium text-primary-700 mb-1 dark:text-text-primary">

@@ -1,19 +1,11 @@
 // src/pages/project-manager/components/BasicInformation.jsx
-import React, { useState } from 'react';
+import React from 'react';
 import Icon from 'components/AppIcon';
+import BilingualField from 'components/admin/BilingualField';
 
 const BasicInformation = ({ formData, setFormData }) => {
-  const [characterCounts, setCharacterCounts] = useState({
-    title: formData?.title?.length || 0,
-    description: formData?.description?.length || 0
-  });
-
   const handleInputChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    
-    if (field === 'title' || field === 'description') {
-      setCharacterCounts(prev => ({ ...prev, [field]: value.length }));
-    }
   };
 
   const projectTypes = [
@@ -51,38 +43,30 @@ const BasicInformation = ({ formData, setFormData }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Project Title */}
-        <div className="md:col-span-2">
-          <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
-            Project Title *
-          </label>
-          <div className="relative">
-            <input
-              type="text"
-              value={formData?.title || ''}
-              onChange={(e) => handleInputChange('title', e.target.value)}
-              className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
-              placeholder="Enter project title"
-              maxLength={100}
-            />
-            <div className="absolute right-3 top-3 text-xs text-secondary-500 dark:text-muted">
-              {characterCounts.title}/100
-            </div>
-          </div>
-        </div>
+        <BilingualField
+          className="md:col-span-2"
+          label="Project Title"
+          required
+          value={formData?.title}
+          valueAr={formData?.title_ar}
+          onChange={(value) => handleInputChange('title', value)}
+          onChangeAr={(value) => handleInputChange('title_ar', value)}
+          placeholder="Enter project title"
+          placeholderAr="عنوان المشروع بالعربية"
+          maxLength={100}
+        />
 
         {/* Client */}
-        <div>
-          <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
-            Client/Company
-          </label>
-          <input
-            type="text"
-            value={formData?.client || ''}
-            onChange={(e) => handleInputChange('client', e.target.value)}
-            className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
-            placeholder="Client or company name"
-          />
-        </div>
+        <BilingualField
+          className="md:col-span-2"
+          label="Client/Company"
+          value={formData?.client}
+          valueAr={formData?.client_ar}
+          onChange={(value) => handleInputChange('client', value)}
+          onChangeAr={(value) => handleInputChange('client_ar', value)}
+          placeholder="Client or company name"
+          placeholderAr="اسم العميل أو الشركة"
+        />
 
         {/* Project Type */}
         <div>
@@ -155,24 +139,21 @@ const BasicInformation = ({ formData, setFormData }) => {
         </div>
 
         {/* Description */}
-        <div className="md:col-span-2">
-          <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
-            Short Summary <span className="text-secondary-600 font-normal dark:text-muted">(shown in project cards)</span>
-          </label>
-          <div className="relative">
-            <textarea
-              value={formData?.description || ''}
-              onChange={(e) => handleInputChange('description', e.target.value)}
-              className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none dark:border-border"
-              rows={3}
-              placeholder="Brief summary shown in project cards (you can add detailed content in Content Sections below)..."
-              maxLength={500}
-            />
-            <div className="absolute right-3 bottom-3 text-xs text-secondary-500 dark:text-muted">
-              {characterCounts.description}/500
-            </div>
-          </div>
-        </div>
+        <BilingualField
+          className="md:col-span-2"
+          label="Short Summary"
+          hint="(shown in project cards)"
+          required
+          multiline
+          rows={3}
+          value={formData?.description}
+          valueAr={formData?.description_ar}
+          onChange={(value) => handleInputChange('description', value)}
+          onChangeAr={(value) => handleInputChange('description_ar', value)}
+          placeholder="Brief summary shown in project cards (you can add detailed content in Content Sections below)..."
+          placeholderAr="ملخص قصير يظهر في بطاقة المشروع"
+          maxLength={500}
+        />
       </div>
     </div>
   );

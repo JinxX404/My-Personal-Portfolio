@@ -79,7 +79,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* About Section */}
           <div>
-            <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">{profile?.full_name || siteSettings?.site_title || t('site.portfolio')}</h3>
+            <h3 className="text-xl font-bold mb-4 text-gray-900 dark:text-white"><bdi>{profile?.full_name || siteSettings?.site_title || t('site.portfolio')}</bdi></h3>
             <p dir="auto" className="text-gray-600 dark:text-white/70 mb-4">
               {profile?.tagline || t('footer.defaultTagline')}
             </p>

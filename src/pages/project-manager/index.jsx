@@ -1,11 +1,27 @@
 // src/pages/project-manager/index.jsx
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 import { useProjects } from 'context/ProjectsContext';
 import { useToast } from 'context/ToastContext';
 import { uploadImage } from 'services/storageService';
 import { screenshotLimitMessage, screenshotsWithinLimit, toStoredScreenshot } from 'lib/screenshotLayout.mjs';
+import { describeMissing, missingArabic, PROJECT_SPEC } from '../../i18n/content.mjs';
+import { ArabicMissingBadge } from 'components/admin/BilingualField';
+
+// Arabic twins of the project's scalar text fields (columns added by migration 008).
+const AR_FIELDS = ['title_ar', 'description_ar', 'client_ar', 'problem_ar', 'solution_ar', 'results_ar', 'meta_title_ar', 'meta_description_ar'];
+const emptyArabic = () => Object.fromEntries(AR_FIELDS.map((key) => [key, '']));
+const arabicOrNull = (value) => (typeof value === 'string' && value.trim() ? value : null);
+
+// Which editor section holds each translatable field.
+const SECTION_OF_FIELD = {
+  title: 'basic', description: 'basic', client: 'basic',
+  content_sections: 'sections',
+  problem: 'content', solution: 'content', results: 'content', testimonials: 'content',
+  meta_title: 'publishing', meta_description: 'publishing',
+};
+const sectionOfPath = (path) => SECTION_OF_FIELD[path.split(/[.[]/)[0]] || 'basic';
 
 // Import components
 import BasicInformation from './components/BasicInformation';
@@ -26,7 +42,7 @@ const formatPublishingStatus = (value) => {
 
 const ProjectManager = () => {
   const { addProject, editProject, getProjectById } = useProjects();
-  const { success, error: showError } = useToast();
+  const { success, warning, error: showError } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const editId = searchParams.get('id');
@@ -77,7 +93,10 @@ const ProjectManager = () => {
     metaDescription: '',
 
     // Dynamic Content Sections
-    content_sections: []
+    content_sections: [],
+
+    // Arabic versions (optional; empty falls back to English on /ar)
+    ...emptyArabic()
   });
 
   const [activeSection, setActiveSection] = useState('basic');
@@ -128,6 +147,8 @@ const ProjectManager = () => {
             metaTitle: p.meta_title || '',
             metaDescription: p.meta_description || '',
             content_sections: p.content_sections || [],
+            enableCaseStudy: p.enable_case_study || false,
+            ...Object.fromEntries(AR_FIELDS.map((key) => [key, p[key] || ''])),
           });
         } else {
           showError('Project not found. Redirecting...');
@@ -160,6 +181,36 @@ const ProjectManager = () => {
     warning: { bg: 'bg-warning-100 dark:bg-warning-900/40', text: 'text-warning-800 dark:text-warning', border: 'border-warning-600', iconBg: 'bg-warning-200 dark:bg-warning-800/40', iconText: 'text-warning-600 dark:text-warning' },
     secondary: { bg: 'bg-secondary-100 dark:bg-surface-elevated', text: 'text-secondary-800 dark:text-text-primary', border: 'border-secondary-600 dark:border-border-strong', iconBg: 'bg-secondary-200 dark:bg-surface', iconText: 'text-secondary-600 dark:text-muted' },
   };
+
+  // English text that has no Arabic yet (Arabic is optional, but flagged).
+  const missingArabicPaths = useMemo(() => missingArabic({
+    title: formData.title,
+    title_ar: formData.title_ar,
+    description: formData.description,
+    description_ar: formData.description_ar,
+    client: formData.client,
+    client_ar: formData.client_ar,
+    ...(formData.enableCaseStudy ? {
+      problem: formData.problem, problem_ar: formData.problem_ar,
+      solution: formData.solution, solution_ar: formData.solution_ar,
+      results: formData.results, results_ar: formData.results_ar,
+      testimonials: formData.testimonials,
+    } : {}),
+    meta_title: formData.metaTitle,
+    meta_title_ar: formData.meta_title_ar,
+    meta_description: formData.metaDescription,
+    meta_description_ar: formData.meta_description_ar,
+    content_sections: formData.content_sections,
+  }, PROJECT_SPEC), [formData]);
+
+  const missingBySection = useMemo(() => {
+    const counts = {};
+    missingArabicPaths.forEach((path) => {
+      const section = sectionOfPath(path);
+      counts[section] = (counts[section] || 0) + 1;
+    });
+    return counts;
+  }, [missingArabicPaths]);
 
   // Validation function - MINIMAL REQUIREMENTS ONLY
   const validateForm = () => {
@@ -262,6 +313,16 @@ const ProjectManager = () => {
         screenshots: screenshots,
         mockups: mockups,
         content_sections: formData.content_sections || [],
+        testimonials: formData.testimonials || [],
+        // Arabic: optional; empty saves as null so the site falls back to English.
+        title_ar: arabicOrNull(formData.title_ar),
+        description_ar: arabicOrNull(formData.description_ar),
+        client_ar: arabicOrNull(formData.client_ar),
+        problem_ar: formData.enableCaseStudy ? arabicOrNull(formData.problem_ar) : null,
+        solution_ar: formData.enableCaseStudy ? arabicOrNull(formData.solution_ar) : null,
+        results_ar: formData.enableCaseStudy ? arabicOrNull(formData.results_ar) : null,
+        meta_title_ar: arabicOrNull(formData.meta_title_ar),
+        meta_description_ar: arabicOrNull(formData.meta_description_ar),
       };
       
       const result = isEditing
@@ -270,6 +331,11 @@ const ProjectManager = () => {
       
       if (result.success) {
         setIsSaving(false);
+        if (result.arabicSkipped) {
+          warning('Saved the English text only: the database has no Arabic columns yet (migration 008 not applied).', 9000);
+        } else if (missingArabicPaths.length > 0) {
+          warning(`Saved. Arabic is missing for ${missingArabicPaths.length} field${missingArabicPaths.length === 1 ? '' : 's'}; the Arabic site shows English there.`, 7000);
+        }
         success(isEditing
           ? (isDraft ? 'Draft updated successfully!' : 'Project updated successfully!')
           : (isDraft ? 'Draft saved successfully!' : 'Project saved successfully!'));
@@ -287,7 +353,7 @@ const ProjectManager = () => {
       setIsSaving(false);
       showError(error.message || 'An unexpected error occurred');
     }
-  }, [formData, addProject, editProject, editId, isEditing, navigate]);
+  }, [formData, addProject, editProject, editId, isEditing, navigate, missingArabicPaths]);
 
   // Auto-save disabled - causes issues with image uploads
   // TODO: Fix auto-save to properly handle file uploads before re-enabling
@@ -511,6 +577,14 @@ const ProjectManager = () => {
                         />
                       </div>
                       <span className="font-medium">{section.label}</span>
+                      {missingBySection[section.id] > 0 && (
+                        <span
+                          className="ms-auto rounded-full bg-warning-100 px-2 py-0.5 text-[11px] font-semibold text-warning-800 dark:bg-warning-900/30 dark:text-warning"
+                          title={`${missingBySection[section.id]} field(s) without Arabic`}
+                        >
+                          AR {missingBySection[section.id]}
+                        </span>
+                      )}
                     </button>
                   );
                 })}
@@ -533,6 +607,12 @@ const ProjectManager = () => {
                     </span>
                   </div>
                   <div className="flex justify-between">
+                    <span className="text-secondary-600 dark:text-text-secondary">Arabic:</span>
+                    <span className="font-medium text-secondary-800 dark:text-text-primary" data-arabic-status>
+                      {missingArabicPaths.length === 0 ? 'Complete' : `${missingArabicPaths.length} missing`}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
                     <span className="text-secondary-600 dark:text-text-secondary">Images:</span>
                     <span className="font-medium text-secondary-800 dark:text-text-primary">
                       {(formData.heroImages?.length || 0) + (formData.screenshots?.length || 0)}
@@ -540,6 +620,31 @@ const ProjectManager = () => {
                   </div>
                 </div>
               </div>
+
+              {missingArabicPaths.length > 0 && (
+                <div className="mt-4 rounded-lg border border-warning-200 bg-warning-50/60 p-4 dark:border-warning-800/50 dark:bg-warning-900/20" data-arabic-missing-list>
+                  <ArabicMissingBadge />
+                  <p className="mt-2 text-xs text-secondary-700 dark:text-text-secondary">
+                    Optional, but the Arabic site shows English for these:
+                  </p>
+                  <ul className="mt-2 space-y-1">
+                    {missingArabicPaths.slice(0, 8).map((path, index) => (
+                      <li key={path}>
+                        <button
+                          type="button"
+                          onClick={() => setActiveSection(sectionOfPath(path))}
+                          className="text-start text-xs font-medium capitalize text-warning-800 underline-offset-2 hover:underline dark:text-warning"
+                        >
+                          {describeMissing([path])[0]}
+                        </button>
+                      </li>
+                    ))}
+                    {missingArabicPaths.length > 8 && (
+                      <li className="text-xs text-secondary-600 dark:text-muted">and {missingArabicPaths.length - 8} more</li>
+                    )}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
 

@@ -1,6 +1,8 @@
 // src/pages/project-manager/components/PublishingOptions.jsx
 import React, { useState } from 'react';
 import Icon from 'components/AppIcon';
+import BilingualField from 'components/admin/BilingualField';
+import { translateTerm } from '../../../i18n/content.mjs';
 
 const PublishingOptions = ({ formData, setFormData }) => {
   const [previewMode, setPreviewMode] = useState('desktop');
@@ -159,7 +161,7 @@ const PublishingOptions = ({ formData, setFormData }) => {
             >
               <option value="">Select category</option>
               {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
+                <option key={category} value={category}>{category} · {translateTerm(category, 'ar')}</option>
               ))}
             </select>
           </div>
@@ -187,7 +189,7 @@ const PublishingOptions = ({ formData, setFormData }) => {
         {/* Tags */}
         <div>
           <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-3">
-            Tags
+            Tags <span className="font-normal text-secondary-600 dark:text-muted">(translated automatically on the Arabic site)</span>
           </label>
           <div className="flex flex-wrap gap-2">
             {tags.map(tag => {
@@ -216,32 +218,28 @@ const PublishingOptions = ({ formData, setFormData }) => {
             SEO Settings
           </h3>
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
-                Meta Title
-              </label>
-              <input
-                type="text"
-                value={formData?.metaTitle || ''}
-                onChange={(e) => setFormData(prev => ({ ...prev, metaTitle: e.target.value }))}
-                className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:border-border"
-                placeholder="Optimized title for search engines"
-                maxLength={60}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
-                Meta Description
-              </label>
-              <textarea
-                value={formData?.metaDescription || ''}
-                onChange={(e) => setFormData(prev => ({ ...prev, metaDescription: e.target.value }))}
-                className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none dark:border-border"
-                rows={3}
-                placeholder="Brief description for search engine results"
-                maxLength={160}
-              />
-            </div>
+            <BilingualField
+              label="Meta Title"
+              value={formData?.metaTitle}
+              valueAr={formData?.meta_title_ar}
+              onChange={(value) => setFormData(prev => ({ ...prev, metaTitle: value }))}
+              onChangeAr={(value) => setFormData(prev => ({ ...prev, meta_title_ar: value }))}
+              placeholder="Optimized title for search engines"
+              placeholderAr="عنوان مخصص لمحركات البحث"
+              maxLength={60}
+            />
+            <BilingualField
+              label="Meta Description"
+              multiline
+              rows={3}
+              value={formData?.metaDescription}
+              valueAr={formData?.meta_description_ar}
+              onChange={(value) => setFormData(prev => ({ ...prev, metaDescription: value }))}
+              onChangeAr={(value) => setFormData(prev => ({ ...prev, meta_description_ar: value }))}
+              placeholder="Brief description for search engine results"
+              placeholderAr="وصف قصير يظهر في نتائج البحث"
+              maxLength={160}
+            />
           </div>
         </div>
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
+import BilingualField from 'components/admin/BilingualField';
 import { uploadImage } from 'services/storageService';
 import { supabase, isSupabaseConfigured } from 'lib/supabase';
 
@@ -110,60 +111,54 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
           </div>
 
           {/* Full Name */}
-          <div>
-            <label className="block text-sm font-semibold text-primary-700 mb-2 dark:text-text-primary">
-              Full Name *
-            </label>
-            <input
-              type="text"
-              value={settings.full_name}
-              onChange={(e) => onChange({ ...settings, full_name: e.target.value })}
-              placeholder="John Doe"
-              className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
-            />
-          </div>
+          <BilingualField
+            className="md:col-span-2"
+            label="Full Name" required
+            value={settings.full_name}
+            valueAr={settings.full_name_ar}
+            onChange={(value) => onChange({ ...settings, full_name: value })}
+            onChangeAr={(value) => onChange({ ...settings, full_name_ar: value })}
+            placeholder="John Doe"
+            placeholderAr="الاسم بالعربية"
+          />
 
           {/* Title */}
-          <div>
-            <label className="block text-sm font-semibold text-primary-700 mb-2 dark:text-text-primary">
-              Professional Title *
-            </label>
-            <input
-              type="text"
-              value={settings.title}
-              onChange={(e) => onChange({ ...settings, title: e.target.value })}
-              placeholder="Full Stack Developer"
-              className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
-            />
-          </div>
+          <BilingualField
+            className="md:col-span-2"
+            label="Professional Title" required
+            value={settings.title}
+            valueAr={settings.title_ar}
+            onChange={(value) => onChange({ ...settings, title: value })}
+            onChangeAr={(value) => onChange({ ...settings, title_ar: value })}
+            placeholder="Full Stack Developer"
+            placeholderAr="المسمى المهني"
+          />
 
           {/* Tagline */}
-          <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-primary-700 mb-2 dark:text-text-primary">
-              Tagline / Headline
-            </label>
-            <input
-              type="text"
-              value={settings.tagline}
-              onChange={(e) => onChange({ ...settings, tagline: e.target.value })}
-              placeholder="Crafting Digital Experiences That Matter"
-              className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
-            />
-          </div>
+          <BilingualField
+            className="md:col-span-2"
+            label="Tagline / Headline"
+            value={settings.tagline}
+            valueAr={settings.tagline_ar}
+            onChange={(value) => onChange({ ...settings, tagline: value })}
+            onChangeAr={(value) => onChange({ ...settings, tagline_ar: value })}
+            placeholder="Crafting Digital Experiences That Matter"
+            placeholderAr="العبارة التعريفية"
+          />
 
           {/* Bio */}
-          <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-primary-700 mb-2 dark:text-text-primary">
-              Bio / About
-            </label>
-            <textarea
-              value={settings.bio}
-              onChange={(e) => onChange({ ...settings, bio: e.target.value })}
-              placeholder="Tell your story..."
-              rows="6"
-              className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
-            />
-          </div>
+          <BilingualField
+            className="md:col-span-2"
+            label="Bio / About"
+            multiline
+            rows={6}
+            value={settings.bio}
+            valueAr={settings.bio_ar}
+            onChange={(value) => onChange({ ...settings, bio: value })}
+            onChangeAr={(value) => onChange({ ...settings, bio_ar: value })}
+            placeholder="Tell your story..."
+            placeholderAr="نبذة عنك بالعربية"
+          />
 
           {/* Email */}
           <div>
@@ -200,21 +195,16 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
           </div>
 
           {/* Location */}
-          <div>
-            <label className="block text-sm font-semibold text-primary-700 mb-2 dark:text-text-primary">
-              Location
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                value={settings.location}
-                onChange={(e) => onChange({ ...settings, location: e.target.value })}
-                placeholder="San Francisco, CA"
-                className="w-full pl-12 pr-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
-              />
-              <Icon name="MapPin" size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary-400 dark:text-muted" />
-            </div>
-          </div>
+          <BilingualField
+            className="md:col-span-2"
+            label="Location"
+            value={settings.location}
+            valueAr={settings.location_ar}
+            onChange={(value) => onChange({ ...settings, location: value })}
+            onChangeAr={(value) => onChange({ ...settings, location_ar: value })}
+            placeholder="San Francisco, CA"
+            placeholderAr="المدينة، الدولة"
+          />
 
           {/* Availability Status */}
           <div>

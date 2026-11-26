@@ -7,6 +7,7 @@ import {
 // zod-based validation is only needed when saving, so it loads on demand
 // instead of shipping with every public page.
 const loadValidation = () => import("../lib/validation");
+import { writeWithArabicFallback, withArabicFlag } from "../lib/arabicWrite";
 import {
   screenshotLimitMessage,
   screenshotsWithinLimit,
@@ -143,13 +144,11 @@ export const createProject = async (projectData) => {
   }
 
   try {
-    const { data, error } = await supabase
-      .from("projects")
-      .insert([projectData])
-      .select()
-      .single();
+    const result = await writeWithArabicFallback(projectData, (row) =>
+      supabase.from("projects").insert([row]).select().single()
+    );
 
-    return formatSupabaseResponse(data, error);
+    return withArabicFlag(formatSupabaseResponse(result.data, result.error), result);
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -179,14 +178,11 @@ export const updateProject = async (projectId, updates) => {
   }
 
   try {
-    const { data, error } = await supabase
-      .from("projects")
-      .update(updates)
-      .eq("id", projectId)
-      .select()
-      .single();
+    const result = await writeWithArabicFallback(updates, (row) =>
+      supabase.from("projects").update(row).eq("id", projectId).select().single()
+    );
 
-    return formatSupabaseResponse(data, error);
+    return withArabicFlag(formatSupabaseResponse(result.data, result.error), result);
   } catch (error) {
     return { success: false, error: error.message };
   }

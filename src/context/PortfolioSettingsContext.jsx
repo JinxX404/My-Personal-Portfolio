@@ -1,14 +1,31 @@
 import React, { createContext, useState, useEffect, useContext, useCallback, useMemo } from 'react';
 import { supabase } from '../lib/supabase';
+import { useI18n } from '../i18n/I18nContext';
+import { localize, PROFILE_SPEC, SITE_SPEC, SEO_SPEC, CAREER_SPEC } from '../i18n/content.mjs';
 
 const PortfolioSettingsContext = createContext();
 
+/**
+ * Settings for the current page language. On /ar the profile, site, SEO and
+ * career texts hold the Arabic version where it is filled in and English
+ * otherwise. `settings` always stays the raw row, which the admin edits.
+ */
 export const usePortfolioSettings = () => {
   const context = useContext(PortfolioSettingsContext);
   if (!context) {
     throw new Error('usePortfolioSettings must be used within PortfolioSettingsProvider');
   }
-  return context;
+  const { lang } = useI18n();
+  return useMemo(() => {
+    if (lang !== 'ar') return context;
+    return {
+      ...context,
+      profile: localize(context.profile, PROFILE_SPEC, lang),
+      siteSettings: localize(context.siteSettings, SITE_SPEC, lang),
+      seoSettings: localize(context.seoSettings, SEO_SPEC, lang),
+      careerData: localize(context.careerData, CAREER_SPEC, lang),
+    };
+  }, [context, lang]);
 };
 
 // Default settings - used when database has no data

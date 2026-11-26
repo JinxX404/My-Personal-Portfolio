@@ -1,5 +1,6 @@
 import React from 'react';
 import Icon from 'components/AppIcon';
+import BilingualField from 'components/admin/BilingualField';
 
 const CareerDataTab = ({ careerData, onChange }) => {
   const timeline = careerData?.timeline || [];
@@ -9,7 +10,7 @@ const CareerDataTab = ({ careerData, onChange }) => {
   const addTimelineItem = () => {
     onChange({
       ...careerData,
-      timeline: [...timeline, { year: '', title: '', company: '', description: '' }]
+      timeline: [...timeline, { year: '', title: '', title_ar: '', company: '', company_ar: '', description: '', description_ar: '' }]
     });
   };
 
@@ -65,26 +66,28 @@ const CareerDataTab = ({ careerData, onChange }) => {
       <div>
         <h3 className="text-lg font-semibold text-primary-800 dark:text-primary-200 mb-4">Philosophy & Mission</h3>
         <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-primary-700 dark:text-primary-300 mb-1">Philosophy</label>
-            <textarea
-              value={careerData?.philosophy || ''}
-              onChange={(e) => onChange({ ...careerData, philosophy: e.target.value })}
-              rows={4}
-              className="w-full px-4 py-3 border border-primary-200 dark:border-primary-700 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:bg-background dark:text-primary-200"
-              placeholder="Your professional philosophy..."
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-primary-700 dark:text-primary-300 mb-1">Mission</label>
-            <textarea
-              value={careerData?.mission || ''}
-              onChange={(e) => onChange({ ...careerData, mission: e.target.value })}
-              rows={3}
-              className="w-full px-4 py-3 border border-primary-200 dark:border-primary-700 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:bg-background dark:text-primary-200"
-              placeholder="Your mission statement..."
-            />
-          </div>
+          <BilingualField
+            label="Philosophy"
+            multiline
+            rows={4}
+            value={careerData?.philosophy}
+            valueAr={careerData?.philosophy_ar}
+            onChange={(value) => onChange({ ...careerData, philosophy: value })}
+            onChangeAr={(value) => onChange({ ...careerData, philosophy_ar: value })}
+            placeholder="Your professional philosophy..."
+            placeholderAr="فلسفتك في العمل"
+          />
+          <BilingualField
+            label="Mission"
+            multiline
+            rows={3}
+            value={careerData?.mission}
+            valueAr={careerData?.mission_ar}
+            onChange={(value) => onChange({ ...careerData, mission: value })}
+            onChangeAr={(value) => onChange({ ...careerData, mission_ar: value })}
+            placeholder="Your mission statement..."
+            placeholderAr="رسالتك المهنية"
+          />
         </div>
       </div>
 
@@ -105,32 +108,44 @@ const CareerDataTab = ({ careerData, onChange }) => {
                   <Icon name="Trash2" size={16} />
                 </button>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-text-secondary dark:text-text-secondary">Year</label>
                 <input
-                  value={item.year}
+                  value={item.year || ''}
                   onChange={(e) => updateTimelineItem(index, 'year', e.target.value)}
                   placeholder="Year (e.g., 2024)"
-                  className="px-3 py-2 border border-primary-200 dark:border-primary-700 rounded-lg text-sm dark:bg-background dark:text-primary-200"
-                />
-                <input
-                  value={item.title}
-                  onChange={(e) => updateTimelineItem(index, 'title', e.target.value)}
-                  placeholder="Title"
+                  dir="ltr"
                   className="px-3 py-2 border border-primary-200 dark:border-primary-700 rounded-lg text-sm dark:bg-background dark:text-primary-200"
                 />
               </div>
-              <input
-                value={item.company}
-                onChange={(e) => updateTimelineItem(index, 'company', e.target.value)}
-                placeholder="Company / Organization"
-                className="w-full px-3 py-2 border border-primary-200 dark:border-primary-700 rounded-lg text-sm dark:bg-background dark:text-primary-200"
+              <BilingualField
+                label="Title"
+                value={item.title}
+                valueAr={item.title_ar}
+                onChange={(value) => updateTimelineItem(index, 'title', value)}
+                onChangeAr={(value) => updateTimelineItem(index, 'title_ar', value)}
+                placeholder="Title"
+                placeholderAr="المسمى أو الشهادة"
               />
-              <textarea
+              <BilingualField
+                label="Company / Organization"
+                value={item.company}
+                valueAr={item.company_ar}
+                onChange={(value) => updateTimelineItem(index, 'company', value)}
+                onChangeAr={(value) => updateTimelineItem(index, 'company_ar', value)}
+                placeholder="Company / Organization"
+                placeholderAr="الجهة"
+              />
+              <BilingualField
+                label="Description"
+                multiline
+                rows={3}
                 value={item.description}
-                onChange={(e) => updateTimelineItem(index, 'description', e.target.value)}
+                valueAr={item.description_ar}
+                onChange={(value) => updateTimelineItem(index, 'description', value)}
+                onChangeAr={(value) => updateTimelineItem(index, 'description_ar', value)}
                 placeholder="Description"
-                rows={2}
-                className="w-full px-3 py-2 border border-primary-200 dark:border-primary-700 rounded-lg text-sm dark:bg-background dark:text-primary-200"
+                placeholderAr="الوصف"
               />
             </div>
           ))}
@@ -151,35 +166,43 @@ const CareerDataTab = ({ careerData, onChange }) => {
         <div className="space-y-4">
           {values.map((item, index) => (
             <div key={index} className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4 space-y-3">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-3">
                 <span className="text-sm font-medium text-primary-700 dark:text-primary-300">Value #{index + 1}</span>
-                <button onClick={() => removeValue(index)} className="text-error-500 hover:text-error-700" aria-label="Remove value">
-                  <Icon name="Trash2" size={16} />
-                </button>
+                <div className="flex items-center gap-3">
+                  <select
+                    value={item.icon}
+                    onChange={(e) => updateValue(index, 'icon', e.target.value)}
+                    aria-label="Icon"
+                    className="px-3 py-2 border border-primary-200 dark:border-primary-700 rounded-lg text-sm dark:bg-background dark:text-primary-200"
+                  >
+                    {iconOptions.map((icon) => (
+                      <option key={icon} value={icon}>{icon}</option>
+                    ))}
+                  </select>
+                  <button onClick={() => removeValue(index)} className="text-error-500 hover:text-error-700" aria-label="Remove value">
+                    <Icon name="Trash2" size={16} />
+                  </button>
+                </div>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                <input
-                  value={item.title}
-                  onChange={(e) => updateValue(index, 'title', e.target.value)}
-                  placeholder="Title"
-                  className="px-3 py-2 border border-primary-200 dark:border-primary-700 rounded-lg text-sm dark:bg-background dark:text-primary-200"
-                />
-                <select
-                  value={item.icon}
-                  onChange={(e) => updateValue(index, 'icon', e.target.value)}
-                  className="px-3 py-2 border border-primary-200 dark:border-primary-700 rounded-lg text-sm dark:bg-background dark:text-primary-200"
-                >
-                  {iconOptions.map((icon) => (
-                    <option key={icon} value={icon}>{icon}</option>
-                  ))}
-                </select>
-              </div>
-              <textarea
-                value={item.description}
-                onChange={(e) => updateValue(index, 'description', e.target.value)}
-                placeholder="Description"
+              <BilingualField
+                label="Title"
+                value={item.title}
+                valueAr={item.title_ar}
+                onChange={(value) => updateValue(index, 'title', value)}
+                onChangeAr={(value) => updateValue(index, 'title_ar', value)}
+                placeholder="Title"
+                placeholderAr="العنوان"
+              />
+              <BilingualField
+                label="Description"
+                multiline
                 rows={2}
-                className="w-full px-3 py-2 border border-primary-200 dark:border-primary-700 rounded-lg text-sm dark:bg-background dark:text-primary-200"
+                value={item.description}
+                valueAr={item.description_ar}
+                onChange={(value) => updateValue(index, 'description', value)}
+                onChangeAr={(value) => updateValue(index, 'description_ar', value)}
+                placeholder="Description"
+                placeholderAr="الوصف"
               />
             </div>
           ))}
@@ -199,25 +222,31 @@ const CareerDataTab = ({ careerData, onChange }) => {
         </div>
         <div className="space-y-3">
           {interests.map((item, index) => (
-            <div key={index} className="flex items-center gap-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg p-3">
-              <select
-                value={item.icon}
-                onChange={(e) => updateInterest(index, 'icon', e.target.value)}
-                className="px-3 py-2 border border-primary-200 dark:border-primary-700 rounded-lg text-sm dark:bg-background dark:text-primary-200"
-              >
-                {iconOptions.map((icon) => (
-                  <option key={icon} value={icon}>{icon}</option>
-                ))}
-              </select>
-              <input
+            <div key={index} className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-3 space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <select
+                  value={item.icon}
+                  onChange={(e) => updateInterest(index, 'icon', e.target.value)}
+                  aria-label="Icon"
+                  className="px-3 py-2 border border-primary-200 dark:border-primary-700 rounded-lg text-sm dark:bg-background dark:text-primary-200"
+                >
+                  {iconOptions.map((icon) => (
+                    <option key={icon} value={icon}>{icon}</option>
+                  ))}
+                </select>
+                <button onClick={() => removeInterest(index)} className="text-error-500 hover:text-error-700" aria-label="Remove interest">
+                  <Icon name="Trash2" size={16} />
+                </button>
+              </div>
+              <BilingualField
+                label="Interest"
                 value={item.name}
-                onChange={(e) => updateInterest(index, 'name', e.target.value)}
+                valueAr={item.name_ar}
+                onChange={(value) => updateInterest(index, 'name', value)}
+                onChangeAr={(value) => updateInterest(index, 'name_ar', value)}
                 placeholder="Interest name"
-                className="flex-1 px-3 py-2 border border-primary-200 dark:border-primary-700 rounded-lg text-sm dark:bg-background dark:text-primary-200"
+                placeholderAr="الاهتمام"
               />
-              <button onClick={() => removeInterest(index)} className="text-error-500 hover:text-error-700" aria-label="Remove interest">
-                <Icon name="Trash2" size={16} />
-              </button>
             </div>
           ))}
           {interests.length === 0 && (

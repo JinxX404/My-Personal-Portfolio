@@ -4,6 +4,7 @@ import {
   formatSupabaseResponse,
   isSupabaseConfigured,
 } from "../lib/supabase";
+import { writeWithArabicFallback, withArabicFlag } from "../lib/arabicWrite";
 
 /**
  * Skills Service - Handles all database operations for skills and tech stack
@@ -74,13 +75,11 @@ export const createSkillCategory = async (categoryData) => {
   }
 
   try {
-    const { data, error } = await supabase
-      .from("skill_categories")
-      .insert([categoryData])
-      .select()
-      .single();
+    const result = await writeWithArabicFallback(categoryData, (row) =>
+      supabase.from("skill_categories").insert([row]).select().single()
+    );
 
-    return formatSupabaseResponse(data, error);
+    return withArabicFlag(formatSupabaseResponse(result.data, result.error), result);
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -92,14 +91,11 @@ export const updateSkillCategory = async (categoryId, updates) => {
   }
 
   try {
-    const { data, error } = await supabase
-      .from("skill_categories")
-      .update(updates)
-      .eq("id", categoryId)
-      .select()
-      .single();
+    const result = await writeWithArabicFallback(updates, (row) =>
+      supabase.from("skill_categories").update(row).eq("id", categoryId).select().single()
+    );
 
-    return formatSupabaseResponse(data, error);
+    return withArabicFlag(formatSupabaseResponse(result.data, result.error), result);
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -152,13 +148,11 @@ export const createSkill = async (skillData) => {
   }
 
   try {
-    const { data, error } = await supabase
-      .from("skills")
-      .insert([skillData])
-      .select()
-      .single();
+    const result = await writeWithArabicFallback(skillData, (row) =>
+      supabase.from("skills").insert([row]).select().single()
+    );
 
-    return formatSupabaseResponse(data, error);
+    return withArabicFlag(formatSupabaseResponse(result.data, result.error), result);
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -170,14 +164,11 @@ export const updateSkill = async (skillId, updates) => {
   }
 
   try {
-    const { data, error } = await supabase
-      .from("skills")
-      .update(updates)
-      .eq("id", skillId)
-      .select()
-      .single();
+    const result = await writeWithArabicFallback(updates, (row) =>
+      supabase.from("skills").update(row).eq("id", skillId).select().single()
+    );
 
-    return formatSupabaseResponse(data, error);
+    return withArabicFlag(formatSupabaseResponse(result.data, result.error), result);
   } catch (error) {
     return { success: false, error: error.message };
   }
