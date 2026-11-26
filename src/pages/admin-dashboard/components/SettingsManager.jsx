@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import Icon from 'components/AppIcon';
 import Breadcrumb from 'components/ui/Breadcrumb';
@@ -12,7 +13,8 @@ import CareerDataTab from './settings-tabs/CareerDataTab';
 
 const SettingsManager = () => {
   const { settings, updateSettings } = usePortfolioSettings();
-  const [activeTab, setActiveTab] = useState('profile');
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(location.state?.tab || 'profile');
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState(null);
   

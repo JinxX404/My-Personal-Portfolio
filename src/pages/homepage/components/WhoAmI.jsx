@@ -3,20 +3,21 @@ import { Link } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
 import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
-import { useProjects } from 'context/ProjectsContext';
 
 const WhoAmI = () => {
   const { profile } = usePortfolioSettings();
-  const { projects } = useProjects();
-  
-  const projectCount = projects?.filter(p => p.publishing_status === 'published').length || 0;
+
+  // Years, project count, and role are already in the hero right above,
+  // so this strip only adds what the hero does not say.
+  const availabilityText = {
+    available: 'Open to new projects',
+    busy: 'Limited availability',
+  }[profile?.availability] || 'Not taking new projects';
 
   const highlights = [
-    { icon: 'Code2', text: profile?.experience_years ? `${profile.experience_years}+ Years` : '—', label: 'Experience' },
-    { icon: 'MapPin', text: profile?.location || 'Remote', label: 'Location' },
-    { icon: 'Briefcase', text: profile?.title || 'Developer', label: 'Role' },
-    { icon: 'FolderOpen', text: `${projectCount}+`, label: 'Projects' },
-  ];
+    profile?.location && { icon: 'MapPin', text: profile.location, label: 'Based in' },
+    { icon: 'Calendar', text: availabilityText, label: 'Availability' },
+  ].filter(Boolean);
 
   return (
     <section className="py-16 bg-surface dark:bg-surface border-y border-border dark:border-border-strong transition-theme">
@@ -44,9 +45,9 @@ const WhoAmI = () => {
               {profile?.full_name || 'Moataz Mohammed'}
             </h2>
             <p className="text-accent font-medium mb-4 dark:text-accent-text">
-              {profile?.tagline || 'Full-Stack .NET Developer'}
+              {profile?.title || 'Full-Stack .NET Developer'}
             </p>
-            <p className="text-text-secondary dark:text-white/70 max-w-2xl mb-6">
+            <p dir="auto" className="text-text-secondary dark:text-white/70 max-w-2xl mb-6">
               {profile?.bio ? (
                 profile.bio.length > 200 ? profile.bio.substring(0, 200) + '...' : profile.bio
               ) : (
@@ -56,13 +57,13 @@ const WhoAmI = () => {
 
             {/* Quick Stats */}
             <div className="flex flex-wrap justify-center lg:justify-start gap-6">
-              {highlights.map((item, index) => (
-                <div key={index} className="flex items-center space-x-2">
+              {highlights.map((item) => (
+                <div key={item.label} className="flex items-center space-x-2">
                   <div className="w-10 h-10 bg-accent/10 dark:bg-accent/20 rounded-lg flex items-center justify-center">
                     <Icon name={item.icon} size={18} className="text-accent dark:text-accent-text" strokeWidth={2} />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-text-primary dark:text-white">{item.text}</p>
+                    <p dir="auto" className="text-sm font-semibold text-text-primary dark:text-white">{item.text}</p>
                     <p className="text-xs text-text-secondary dark:text-white/50">{item.label}</p>
                   </div>
                 </div>

@@ -45,11 +45,6 @@ const defaultSettings = {
     site_title: 'Portfolio',
     site_description: 'Professional portfolio showcasing my work and expertise',
     site_keywords: 'full-stack .NET developer, C#, ASP.NET, software engineer',
-    logo_url: '',
-    favicon_url: '',
-    primary_color: '#3B82F6',
-    accent_color: '#8B5CF6',
-    show_theme_toggle: true,
     enable_animations: true,
     enable_contact_form: true
   },

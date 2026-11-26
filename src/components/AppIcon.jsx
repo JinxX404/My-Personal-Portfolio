@@ -2,6 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
     Activity,
+    Archive,
+    ArchiveRestore,
+    Copy,
+    Reply,
+    MailOpen,
+    ListChecks,
     AlertCircle,
     AlertTriangle,
     ArrowLeft,
@@ -122,6 +128,12 @@ import {
 
 const ICONS = {
     Activity,
+    Archive,
+    ArchiveRestore,
+    Copy,
+    Reply,
+    MailOpen,
+    ListChecks,
     AlertCircle,
     AlertTriangle,
     ArrowLeft,

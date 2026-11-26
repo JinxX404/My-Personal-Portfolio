@@ -34,13 +34,16 @@ const MetricCard = ({
   };
 
   return (
-    <div 
+    <div
       className={`card hover:shadow-lg transition-all duration-300 ${
-        onClick ? 'cursor-pointer hover:scale-105' : ''
+        onClick ? 'cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent' : ''
       }`}
       onClick={onClick}
+      onKeyDown={onClick ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClick(); } } : undefined}
+      role={onClick ? 'link' : undefined}
+      tabIndex={onClick ? 0 : undefined}
     >
-      <div className="card-content">
+      <div>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-accent-50 dark:bg-accent-900/30 rounded-lg flex items-center justify-center">

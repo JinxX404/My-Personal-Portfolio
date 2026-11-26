@@ -5,8 +5,6 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.75.0",
     "@tailwindcss/forms": "^0.5.7",
-    "date-fns": "^4.1.0",
-    "dotenv": "^16.0.1",
     "framer-motion": "^10.16.4",
     "lucide-react": "^0.484.0",
     "prop-types": "^15.8.1",
@@ -14,7 +12,6 @@
     "react-dom": "^18.2.0",
     "react-helmet-async": "^3.0.0",
     "react-router-dom": "^6.30.6",
-    "recharts": "^2.15.2",
     "zod": "^4.3.5"
   },
   "scripts": {

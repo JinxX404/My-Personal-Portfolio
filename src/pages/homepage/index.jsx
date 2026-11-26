@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 import { useReducedMotion } from 'hooks/useReducedMotion';
@@ -8,34 +8,45 @@ import { safeHref } from 'lib/safeUrl';
 import HeroSection from './components/HeroSection';
 import FeaturedWork from './components/FeaturedWork';
 import SkillsVisualization from './components/SkillsVisualization';
-import FloatingCTA from './components/FloatingCTA';
 import WhoAmI from './components/WhoAmI';
 
 const Homepage = () => {
-  const [scrollProgress, setScrollProgress] = useState(0);
+  const progressRef = useRef(null);
   const shouldReduceMotion = useReducedMotion();
   const { profile } = usePortfolioSettings();
   const cvUrl = safeHref(profile?.cv_url || profile?.resume_url);
 
+  // Reading progress. Written straight to the bar's transform once per frame,
+  // so scrolling does not re-render the whole page.
   useEffect(() => {
-    const handleScroll = () => {
-      const scrolled = window.scrollY;
+    let frame = 0;
+    const update = () => {
+      frame = 0;
       const maxHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const progress = (scrolled / maxHeight) * 100;
-      setScrollProgress(progress);
+      const progress = maxHeight > 0 ? Math.min(1, window.scrollY / maxHeight) : 0;
+      if (progressRef.current) progressRef.current.style.transform = `scaleX(${progress})`;
     };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
   }, []);
 
   return (
     <div className="min-h-screen bg-background text-text-primary transition-theme">
       {/* Progress Bar */}
-      <div className="fixed top-0 left-0 w-full h-1 bg-primary-100 dark:bg-accent-fill/40 z-50 transition-theme">
-        <div 
-          className="h-full bg-gradient-to-r from-accent-500 via-accent-400 to-cta transition-all duration-300 ease-out dark:from-accent-400 dark:via-accent-500 dark:to-cta"
-          style={{ width: `${scrollProgress}%` }}
+      <div className="fixed top-0 left-0 w-full h-1 bg-primary-100 dark:bg-accent-fill/40 z-50 transition-theme" aria-hidden="true">
+        <div
+          ref={progressRef}
+          className="h-full origin-left bg-gradient-to-r from-accent-500 via-accent-400 to-cta dark:from-accent-400 dark:via-accent-500 dark:to-cta"
+          style={{ transform: 'scaleX(0)' }}
         ></div>
       </div>
 
@@ -52,7 +63,7 @@ const Homepage = () => {
               Featured Work
             </h2>
             <p className="text-xl text-text-secondary max-w-3xl mx-auto">
-              Projects pulled from the portfolio. Featured ones come first, and the latest published work fills in when none are marked featured.
+              A few recent projects, from the problem to what shipped.
             </p>
           </div>
           <FeaturedWork />
@@ -78,10 +89,10 @@ const Homepage = () => {
       <section className="py-20 bg-background dark:bg-background border-t border-border dark:border-border-strong transition-theme">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-text-primary">
-            Ready to Build Something Amazing?
+            Have a project in mind?
           </h2>
           <p className="text-xl text-text-secondary mb-8 max-w-2xl mx-auto">
-            Let's collaborate to turn your ideas into exceptional digital experiences that users love and businesses depend on.
+            Tell me what you need built. I reply within one business day.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
@@ -92,7 +103,7 @@ const Homepage = () => {
               <span>Start a Conversation</span>
             </Link>
             <Link
-              to="/portfolio-gallery"
+              to="/projects"
               className="inline-flex items-center justify-center space-x-2 border border-border dark:border-border-strong hover:border-accent hover:bg-accent/5 text-text-primary dark:text-text-primary font-semibold py-4 px-8 rounded-xl transition-all duration-300"
             >
               <Icon name="Eye" size={20} strokeWidth={2} />
@@ -113,8 +124,6 @@ const Homepage = () => {
         </div>
       </section>
 
-      {/* Floating CTA */}
-      <FloatingCTA />
     </div>
   );
 };

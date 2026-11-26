@@ -6,7 +6,12 @@ import TurnstileField, { turnstileSiteKey } from 'components/TurnstileField';
 import { useToast } from 'context/ToastContext';
 import { submitContactForm } from 'services/contactService';
 
-const ContactForm = ({ selectedInquiryType }) => {
+const INQUIRY_OPTIONS = [
+  { id: 'project', label: 'A project', icon: 'Briefcase' },
+  { id: 'general', label: 'Something else', icon: 'MessageCircle' },
+];
+
+const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
   const { error: showError } = useToast();
   const [formData, setFormData] = useState({
     name: '',
@@ -151,12 +156,8 @@ const ContactForm = ({ selectedInquiryType }) => {
         </div>
         <h3 className="text-2xl font-bold text-text-primary mb-4">Message Sent!</h3>
         <p className="text-text-secondary mb-6">
-          Thank you for reaching out. I'll get back to you within 24 hours.
+          Thank you for reaching out. I usually reply within one business day.
         </p>
-        <div className="flex items-center justify-center space-x-2 text-sm text-muted">
-          <Icon name="Clock" size={16} strokeWidth={2} />
-          <span>Expected response time: 24 hours</span>
-        </div>
       </motion.div>
     );
   }
@@ -174,6 +175,38 @@ const ContactForm = ({ selectedInquiryType }) => {
           Fill out the form below and I'll get back to you as soon as possible.
         </p>
       </div>
+
+      {onInquiryTypeChange && (
+        <fieldset className="mb-8">
+          <legend className="block text-sm font-medium text-text-primary mb-2">What is this about?</legend>
+          <div className="inline-flex flex-wrap gap-2 p-1 rounded-xl bg-background border border-border dark:border-border-strong">
+            {INQUIRY_OPTIONS.map((option) => {
+              const active = selectedInquiryType === option.id;
+              return (
+                <label
+                  key={option.id}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium cursor-pointer transition-colors focus-within:ring-2 focus-within:ring-accent ${
+                    active
+                      ? 'bg-accent text-white dark:bg-accent-fill'
+                      : 'text-text-secondary hover:text-text-primary'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="inquiryType"
+                    value={option.id}
+                    checked={active}
+                    onChange={() => onInquiryTypeChange(option.id)}
+                    className="sr-only"
+                  />
+                  <Icon name={option.icon} size={16} strokeWidth={2} />
+                  {option.label}
+                </label>
+              );
+            })}
+          </div>
+        </fieldset>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Information */}
@@ -429,7 +462,8 @@ const ContactForm = ({ selectedInquiryType }) => {
 };
 
 ContactForm.propTypes = {
-  selectedInquiryType: PropTypes.oneOf(['project', 'collaboration', 'speaking', 'general']).isRequired
+  selectedInquiryType: PropTypes.oneOf(['project', 'collaboration', 'speaking', 'general']).isRequired,
+  onInquiryTypeChange: PropTypes.func,
 };
 
 export default ContactForm;

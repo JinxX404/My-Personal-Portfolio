@@ -108,24 +108,6 @@ const SkillsVisualization = () => {
             </div>
           ))}
         </div>
-
-        {/* Additional Info */}
-        {/* <div className="mt-8 pt-8 border-t border-primary-100 dark:border-border">
-          <div className="grid md:grid-cols-3 gap-6 text-center">
-            <div>
-              <div className={`text-2xl font-bold text-${currentCategory.color}`}>8+</div>
-              <div className="text-sm text-secondary-600 dark:text-text-secondary">Years Experience</div>
-            </div>
-            <div>
-              <div className={`text-2xl font-bold text-${currentCategory.color}`}>50+</div>
-              <div className="text-sm text-secondary-600 dark:text-text-secondary">Projects Completed</div>
-            </div>
-            <div>
-              <div className={`text-2xl font-bold text-${currentCategory.color}`}>15+</div>
-              <div className="text-sm text-secondary-600 dark:text-text-secondary">Technologies Mastered</div>
-            </div>
-          </div>
-        </div> */}
       </div>
 
       {/* Tech Stack Cloud */}

@@ -102,7 +102,7 @@ const FeaturedWork = () => {
     return (
       <div className="text-center text-text-secondary">
         <p>Published projects will show up here.</p>
-        <Link to="/portfolio-gallery" className="inline-flex items-center space-x-2 mt-4 text-accent-500 font-semibold dark:text-accent-text">
+        <Link to="/projects" className="inline-flex items-center space-x-2 mt-4 text-accent-500 font-semibold dark:text-accent-text">
           <span>Browse the portfolio</span>
           <Icon name="ArrowRight" size={18} />
         </Link>
@@ -259,7 +259,7 @@ const FeaturedWork = () => {
 
       <div className="text-center mt-12">
         <Link
-          to="/portfolio-gallery"
+          to="/projects"
           className="inline-flex items-center space-x-2 text-accent-500 hover:text-accent-600 font-semibold transition-theme dark:text-accent-text"
         >
           <span>View all projects</span>

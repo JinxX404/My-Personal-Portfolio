@@ -1,6 +1,6 @@
 // src/Routes.jsx
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes as RouterRoutes, Route } from "react-router-dom";
+import { BrowserRouter, Routes as RouterRoutes, Route, Navigate, useParams } from "react-router-dom";
 import Layout from "components/Layout";
 import AdminLayout from "components/AdminLayout";
 import ScrollToTop from "components/ScrollToTop";
@@ -24,6 +24,14 @@ const SkillsManager = lazy(() => import("pages/admin-dashboard/components/Skills
 const ProjectsManager = lazy(() => import("pages/admin-dashboard/components/ProjectsManager"));
 const SettingsManager = lazy(() => import("pages/admin-dashboard/components/SettingsManager"));
 
+const MessagesManager = lazy(() => import("pages/admin-dashboard/components/MessagesManager"));
+
+// Old project URLs keep working but send visitors to the canonical address.
+const LegacyProjectRedirect = () => {
+  const { id } = useParams();
+  return <Navigate to={`/projects/${id}`} replace />;
+};
+
 // Loading fallback component
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-background pt-20">
@@ -44,11 +52,11 @@ const Routes = () => {
             <RouterRoutes>
               {/* Public routes */}
               <Route path="/" element={<Homepage />} />
-              <Route path="/homepage" element={<Homepage />} />
-              <Route path="/portfolio-gallery" element={<PortfolioGallery />} />
+              <Route path="/homepage" element={<Navigate to="/" replace />} />
               <Route path="/projects" element={<PortfolioGallery />} />
+              <Route path="/portfolio-gallery" element={<Navigate to="/projects" replace />} />
               <Route path="/projects/:id" element={<CaseStudyDetail />} />
-              <Route path="/case-study-detail/:id" element={<CaseStudyDetail />} />
+              <Route path="/case-study-detail/:id" element={<LegacyProjectRedirect />} />
               <Route path="/about-story" element={<AboutStory />} />
               <Route path="/contact-hub" element={<ContactHub />} />
               <Route path="/login" element={<Login />} />
@@ -78,6 +86,13 @@ const Routes = () => {
                 <RequireAuth>
                   <AdminLayout>
                     <ProjectsManager />
+                  </AdminLayout>
+                </RequireAuth>
+              } />
+              <Route path="/messages-manager" element={
+                <RequireAuth>
+                  <AdminLayout>
+                    <MessagesManager />
                   </AdminLayout>
                 </RequireAuth>
               } />

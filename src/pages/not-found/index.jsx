@@ -31,7 +31,7 @@ const NotFound = () => {
         {/* Navigation Options */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
           <Link
-            to="/homepage"
+            to="/"
             className="btn-primary flex items-center space-x-2 px-6 py-3"
           >
             <Icon name="Home" size={18} strokeWidth={2} />
@@ -39,7 +39,7 @@ const NotFound = () => {
           </Link>
           
           <Link
-            to="/portfolio-gallery"
+            to="/projects"
             className="btn-secondary flex items-center space-x-2 px-6 py-3"
           >
             <Icon name="Briefcase" size={18} strokeWidth={2} />

@@ -4,11 +4,9 @@ import {
   formatSupabaseResponse,
   isSupabaseConfigured,
 } from "../lib/supabase";
-import {
-  projectCreateSchema,
-  projectUpdateSchema,
-  validate,
-} from "../lib/validation";
+// zod-based validation is only needed when saving, so it loads on demand
+// instead of shipping with every public page.
+const loadValidation = () => import("../lib/validation");
 import {
   screenshotLimitMessage,
   screenshotsWithinLimit,
@@ -134,6 +132,7 @@ export const createProject = async (projectData) => {
   }
 
   // Validate input
+  const { projectCreateSchema, validate } = await loadValidation();
   const validation = validate(projectCreateSchema, projectData);
   if (!validation.success) {
     return {
@@ -169,6 +168,7 @@ export const updateProject = async (projectId, updates) => {
   }
 
   // Validate input
+  const { projectUpdateSchema, validate } = await loadValidation();
   const validation = validate(projectUpdateSchema, updates);
   if (!validation.success) {
     return {

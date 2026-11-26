@@ -8,11 +8,14 @@ import { useProjects } from "context/ProjectsContext";
 import { SkeletonCard, SkeletonText } from "components/ui/Skeleton";
 import { safeHref } from "lib/safeUrl";
 import ProjectGallery, { normalizeGalleryImages } from "./ProjectGallery";
+import MoreProjects from "./MoreProjects";
+import { coverForProject } from "lib/projectMedia";
+import { SITE_ORIGIN, absoluteHttpsUrl } from "lib/pageMeta";
 
 const CaseStudyDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { getProjectById } = useProjects();
+  const { getProjectById, projects } = useProjects();
 
   const [activeSection, setActiveSection] = useState("");
   const [caseStudy, setCaseStudy] = useState(null);
@@ -25,7 +28,7 @@ const CaseStudyDetail = () => {
     const loadProject = async () => {
 
       if (!id) {
-        navigate("/portfolio-gallery");
+        navigate("/projects");
         return;
       }
 
@@ -56,10 +59,7 @@ const CaseStudyDetail = () => {
               : [],
             category: project.category,
             status: project.status,
-            heroImage:
-              (Array.isArray(project.hero_images) && project.hero_images[0]) ||
-              project.featured_image ||
-              "/assets/images/no_image.png",
+            heroImage: coverForProject(project),
             description: project.description,
             repositoryUrl: project.repository_url,
             demoUrl: project.demo_url,
@@ -96,7 +96,6 @@ const CaseStudyDetail = () => {
                     avatar: project.testimonials[0].avatar || null,
                   }
                 : null,
-            nextProjects: [], // Can be populated later with related projects
           };
 
           setCaseStudy(transformedData);
@@ -264,7 +263,7 @@ const CaseStudyDetail = () => {
         <div className="max-w-lg w-full">
           <LoadError message={loadError} onRetry={() => setReloadKey((value) => value + 1)} />
           <div className="text-center mt-6">
-            <Link to="/portfolio-gallery" className="text-accent font-semibold dark:text-accent-text">
+            <Link to="/projects" className="text-accent font-semibold dark:text-accent-text">
               Back to portfolio
             </Link>
           </div>
@@ -289,7 +288,7 @@ const CaseStudyDetail = () => {
           <p className="text-text-secondary dark:text-white/70 mb-6">
             The project you're looking for doesn't exist.
           </p>
-          <Link to="/portfolio-gallery" className="btn-primary">
+          <Link to="/projects" className="btn-primary">
             Back to Portfolio
           </Link>
         </div>
@@ -303,16 +302,26 @@ const CaseStudyDetail = () => {
         page={caseStudy.title}
         description={caseStudy.description}
         image={caseStudy.heroImage}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "CreativeWork",
+          name: caseStudy.title,
+          ...(caseStudy.description ? { description: caseStudy.description } : {}),
+          url: `${SITE_ORIGIN}/projects/${caseStudy.id}`,
+          image: absoluteHttpsUrl(caseStudy.heroImage),
+          ...(caseStudy.tags.length ? { keywords: caseStudy.tags.join(", ") } : {}),
+          author: { "@id": `${SITE_ORIGIN}/#person` },
+        }}
       />
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-banner-from to-banner-to text-white pt-20 pb-16">
+      <section className="relative bg-gradient-to-br from-banner-from to-banner-to text-white pt-28 lg:pt-32 pb-16">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <div className="flex items-center space-x-2 mb-4">
                 <Link
-                  to="/portfolio-gallery"
+                  to="/projects"
                   className="text-accent-200 hover:text-accent-100 transition-colors duration-200 flex items-center space-x-1"
                 >
                   <Icon name="ArrowLeft" size={16} strokeWidth={2} />
@@ -320,10 +329,10 @@ const CaseStudyDetail = () => {
                 </Link>
               </div>
 
-              <h1 className="text-4xl lg:text-5xl font-bold mb-4 leading-tight text-white">
+              <h1 dir="auto" className="text-4xl lg:text-5xl font-bold mb-4 leading-tight text-white text-start">
                 {caseStudy.title}
               </h1>
-              <p className="text-xl text-accent-100 mb-6">
+              <p dir="auto" className="text-xl text-accent-100 mb-6 text-start">
                 {caseStudy.subtitle}
               </p>
 
@@ -336,14 +345,12 @@ const CaseStudyDetail = () => {
                     <p className="text-lg text-white">{caseStudy.category}</p>
                   </div>
                 )}
-                {caseStudy.status && (
+                {/in[-_ ]?progress/i.test(caseStudy.status || "") && (
                   <div>
                     <h3 className="text-sm font-semibold text-accent-200 uppercase tracking-wide mb-2">
                       Status
                     </h3>
-                    <p className="text-lg capitalize text-white">
-                      {caseStudy.status.replace("-", " ")}
-                    </p>
+                    <p className="text-lg text-white">In progress</p>
                   </div>
                 )}
                 {caseStudy.client && (
@@ -351,7 +358,7 @@ const CaseStudyDetail = () => {
                     <h3 className="text-sm font-semibold text-accent-200 uppercase tracking-wide mb-2">
                       Client
                     </h3>
-                    <p className="text-lg text-white">{caseStudy.client}</p>
+                    <p dir="auto" className="text-lg text-white text-start">{caseStudy.client}</p>
                   </div>
                 )}
                 {caseStudy.duration && (
@@ -579,61 +586,11 @@ const CaseStudyDetail = () => {
               </section>
             )}
 
-            {/* Next Projects */}
-            <section className="bg-surface dark:bg-surface rounded-lg shadow-sm border border-border dark:border-border-strong p-8">
-              <h2 className="text-3xl font-bold text-text-primary dark:text-white mb-8 text-center">
-                Explore More Projects
-              </h2>
-
-              <div className="grid md:grid-cols-2 gap-8">
-                {caseStudy.nextProjects.map((project) => (
-                  <Link
-                    key={project.id}
-                    to={`/projects/${project.id}`}
-                    className="group block bg-primary-50 dark:bg-primary-900/30 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300"
-                  >
-                    <div className="relative overflow-hidden">
-                      <Image
-                        src={project.image}
-                        alt={project.title}
-                        width={800}
-                        height={480}
-                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                    </div>
-                    <div className="p-6">
-                      <h3 className="text-xl font-semibold text-text-primary dark:text-white mb-2 group-hover:text-accent transition-colors duration-200">
-                        {project.title}
-                      </h3>
-                      <p className="text-text-secondary dark:text-white/70 mb-4">
-                        {project.subtitle}
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {project.tags.map((tag, index) => (
-                          <span
-                            key={index}
-                            className="px-2 py-1 bg-accent/10 text-accent dark:text-accent-400 text-xs font-medium rounded"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-
-              <div className="text-center mt-8">
-                <Link
-                  to="/portfolio-gallery"
-                  className="btn-primary inline-flex items-center space-x-2"
-                >
-                  <span>View All Projects</span>
-                  <Icon name="ArrowRight" size={16} strokeWidth={2} />
-                </Link>
-              </div>
-            </section>
+            <MoreProjects
+              currentId={caseStudy.id}
+              category={caseStudy.category}
+              projects={projects}
+            />
           </div>
         </div>
       </div>

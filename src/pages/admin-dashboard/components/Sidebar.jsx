@@ -1,16 +1,28 @@
 // src/pages/admin-dashboard/components/Sidebar.jsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 import ThemeToggle from 'components/ui/ThemeToggle';
-import { useProjects } from 'context/ProjectsContext';
+import { countNewMessages, MESSAGES_CHANGED_EVENT } from 'services/messagesService';
 
 const Sidebar = ({ isOpen, onClose }) => {
   const location = useLocation();
-  const { projects } = useProjects();
+  const [newMessages, setNewMessages] = useState(0);
 
-  const publishedCount = projects.filter(p => p.publishing_status === 'published').length;
-  const draftCount = projects.filter(p => p.publishing_status === 'draft').length;
+  useEffect(() => {
+    let active = true;
+    const refresh = () => {
+      countNewMessages().then((count) => {
+        if (active) setNewMessages(count);
+      });
+    };
+    refresh();
+    window.addEventListener(MESSAGES_CHANGED_EVENT, refresh);
+    return () => {
+      active = false;
+      window.removeEventListener(MESSAGES_CHANGED_EVENT, refresh);
+    };
+  }, []);
 
   const navigationItems = [
     {
@@ -26,6 +38,13 @@ const Sidebar = ({ isOpen, onClose }) => {
       description: 'Manage projects'
     },
     {
+      name: 'Messages',
+      path: '/messages-manager',
+      icon: 'Inbox',
+      description: 'Contact form inbox',
+      badge: newMessages
+    },
+    {
       name: 'Skills Manager',
       path: '/skills-manager',
       icon: 'Code2',
@@ -37,7 +56,6 @@ const Sidebar = ({ isOpen, onClose }) => {
       icon: 'Plus',
       description: 'Create new project'
     },
-    // },
     {
       name: 'Settings',
       path: '/settings-manager',
@@ -67,7 +85,9 @@ const Sidebar = ({ isOpen, onClose }) => {
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
+            aria-label="Close sidebar navigation"
             className="lg:hidden p-2 rounded-lg text-primary-600 hover:bg-primary-50 transition-colors duration-200 dark:text-text-secondary dark:hover:bg-surface-elevated"
           >
             <Icon name="X" size={20} strokeWidth={2} />
@@ -101,32 +121,25 @@ const Sidebar = ({ isOpen, onClose }) => {
                   {item?.description}
                 </div>
               </div>
+              {item?.badge > 0 && (
+                <span
+                  className={`min-w-[1.5rem] h-6 px-2 rounded-full text-xs font-bold flex items-center justify-center ${
+                    isActivePath(item?.path) ? 'bg-white text-accent' : 'bg-accent text-white dark:bg-accent-fill'
+                  }`}
+                  aria-label={`${item.badge} new`}
+                >
+                  {item.badge}
+                </span>
+              )}
             </Link>
           ))}
         </nav>
 
-        {/* Quick Stats */}
-        <div className="p-4 mt-8 border-t border-primary-100 dark:border-border">
-          <div className="bg-primary-50 dark:bg-primary-900/30 rounded-lg p-4">
-            <h3 className="text-sm font-semibold text-primary-800 dark:text-primary-200 mb-3">Quick Stats</h3>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-secondary-600 dark:text-text-secondary">Published</span>
-                <span className="font-medium text-success-600 dark:text-success-text">{publishedCount}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-secondary-600 dark:text-text-secondary">Drafts</span>
-                <span className="font-medium text-warning-600 dark:text-warning">{draftCount}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Theme + Back to Site */}
-        <div className="p-4 mt-4 space-y-3">
+        <div className="p-4 mt-4 border-t border-primary-100 dark:border-border space-y-3">
           <ThemeToggle variant="row" />
           <Link
-            to="/homepage"
+            to="/"
             className="flex items-center justify-center space-x-2 w-full px-4 py-3 bg-primary-800 text-white rounded-lg hover:bg-primary-700 transition-colors duration-200 dark:bg-accent-fill dark:hover:bg-accent-fill-hover"
           >
             <Icon name="ExternalLink" size={16} strokeWidth={2} />
