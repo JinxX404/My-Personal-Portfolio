@@ -45,8 +45,12 @@ app.Run();`,
 ];
 
 const HeroSection = ({ shouldReduceMotion }) => {
-  const { profile, freelanceProjects } = usePortfolioSettings();
-  const { projects } = useProjects();
+  const { profile, freelanceProjects, isReady } = usePortfolioSettings();
+  const { projects, loading: projectsLoading } = useProjects();
+  // Until the real profile is known (first visit only; later visits use the
+  // cached copy) keep its space but hide placeholder text, so the hero never
+  // shows a default title or the wrong availability and then swaps it.
+  const settled = isReady ? '' : 'invisible';
   const [currentCodeIndex, setCurrentCodeIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(true);
   
@@ -130,7 +134,7 @@ const HeroSection = ({ shouldReduceMotion }) => {
 
           {/* Right Side - Hero Content */}
           <div className="order-1 lg:order-2 text-center lg:text-left transition-theme">
-            <div className="mb-6">
+            <div className={`mb-6 ${settled}`}>
               <div className="inline-flex items-center px-4 py-2 bg-accent-500/10 text-accent-500 rounded-full text-sm font-medium mb-4 dark:text-accent-text">
                 <Icon name="Code2" size={16} strokeWidth={2} className="mr-2" />
                 {profile?.availability === 'available' ? 'Available for new opportunities' : 
@@ -177,7 +181,7 @@ const HeroSection = ({ shouldReduceMotion }) => {
             </div>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-3 gap-6 max-w-xl mx-auto lg:mx-0">
+            <div className={`grid grid-cols-3 gap-6 max-w-xl mx-auto lg:mx-0 ${isReady && !projectsLoading ? '' : 'invisible'}`}>
               <div className="text-center lg:text-left">
                 <div className="text-2xl font-bold text-accent-500 dark:text-accent-text">{profile?.experience_years ? `${profile.experience_years}+` : '—'}</div>
                 <div className="text-sm text-text-secondary">Years Experience</div>

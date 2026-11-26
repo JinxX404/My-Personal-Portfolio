@@ -53,7 +53,7 @@ const ContactInfo = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 20 }}
+      initial={false}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
       className="bg-surface dark:bg-surface rounded-2xl shadow-lg p-8 border border-border dark:border-border-strong"
@@ -84,7 +84,7 @@ const ContactInfo = () => {
                       : {}),
                   }
                 : {})}
-              initial={{ opacity: 0, y: 10 }}
+              initial={false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
               className="flex items-start space-x-4 p-4 rounded-lg hover:bg-primary-100/50 dark:hover:bg-primary-900/30 transition-colors duration-200 group"

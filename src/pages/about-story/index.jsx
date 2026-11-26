@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Icon from "components/AppIcon";
@@ -6,9 +6,8 @@ import Image from "components/AppImage";
 import { usePortfolioSettings } from "context/PortfolioSettingsContext";
 
 const AboutStory = () => {
-  const { profile, careerData } = usePortfolioSettings();
+  const { profile, careerData, isReady } = usePortfolioSettings();
   const [activeTimelineItem, setActiveTimelineItem] = useState(undefined);
-  const [visibleSections, setVisibleSections] = useState(new Set());
 
   const careerTimeline = careerData?.timeline || [];
   const careerValues = careerData?.values || [];
@@ -29,25 +28,6 @@ const AboutStory = () => {
     available: { text: "Available for projects", dot: "bg-success" },
     busy: { text: "Limited availability", dot: "bg-warning" },
   }[profile?.availability] || { text: "Not taking new projects", dot: "bg-secondary-400" };
-
-  // Scroll animation effect
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setVisibleSections((prev) => new Set([...prev, entry.target.id]));
-          }
-        });
-      },
-      { threshold: 0.1 },
-    );
-
-    const sections = document.querySelectorAll("[data-animate]");
-    sections.forEach((section) => observer.observe(section));
-
-    return () => observer.disconnect();
-  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -76,11 +56,12 @@ const AboutStory = () => {
       {/* Hero Section */}
       <section className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
+          {/* Above the fold: render in place, no fade-in on every visit. */}
           <motion.div
-            initial="hidden"
+            initial={false}
             animate="visible"
             variants={containerVariants}
-            className="grid lg:grid-cols-2 gap-12 items-center"
+            className={`grid lg:grid-cols-2 gap-12 items-center ${isReady ? '' : 'invisible'}`}
           >
             {/* Profile Image */}
             <motion.div variants={itemVariants} className="relative">
@@ -242,9 +223,9 @@ const AboutStory = () => {
         <div className="max-w-6xl mx-auto">
           <motion.div
             id="timeline"
-            data-animate
             initial="hidden"
-            animate={visibleSections.has("timeline") ? "visible" : "hidden"}
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.1 }}
             variants={containerVariants}
             className="space-y-12"
           >

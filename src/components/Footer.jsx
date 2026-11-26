@@ -66,7 +66,7 @@ const Footer = () => {
 
   const footerLinks = [
     { name: 'Home', path: '/' },
-    { name: 'Portfolio', path: '/portfolio-gallery' },
+    { name: 'Portfolio', path: '/projects' },
     { name: 'About', path: '/about-story' },
     { name: 'Contact', path: '/contact-hub' },
   ];

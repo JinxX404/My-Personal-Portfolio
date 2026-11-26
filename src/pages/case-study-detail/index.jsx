@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import Icon from "components/AppIcon";
 import Image from "components/AppImage";
@@ -12,110 +12,137 @@ import MoreProjects from "./MoreProjects";
 import { coverForProject } from "lib/projectMedia";
 import { SITE_ORIGIN, absoluteHttpsUrl } from "lib/pageMeta";
 
+// Shape a project record for the detail page.
+const toCaseStudy = (project) => {
+  return {
+    id: project.id,
+    title: project.title || "Untitled Project",
+    subtitle:
+      project.tagline ||
+      project.short_description ||
+      project.description ||
+      "Project Overview",
+    client: project.client,
+    duration: project.duration,
+    role: project.role,
+    team: Array.isArray(project.team_members)
+      ? project.team_members
+      : null,
+    tags: Array.isArray(project.technologies)
+      ? project.technologies
+      : [],
+    category: project.category,
+    status: project.status,
+    heroImage: coverForProject(project),
+    description: project.description,
+    repositoryUrl: project.repository_url,
+    demoUrl: project.demo_url,
+    enableCaseStudy: project.enable_case_study || false,
+    problem: project.problem,
+    solution: project.solution,
+    results: project.results,
+    content_sections: project.content_sections || [],
+    hero_images: project.hero_images || [],
+    screenshots: project.screenshots || [],
+    mockups: project.mockups || [],
+    gallery: Array.isArray(project.screenshots)
+      ? project.screenshots.map((img, idx) => ({
+          id: idx + 1,
+          title:
+            typeof img === "object"
+              ? img.caption
+              : `Screenshot ${idx + 1}`,
+          image: typeof img === "object" ? img.url : img,
+          type: "desktop",
+        }))
+      : [],
+    testimonial:
+      Array.isArray(project.testimonials) &&
+      project.testimonials.length > 0
+        ? {
+            quote: project.testimonials[0].content,
+            author: project.testimonials[0].name,
+            position:
+              project.testimonials[0].role +
+              (project.testimonials[0].company
+                ? ` at ${project.testimonials[0].company}`
+                : ""),
+            avatar: project.testimonials[0].avatar || null,
+          }
+        : null,
+  };
+};
+
 const CaseStudyDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { getProjectById, projects } = useProjects();
 
   const [activeSection, setActiveSection] = useState("");
-  const [caseStudy, setCaseStudy] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // Start from the project the app already holds (list cache), so opening a
+  // project shows it at once; the fresh copy below replaces it quietly.
+  const knownProject = useMemo(
+    () => (projects || []).find((project) => project?.id === id) || null,
+    [projects, id]
+  );
+  const [caseStudy, setCaseStudy] = useState(() => (knownProject ? toCaseStudy(knownProject) : null));
+  const [isLoading, setIsLoading] = useState(() => !knownProject);
   const [loadError, setLoadError] = useState(null);
   const [reloadKey, setReloadKey] = useState(0);
 
-  // Load project data from Supabase
-  useEffect(() => {
-    const loadProject = async () => {
+  const knownProjectRef = useRef(knownProject);
+  knownProjectRef.current = knownProject;
 
+  // Load the fresh project from Supabase. When a cached copy is already on
+  // screen this happens quietly: no skeleton, and a failed refresh keeps it.
+  // Layout effect so moving to another project never paints the previous one.
+  useLayoutEffect(() => {
+    let cancelled = false;
+
+    const loadProject = async () => {
       if (!id) {
         navigate("/projects");
         return;
       }
 
-      setIsLoading(true);
+      const cached = knownProjectRef.current;
+      if (cached) {
+        setCaseStudy(toCaseStudy(cached));
+        setLoadError(null);
+        setIsLoading(false);
+      } else {
+        setIsLoading(true);
+      }
+
       try {
         const result = await getProjectById(id);
+        if (cancelled) return;
 
         if (result.success && result.data) {
-          const project = result.data;
-
-          // Shape the project record for the detail page
-          const transformedData = {
-            id: project.id,
-            title: project.title || "Untitled Project",
-            subtitle:
-              project.tagline ||
-              project.short_description ||
-              project.description ||
-              "Project Overview",
-            client: project.client,
-            duration: project.duration,
-            role: project.role,
-            team: Array.isArray(project.team_members)
-              ? project.team_members
-              : null,
-            tags: Array.isArray(project.technologies)
-              ? project.technologies
-              : [],
-            category: project.category,
-            status: project.status,
-            heroImage: coverForProject(project),
-            description: project.description,
-            repositoryUrl: project.repository_url,
-            demoUrl: project.demo_url,
-            enableCaseStudy: project.enable_case_study || false,
-            problem: project.problem,
-            solution: project.solution,
-            results: project.results,
-            content_sections: project.content_sections || [],
-            hero_images: project.hero_images || [],
-            screenshots: project.screenshots || [],
-            mockups: project.mockups || [],
-            gallery: Array.isArray(project.screenshots)
-              ? project.screenshots.map((img, idx) => ({
-                  id: idx + 1,
-                  title:
-                    typeof img === "object"
-                      ? img.caption
-                      : `Screenshot ${idx + 1}`,
-                  image: typeof img === "object" ? img.url : img,
-                  type: "desktop",
-                }))
-              : [],
-            testimonial:
-              Array.isArray(project.testimonials) &&
-              project.testimonials.length > 0
-                ? {
-                    quote: project.testimonials[0].content,
-                    author: project.testimonials[0].name,
-                    position:
-                      project.testimonials[0].role +
-                      (project.testimonials[0].company
-                        ? ` at ${project.testimonials[0].company}`
-                        : ""),
-                    avatar: project.testimonials[0].avatar || null,
-                  }
-                : null,
-          };
-
-          setCaseStudy(transformedData);
+          setCaseStudy(toCaseStudy(result.data));
           setLoadError(null);
         } else if (result?.success) {
           setCaseStudy(null);
           setLoadError(null);
-        } else {
+        } else if (!cached) {
           setCaseStudy(null);
           setLoadError(result?.error || "This project could not be loaded.");
         }
       } catch (error) {
-        setCaseStudy(null);
-        setLoadError(error?.message || "This project could not be loaded.");
+        if (cancelled) return;
+        if (!cached) {
+          setCaseStudy(null);
+          setLoadError(error?.message || "This project could not be loaded.");
+        }
       }
 
       setIsLoading(false);
     };
 
     loadProject();
+    return () => {
+      cancelled = true;
+    };
   }, [id, getProjectById, navigate, reloadKey]);
 
   // Dynamic navigation based on available content

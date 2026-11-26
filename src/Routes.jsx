@@ -1,18 +1,19 @@
 // src/Routes.jsx
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Routes as RouterRoutes, Route, Navigate, useParams } from "react-router-dom";
 import Layout from "components/Layout";
 import AdminLayout from "components/AdminLayout";
 import ScrollToTop from "components/ScrollToTop";
 import ErrorBoundary from "components/ErrorBoundary";
 import RequireAuth from "components/RequireAuth";
+import { pageLoaders, prefetchPublicPagesWhenIdle } from "lib/routeChunks";
 
 // Lazy-loaded page imports for code splitting
-const Homepage = lazy(() => import("pages/homepage"));
-const PortfolioGallery = lazy(() => import("pages/portfolio-gallery"));
-const CaseStudyDetail = lazy(() => import("pages/case-study-detail"));
-const AboutStory = lazy(() => import("pages/about-story"));
-const ContactHub = lazy(() => import("pages/contact-hub"));
+const Homepage = lazy(pageLoaders.home);
+const PortfolioGallery = lazy(pageLoaders.projects);
+const CaseStudyDetail = lazy(pageLoaders.project);
+const AboutStory = lazy(pageLoaders.about);
+const ContactHub = lazy(pageLoaders.contact);
 const Login = lazy(() => import("pages/login"));
 const ForgotPassword = lazy(() => import("pages/forgot-password"));
 const NotFound = lazy(() => import("pages/not-found"));
@@ -32,19 +33,22 @@ const LegacyProjectRedirect = () => {
   return <Navigate to={`/projects/${id}`} replace />;
 };
 
-// Loading fallback component
+// Shown only on the very first page load. Later navigations run as React
+// transitions (see `future` below), so the current page stays on screen until
+// the next one is ready instead of being swapped for this spinner.
 const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-background pt-20">
-    <div className="text-center">
-      <div className="w-12 h-12 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-      <p className="text-secondary-600 dark:text-text-secondary">Loading...</p>
-    </div>
+  <div className="min-h-screen flex items-center justify-center bg-background pt-20" role="status" aria-label="Loading">
+    <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
   </div>
 );
 
 const Routes = () => {
+  useEffect(() => {
+    prefetchPublicPagesWhenIdle();
+  }, []);
+
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true }}>
       <ErrorBoundary>
         <ScrollToTop />
         <Layout>

@@ -129,7 +129,7 @@ module.exports = {
         'banner-to': withOpacity('--color-banner-to'),
       },
       fontFamily: {
-        'sans': ['Inter', 'system-ui', 'sans-serif'],
+        'sans': ['Inter', 'Inter Fallback', 'system-ui', 'sans-serif'],
         'mono': ['JetBrains Mono', 'monospace'],
       },
       fontSize: {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Icon from "components/AppIcon";
 
@@ -9,14 +9,9 @@ import { safeHref } from "lib/safeUrl";
 
 const ContactHub = () => {
   const [selectedInquiryType, setSelectedInquiryType] = useState("general");
-  const [isVisible, setIsVisible] = useState(false);
   const { siteSettings, profile } = usePortfolioSettings();
   const formEnabled = siteSettings?.enable_contact_form !== false;
   const email = profile?.email?.trim();
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -44,8 +39,8 @@ const ContactHub = () => {
       <section className="pt-24 lg:pt-32 pb-6 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <motion.div
-            initial="hidden"
-            animate={isVisible ? "visible" : "hidden"}
+            initial={false}
+            animate="visible"
             variants={containerVariants}
             className="text-center mb-12"
           >
