@@ -4,10 +4,12 @@ import { motion } from "framer-motion";
 import Icon from "components/AppIcon";
 import Image from "components/AppImage";
 import { usePortfolioSettings } from "context/PortfolioSettingsContext";
+import { useI18n } from "i18n/I18nContext";
 
 const AboutStory = () => {
   const { profile, careerData, isReady } = usePortfolioSettings();
   const [activeTimelineItem, setActiveTimelineItem] = useState(undefined);
+  const { t, lp, formatNumber } = useI18n();
 
   const careerTimeline = careerData?.timeline || [];
   const careerValues = careerData?.values || [];
@@ -25,9 +27,9 @@ const AboutStory = () => {
     Boolean(philosophy || mission) || careerValues.length > 0 || careerInterests.length > 0;
 
   const availability = {
-    available: { text: "Available for projects", dot: "bg-success" },
-    busy: { text: "Limited availability", dot: "bg-warning" },
-  }[profile?.availability] || { text: "Not taking new projects", dot: "bg-secondary-400" };
+    available: { text: t("about.available"), dot: "bg-success" },
+    busy: { text: t("availability.busy"), dot: "bg-warning" },
+  }[profile?.availability] || { text: t("availability.closed"), dot: "bg-secondary-400" };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -69,14 +71,14 @@ const AboutStory = () => {
                 <div className="aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-accent-100 to-cta-100 p-2">
                   <Image
                     src={profile?.avatar || "/assets/images/no_image.png"}
-                    alt={profile?.full_name || "Moataz Mohammed"}
+                    alt={profile?.full_name || t('site.defaultName')}
                     width={640}
                     height={640}
                     className="w-full h-full object-cover rounded-xl"
                   />
                 </div>
-                <div className="absolute -bottom-4 -right-4 bg-surface dark:bg-background rounded-xl p-4 shadow-lg border border-primary-200 dark:border-border-strong">
-                  <div className="flex items-center space-x-2">
+                <div className="absolute -bottom-4 -end-4 bg-surface dark:bg-background rounded-xl p-4 shadow-lg border border-primary-200 dark:border-border-strong">
+                  <div className="flex items-center space-x-2 rtl:space-x-reverse">
                     <div className={`w-3 h-3 ${availability.dot} rounded-full animate-pulse`}></div>
                     <span className="text-sm font-medium text-primary-700 dark:text-text-primary">
                       {availability.text}
@@ -89,23 +91,23 @@ const AboutStory = () => {
             {/* Personal Introduction */}
             <motion.div variants={itemVariants} className="space-y-6">
               <div>
-                <h1 className="text-4xl lg:text-5xl font-bold text-primary-800 mb-2 dark:text-text-primary">
-                  {profile?.full_name || "Moataz Mohammed"}
+                <h1 dir="auto" className="text-4xl lg:text-5xl font-bold text-primary-800 mb-2 dark:text-text-primary">
+                  {profile?.full_name || t("site.defaultName")}
                 </h1>
-                <p className="text-xl text-cta font-semibold mb-4 dark:text-accent-text">
-                  {profile?.title || "Developer"}
+                <p dir="auto" className="text-xl text-cta font-semibold mb-4 dark:text-accent-text">
+                  {profile?.title || t("about.defaultRole")}
                 </p>
                 <div className="flex flex-wrap gap-4 text-sm text-secondary-600 mb-6 dark:text-text-secondary">
                   {profile?.location && (
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 rtl:space-x-reverse">
                       <Icon name="MapPin" size={16} />
                       <span dir="auto">{profile.location}</span>
                     </div>
                   )}
                   {profile?.experience_years ? (
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-2 rtl:space-x-reverse">
                       <Icon name="Calendar" size={16} />
-                      <span>{profile.experience_years}+ years of experience</span>
+                      <span>{t("about.years", { count: Number(profile.experience_years) || 0, n: formatNumber(Number(profile.experience_years) || 0) })}</span>
                     </div>
                   ) : null}
                 </div>
@@ -117,18 +119,18 @@ const AboutStory = () => {
 
               <div className="flex flex-wrap gap-4">
                 <Link
-                  to="/projects"
-                  className="btn-primary flex items-center space-x-2"
+                  to={lp("/projects")}
+                  className="btn-primary flex items-center space-x-2 rtl:space-x-reverse"
                 >
                   <Icon name="Briefcase" size={18} />
-                  <span>View My Work</span>
+                  <span>{t("home.hero.viewWork")}</span>
                 </Link>
                 <Link
-                  to="/contact-hub"
-                  className="btn-secondary flex items-center space-x-2"
+                  to={lp("/contact-hub")}
+                  className="btn-secondary flex items-center space-x-2 rtl:space-x-reverse"
                 >
                   <Icon name="MessageCircle" size={18} />
-                  <span>Let's Connect</span>
+                  <span>{t("home.hero.connect")}</span>
                 </Link>
               </div>
             </motion.div>
@@ -142,10 +144,10 @@ const AboutStory = () => {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <h2 id="approach-title" className="text-3xl lg:text-4xl font-bold text-primary-800 mb-4 dark:text-text-primary">
-                How I Work
+                {t("about.howTitle")}
               </h2>
               <p className="text-lg text-secondary-600 max-w-2xl mx-auto dark:text-text-secondary">
-                What I care about when I take on a project.
+                {t("about.howSubtitle")}
               </p>
             </div>
 
@@ -154,7 +156,7 @@ const AboutStory = () => {
                 {philosophy && (
                   <figure className="bg-surface dark:bg-surface rounded-2xl p-8 border border-primary-200 dark:border-border-strong">
                     <Icon name="Quote" size={28} className="text-accent dark:text-accent-text mb-4" />
-                    <figcaption className="text-xs font-semibold uppercase tracking-wider text-secondary-500 dark:text-muted mb-2">Philosophy</figcaption>
+                    <figcaption className="text-xs font-semibold uppercase tracking-wider text-secondary-500 dark:text-muted mb-2">{t("about.philosophy")}</figcaption>
                     <blockquote dir="auto" className="text-xl leading-relaxed text-primary-800 dark:text-text-primary">
                       {philosophy}
                     </blockquote>
@@ -163,7 +165,7 @@ const AboutStory = () => {
                 {mission && (
                   <figure className="bg-surface dark:bg-surface rounded-2xl p-8 border border-primary-200 dark:border-border-strong">
                     <Icon name="Target" size={28} className="text-accent dark:text-accent-text mb-4" />
-                    <figcaption className="text-xs font-semibold uppercase tracking-wider text-secondary-500 dark:text-muted mb-2">Mission</figcaption>
+                    <figcaption className="text-xs font-semibold uppercase tracking-wider text-secondary-500 dark:text-muted mb-2">{t("about.mission")}</figcaption>
                     <p dir="auto" className="text-xl leading-relaxed text-primary-800 dark:text-text-primary">
                       {mission}
                     </p>
@@ -194,7 +196,7 @@ const AboutStory = () => {
             {careerInterests.length > 0 && (
               <div className="text-center">
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-secondary-500 dark:text-muted mb-4">
-                  Outside client work
+                  {t("about.interests")}
                 </h3>
                 <ul className="flex flex-wrap justify-center gap-3">
                   {careerInterests.map((interest, index) => {
@@ -231,16 +233,16 @@ const AboutStory = () => {
           >
             <motion.div variants={itemVariants} className="text-center">
               <h2 className="text-3xl lg:text-4xl font-bold text-primary-800 mb-4 dark:text-text-primary">
-                Professional Journey
+                {t("about.journeyTitle")}
               </h2>
               <p className="text-lg text-secondary-600 max-w-2xl mx-auto dark:text-text-secondary">
-                Where I have worked and studied, newest first.
+                {t("about.journeySubtitle")}
               </p>
             </motion.div>
 
             <motion.div variants={itemVariants} className="relative">
               {/* Timeline Line */}
-              <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-accent via-cta to-success hidden md:block"></div>
+              <div className="absolute start-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-accent via-cta to-success hidden md:block"></div>
 
               <div className="space-y-8">
                 {careerTimeline.map((item, index) => {
@@ -250,7 +252,7 @@ const AboutStory = () => {
                   return (
                   <div
                     key={key}
-                    className="relative flex items-start space-x-6"
+                    className="relative flex items-start space-x-6 rtl:space-x-reverse"
                   >
                     {/* Timeline Dot */}
                     <div className="flex-shrink-0 relative">
@@ -275,7 +277,7 @@ const AboutStory = () => {
                           color="white"
                         />
                       </div>
-                      <div className="absolute -top-2 -right-2 bg-surface dark:bg-background rounded-full px-2 py-1 text-xs font-bold text-primary-800 dark:text-primary-200 border border-primary-200 dark:border-border-strong">
+                      <div className="absolute -top-2 -end-2 bg-surface dark:bg-background rounded-full px-2 py-1 text-xs font-bold text-primary-800 dark:text-primary-200 border border-primary-200 dark:border-border-strong">
                         {item.year}
                       </div>
                     </div>
@@ -322,13 +324,13 @@ const AboutStory = () => {
                               item.achievements.length > 0 && (
                               <div>
                                 <h4 className="font-semibold text-primary-800 mb-2 dark:text-text-primary">
-                                  Key Achievements:
+                                  {t("about.achievements")}
                                 </h4>
                                 <ul className="space-y-1">
                                   {item.achievements.map((achievement, idx) => (
                                     <li
                                       key={idx}
-                                      className="flex items-center space-x-2 text-secondary-600 dark:text-text-secondary"
+                                      className="flex items-center space-x-2 rtl:space-x-reverse text-secondary-600 dark:text-text-secondary"
                                     >
                                       <Icon
                                         name="CheckCircle"
@@ -345,7 +347,7 @@ const AboutStory = () => {
                             item.technologies.length > 0 && (
                               <div>
                                 <h4 className="font-semibold text-primary-800 mb-2 dark:text-text-primary">
-                                  Technologies:
+                                  {t("projects.technologies")}
                                 </h4>
                                 <div className="flex flex-wrap gap-2">
                                   {item.technologies.map((tech, idx) => (
@@ -383,11 +385,10 @@ const AboutStory = () => {
           >
             <motion.div variants={itemVariants}>
               <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-                Want to work together?
+                {t("about.cta.title")}
               </h2>
               <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
-                Send a short note about the project. I reply within one
-                business day.
+                {t("about.cta.subtitle")}
               </p>
             </motion.div>
 
@@ -396,18 +397,18 @@ const AboutStory = () => {
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
               <Link
-                to="/projects"
-                className="bg-white text-primary-800 hover:bg-gray-100 font-semibold py-3 px-8 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl"
+                to={lp("/projects")}
+                className="bg-white text-primary-800 hover:bg-gray-100 font-semibold py-3 px-8 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 rtl:space-x-reverse shadow-lg hover:shadow-xl"
               >
                 <Icon name="Eye" size={18} />
-                <span>View My Work</span>
+                <span>{t("home.hero.viewWork")}</span>
               </Link>
               <Link
-                to="/contact-hub"
-                className="bg-accent hover:bg-accent-600 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl"
+                to={lp("/contact-hub")}
+                className="bg-accent hover:bg-accent-600 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 rtl:space-x-reverse shadow-lg hover:shadow-xl"
               >
                 <Icon name="MessageCircle" size={18} />
-                <span>Start a Conversation</span>
+                <span>{t("common.startConversation")}</span>
               </Link>
             </motion.div>
           </motion.div>

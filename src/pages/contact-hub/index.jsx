@@ -6,12 +6,14 @@ import ContactForm from "./components/ContactForm";
 import ContactInfo from "./components/ContactInfo";
 import { usePortfolioSettings } from "context/PortfolioSettingsContext";
 import { safeHref } from "lib/safeUrl";
+import { useI18n } from "i18n/I18nContext";
 
 const ContactHub = () => {
   const [selectedInquiryType, setSelectedInquiryType] = useState("general");
   const { siteSettings, profile } = usePortfolioSettings();
   const formEnabled = siteSettings?.enable_contact_form !== false;
   const email = profile?.email?.trim();
+  const { t } = useI18n();
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -59,24 +61,23 @@ const ContactHub = () => {
               variants={itemVariants}
               className="text-4xl md:text-5xl lg:text-6xl font-bold text-text-primary mb-6"
             >
-              Let's talk about
-              <span className="text-gradient block">your next project</span>
+              {t("contact.titleLine1")}
+              <span className="text-gradient block">{t("contact.titleLine2")}</span>
             </motion.h1>
 
             <motion.p
               variants={itemVariants}
               className="text-xl text-text-secondary max-w-3xl mx-auto mb-8"
             >
-              Tell me what you are building, what is in the way, or just say
-              hello. Every message reaches me directly.
+              {t("contact.subtitle")}
             </motion.p>
 
             <motion.div
               variants={itemVariants}
-              className="flex items-center justify-center space-x-2 text-sm text-muted"
+              className="flex items-center justify-center space-x-2 rtl:space-x-reverse text-sm text-muted"
             >
               <Icon name="Clock" size={16} strokeWidth={2} />
-              <span>I usually reply within one business day.</span>
+              <span>{t("contact.replyTime")}</span>
             </motion.div>
           </motion.div>
 
@@ -97,12 +98,12 @@ const ContactHub = () => {
               ) : (
                 <div className="bg-surface rounded-2xl shadow-lg p-8 border border-border dark:border-border-strong text-center">
                   <Icon name="Mail" size={32} className="mx-auto text-accent dark:text-accent-text mb-4" />
-                  <h2 className="text-2xl font-bold text-text-primary mb-2">Email me directly</h2>
+                  <h2 className="text-2xl font-bold text-text-primary mb-2">{t("contact.closedTitle")}</h2>
                   <p className="text-text-secondary mb-6">
-                    The contact form is closed for now. Email still reaches me.
+                    {t("contact.closedBody")}
                   </p>
                   {email && safeHref(`mailto:${email}`) && (
-                    <a href={`mailto:${email}`} className="btn-primary inline-flex">
+                    <a href={`mailto:${email}`} dir="ltr" className="btn-primary inline-flex">
                       {email}
                     </a>
                   )}

@@ -1,6 +1,7 @@
 import React from 'react';
 import Icon from '../AppIcon';
 import { useTheme } from 'context/ThemeContext';
+import { useI18n } from 'i18n/I18nContext';
 
 const iconButtonClasses =
   'relative inline-flex items-center justify-center w-10 h-10 rounded-full border border-border bg-surface/80 text-text-primary shadow-sm backdrop-blur-sm transition-theme hover:border-accent-500 hover:text-accent-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-200 focus-visible:ring-offset-2 focus-visible:ring-offset-background dark:border-border-strong dark:bg-surface-elevated/90 dark:hover:border-accent-fill dark:hover:text-accent-text';
@@ -10,8 +11,8 @@ const rowButtonClasses =
 
 const ThemeToggle = ({ variant = 'icon', className = '', onToggle }) => {
   const { isDark, toggleTheme } = useTheme();
-  const nextMode = isDark ? 'light' : 'dark';
-  const label = `Switch to ${nextMode} mode`;
+  const { t } = useI18n();
+  const label = isDark ? t('theme.toLight') : t('theme.toDark');
 
   const handleClick = () => {
     toggleTheme();
@@ -29,7 +30,7 @@ const ThemeToggle = ({ variant = 'icon', className = '', onToggle }) => {
         title={label}
       >
         <Icon name={isDark ? 'Sun' : 'Moon'} size={18} strokeWidth={2.5} />
-        <span>{isDark ? 'Switch to light mode' : 'Switch to dark mode'}</span>
+        <span>{label}</span>
       </button>
     );
   }

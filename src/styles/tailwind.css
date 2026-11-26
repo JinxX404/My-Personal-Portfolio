@@ -218,11 +218,11 @@
 @layer base {
   html {
     @apply scroll-smooth;
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Inter', 'IBM Plex Sans Arabic', system-ui, sans-serif;
   }
 
   body {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Inter', 'IBM Plex Sans Arabic', system-ui, sans-serif;
     line-height: 1.6;
     letter-spacing: 0.01em;
     @apply bg-background text-text-primary antialiased transition-colors duration-300 ease-out;
@@ -248,7 +248,8 @@
   }
 
   .font-mono {
-    font-family: 'JetBrains Mono', monospace;
+    /* JetBrains Mono has no Arabic letters; a monospace fallback spaces them apart. */
+    font-family: 'JetBrains Mono', 'IBM Plex Sans Arabic', monospace;
   }
 
   ::selection {
@@ -387,6 +388,12 @@
   to { opacity: 1; transform: none; }
 }
 .toast-enter { animation: toast-in 0.2s ease-out; }
+/* Toasts sit at the inline end, so on Arabic pages they slide in from the left. */
+@keyframes toast-in-rtl {
+  from { opacity: 0; transform: translateX(-3rem) scale(0.9); }
+  to { opacity: 1; transform: none; }
+}
+[dir="rtl"] .toast-enter { animation-name: toast-in-rtl; }
 @media (prefers-reduced-motion: reduce) {
   .toast-enter { animation: none; }
 }

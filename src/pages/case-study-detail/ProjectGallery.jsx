@@ -13,6 +13,7 @@ import {
 } from 'lib/screenshotLayout.mjs';
 import { FRAME_SIZES, NARROW_MEDIA, framePartsFor } from 'lib/screenshotSlices.mjs';
 import BrowserScrollFrame from './BrowserScrollFrame';
+import { useI18n } from 'i18n/I18nContext';
 
 const FOCUSABLE =
   'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -28,7 +29,8 @@ const SPAN_CLASS = {
   phone: 'col-span-1 row-span-2',
 };
 
-export function normalizeGalleryImages(screenshots) {
+/** `labelFor(n)` names an image that has no caption (n starts at 1). */
+export function normalizeGalleryImages(screenshots, labelFor = (n) => `Screenshot ${n}`) {
   if (!Array.isArray(screenshots)) return [];
 
   return screenshots
@@ -37,8 +39,8 @@ export function normalizeGalleryImages(screenshots) {
       if (!src || typeof src !== 'string') return null;
       const title =
         typeof item === 'string'
-          ? `Screenshot ${index + 1}`
-          : item?.caption || item?.title || `Screenshot ${index + 1}`;
+          ? labelFor(index + 1)
+          : item?.caption || item?.title || labelFor(index + 1);
       const width = Number(item?.width);
       const height = Number(item?.height);
       return {
@@ -172,11 +174,12 @@ function GalleryStill({ src, className, reduced, tone = 'light' }) {
 }
 
 function PhoneTile({ image, onOpen, reduced }) {
+  const { t } = useI18n();
   return (
     <button
       type="button"
       onClick={onOpen}
-      aria-label={`Open ${image.title} full screen`}
+      aria-label={t('gallery.openFull', { title: image.title })}
       className={`${SPAN_CLASS.phone} group relative flex items-center justify-center rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-300`}
     >
       <span className="relative flex h-[92%] max-h-[440px] w-auto items-center justify-center">
@@ -200,12 +203,13 @@ function PhoneTile({ image, onOpen, reduced }) {
 }
 
 function Tile({ image, span, onOpen, reduced }) {
+  const { t } = useI18n();
   const showEntireShot = span === 'large' || span === 'hero';
   return (
     <button
       type="button"
       onClick={onOpen}
-      aria-label={`Open ${image.title} full screen`}
+      aria-label={t('gallery.openFull', { title: image.title })}
       className={`${SPAN_CLASS[span] || SPAN_CLASS.small} group relative overflow-hidden rounded-2xl bg-[#f6f3ee] shadow-[0_10px_30px_rgba(8,12,24,0.18)] ring-1 ring-black/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-300`}
     >
       <GalleryStill
@@ -216,7 +220,7 @@ function Tile({ image, span, onOpen, reduced }) {
         } ${reduced ? '' : 'group-hover:scale-[1.035]'}`}
       />
       <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-      <span className="pointer-events-none absolute bottom-3 right-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/55 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+      <span className="pointer-events-none absolute bottom-3 end-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-black/55 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
         <Icon name="ZoomIn" size={15} />
       </span>
     </button>
@@ -224,6 +228,7 @@ function Tile({ image, span, onOpen, reduced }) {
 }
 
 const ProjectGallery = ({ images, projectTitle = 'Project' }) => {
+  const { t, isRTL, formatNumber } = useI18n();
   const count = images.length;
   const [index, setIndex] = useState(0);
   const [open, setOpen] = useState(false);
@@ -302,7 +307,7 @@ const ProjectGallery = ({ images, projectTitle = 'Project' }) => {
   useEffect(() => {
     if (!open) return undefined;
     const dialog = dialogRef.current;
-    const closeButton = dialog?.querySelector('[aria-label="Close gallery"]');
+    const closeButton = dialog?.querySelector('[data-gallery-close]');
     (closeButton || dialog)?.focus();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -316,14 +321,16 @@ const ProjectGallery = ({ images, projectTitle = 'Project' }) => {
     if (!open) return undefined;
     const onKey = (event) => {
       const dialog = dialogRef.current;
+      // Arrow keys follow the reading direction: on Arabic pages the next
+      // image is to the left.
       if (event.key === 'ArrowLeft') {
         event.preventDefault();
-        go(-1);
+        go(isRTL ? 1 : -1);
         return;
       }
       if (event.key === 'ArrowRight') {
         event.preventDefault();
-        go(1);
+        go(isRTL ? -1 : 1);
         return;
       }
       if (event.key === 'Escape') {
@@ -356,7 +363,7 @@ const ProjectGallery = ({ images, projectTitle = 'Project' }) => {
 
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [open, go, close]);
+  }, [open, go, close, isRTL]);
 
   const onTouchStart = (event) => {
     if (event.target.closest('[data-no-swipe]')) {
@@ -374,12 +381,13 @@ const ProjectGallery = ({ images, projectTitle = 'Project' }) => {
     const dy = touch.clientY - touchStart.current.y;
     touchStart.current = null;
     if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy)) return;
-    go(dx < 0 ? 1 : -1);
+    const forward = isRTL ? dx > 0 : dx < 0;
+    go(forward ? 1 : -1);
   };
 
   if (!count) return null;
 
-  const counter = `${safeIndex + 1} / ${count}`;
+  const counter = t('gallery.counter', { n: formatNumber(safeIndex + 1), total: formatNumber(count) });
 
   const lightbox = open && current
     ? createPortal(
@@ -392,13 +400,13 @@ const ProjectGallery = ({ images, projectTitle = 'Project' }) => {
           className="fixed inset-0 z-[80] flex flex-col bg-black text-white outline-none"
         >
           <div className="flex items-center gap-3 px-4 py-3">
-            <p id={titleId} className="min-w-0 flex-1 truncate text-sm font-medium">
+            <p id={titleId} dir="auto" className="min-w-0 flex-1 truncate text-sm font-medium">
               {current.title}
             </p>
             <p className="shrink-0 text-sm font-semibold tabular-nums" aria-live="polite" aria-atomic="true">
               {counter}
             </p>
-            <button type="button" className={controlClass} onClick={close} aria-label="Close gallery">
+            <button type="button" className={controlClass} onClick={close} aria-label={t('gallery.close')} data-gallery-close="">
               <Icon name="X" size={22} />
             </button>
           </div>
@@ -417,19 +425,19 @@ const ProjectGallery = ({ images, projectTitle = 'Project' }) => {
               <>
                 <button
                   type="button"
-                  className={`${controlClass} absolute left-3 top-1/2 z-10 -translate-y-1/2`}
+                  className={`${controlClass} absolute start-3 top-1/2 z-10 -translate-y-1/2`}
                   onClick={() => go(-1)}
                   data-no-swipe=""
-                  aria-label="Previous image"
+                  aria-label={t('gallery.previous')}
                 >
                   <Icon name="ChevronLeft" size={22} />
                 </button>
                 <button
                   type="button"
-                  className={`${controlClass} absolute right-3 top-1/2 z-10 -translate-y-1/2`}
+                  className={`${controlClass} absolute end-3 top-1/2 z-10 -translate-y-1/2`}
                   onClick={() => go(1)}
                   data-no-swipe=""
-                  aria-label="Next image"
+                  aria-label={t('gallery.next')}
                 >
                   <Icon name="ChevronRight" size={22} />
                 </button>
@@ -446,7 +454,7 @@ const ProjectGallery = ({ images, projectTitle = 'Project' }) => {
                   type="button"
                   role="listitem"
                   data-no-swipe=""
-                  aria-label={`Show image ${imageIndex + 1} of ${count}: ${image.title}`}
+                  aria-label={t('gallery.showImage', { n: imageIndex + 1, total: count, title: image.title })}
                   aria-current={selected ? 'true' : undefined}
                   onClick={() => setIndex(imageIndex)}
                   className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-md border-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black ${
@@ -467,7 +475,7 @@ const ProjectGallery = ({ images, projectTitle = 'Project' }) => {
     <section id="gallery" ref={galleryRef} className="scroll-mt-24" aria-labelledby="gallery-heading">
       <div className="rounded-lg border border-border bg-surface p-4 shadow-sm dark:border-border-strong dark:bg-surface sm:p-8">
         <h2 id="gallery-heading" className="mb-4 text-3xl font-bold text-text-primary dark:text-white">
-          Gallery
+          {t('caseStudy.gallery')}
         </h2>
 
         <div className="space-y-4 rounded-2xl bg-[#0c1222] p-3 shadow-inner ring-1 ring-white/10 sm:p-4">

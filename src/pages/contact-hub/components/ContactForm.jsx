@@ -5,14 +5,16 @@ import Icon from 'components/AppIcon';
 import TurnstileField, { turnstileSiteKey } from 'components/TurnstileField';
 import { useToast } from 'context/ToastContext';
 import { submitContactForm } from 'services/contactService';
+import { useI18n } from 'i18n/I18nContext';
 
 const INQUIRY_OPTIONS = [
-  { id: 'project', label: 'A project', icon: 'Briefcase' },
-  { id: 'general', label: 'Something else', icon: 'MessageCircle' },
+  { id: 'project', label: 'contact.form.typeProject', icon: 'Briefcase' },
+  { id: 'general', label: 'contact.form.typeGeneral', icon: 'MessageCircle' },
 ];
 
 const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
   const { error: showError } = useToast();
+  const { t, lang } = useI18n();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -38,17 +40,19 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
   const validateForm = () => {
     const newErrors = {};
     
-    if (!formData.name.trim()) newErrors.name = 'Name is required';
-    if (!formData.email.trim()) newErrors.email = 'Email is required';
-    else if (!isValidEmail(formData.email)) newErrors.email = 'Email is invalid';
-    if (!formData.subject.trim()) newErrors.subject = 'Subject is required';
-    if (!formData.message.trim()) newErrors.message = 'Message is required';
+    // Errors hold i18n keys; they are translated when shown, so switching
+    // language mid-form translates them too.
+    if (!formData.name.trim()) newErrors.name = 'contact.form.errName';
+    if (!formData.email.trim()) newErrors.email = 'contact.form.errEmail';
+    else if (!isValidEmail(formData.email)) newErrors.email = 'contact.form.errEmailInvalid';
+    if (!formData.subject.trim()) newErrors.subject = 'contact.form.errSubject';
+    if (!formData.message.trim()) newErrors.message = 'contact.form.errMessage';
     
     if (selectedInquiryType === 'project') {
-      if (!formData.budget) newErrors.budget = 'Budget range is required';
-      if (!formData.timeline) newErrors.timeline = 'Timeline is required';
+      if (!formData.budget) newErrors.budget = 'contact.form.errBudget';
+      if (!formData.timeline) newErrors.timeline = 'contact.form.errTimeline';
     }
-    if (captchaEnabled && !turnstileToken) newErrors.captcha = 'Complete the captcha before sending.';
+    if (captchaEnabled && !turnstileToken) newErrors.captcha = 'contact.form.errCaptcha';
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -89,11 +93,12 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
         }, 3000);
       } else {
         setIsSubmitting(false);
-        showError(result.error || 'Failed to send message. Please try again.');
+        // Server messages are English and technical; Arabic visitors get the plain version.
+        showError(lang === 'en' && result.error ? result.error : t('contact.form.sendFailed'));
       }
     } catch (error) {
       setIsSubmitting(false);
-      showError('An unexpected error occurred. Please try again.');
+      showError(t('contact.form.unexpected'));
     }
   };
 
@@ -118,30 +123,30 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
 
   const getFormTitle = () => {
     const titles = {
-      project: 'Project Details',
-      collaboration: 'Collaboration Inquiry',
-      speaking: 'Speaking Request',
-      general: 'General Inquiry'
+      project: t('contact.form.titleProject'),
+      collaboration: t('contact.form.titleCollab'),
+      speaking: t('contact.form.titleSpeaking'),
+      general: t('contact.form.titleGeneral')
     };
-    return titles[selectedInquiryType] || 'Contact Form';
+    return titles[selectedInquiryType] || t('contact.form.title');
   };
 
   const budgetOptions = [
-    { value: '', label: 'Select budget range' },
-    { value: 'under-5k', label: 'Under $5,000' },
-    { value: '5k-15k', label: '$5,000 - $15,000' },
-    { value: '15k-50k', label: '$15,000 - $50,000' },
-    { value: 'over-50k', label: 'Over $50,000' },
-    { value: 'discuss', label: 'Let\'s discuss' }
+    { value: '', label: t('contact.form.budgetSelect') },
+    { value: 'under-5k', label: t('contact.form.budgetUnder5k') },
+    { value: '5k-15k', label: t('contact.form.budget5to15') },
+    { value: '15k-50k', label: t('contact.form.budget15to50') },
+    { value: 'over-50k', label: t('contact.form.budgetOver50k') },
+    { value: 'discuss', label: t('contact.form.budgetDiscuss') }
   ];
 
   const timelineOptions = [
-    { value: '', label: 'Select timeline' },
-    { value: 'asap', label: 'ASAP' },
-    { value: '1-month', label: 'Within 1 month' },
-    { value: '2-3-months', label: '2-3 months' },
-    { value: '3-6-months', label: '3-6 months' },
-    { value: 'flexible', label: 'Flexible' }
+    { value: '', label: t('contact.form.timelineSelect') },
+    { value: 'asap', label: t('contact.form.timelineAsap') },
+    { value: '1-month', label: t('contact.form.timeline1m') },
+    { value: '2-3-months', label: t('contact.form.timeline2to3') },
+    { value: '3-6-months', label: t('contact.form.timeline3to6') },
+    { value: 'flexible', label: t('contact.form.timelineFlexible') }
   ];
 
   if (isSubmitted) {
@@ -154,9 +159,9 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
         <div className="w-16 h-16 bg-success rounded-full flex items-center justify-center mx-auto mb-6">
           <Icon name="CheckCircle" size={32} color="white" strokeWidth={2} />
         </div>
-        <h3 className="text-2xl font-bold text-text-primary mb-4">Message Sent!</h3>
+        <h3 className="text-2xl font-bold text-text-primary mb-4">{t('contact.form.sentTitle')}</h3>
         <p className="text-text-secondary mb-6">
-          Thank you for reaching out. I usually reply within one business day.
+          {t('contact.form.sentBody')}
         </p>
       </motion.div>
     );
@@ -172,13 +177,13 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-text-primary mb-2">{getFormTitle()}</h2>
         <p className="text-text-secondary">
-          Fill out the form below and I'll get back to you as soon as possible.
+          {t('contact.form.intro')}
         </p>
       </div>
 
       {onInquiryTypeChange && (
         <fieldset className="mb-8">
-          <legend className="block text-sm font-medium text-text-primary mb-2">What is this about?</legend>
+          <legend className="block text-sm font-medium text-text-primary mb-2">{t('contact.form.about')}</legend>
           <div className="inline-flex flex-wrap gap-2 p-1 rounded-xl bg-background border border-border dark:border-border-strong">
             {INQUIRY_OPTIONS.map((option) => {
               const active = selectedInquiryType === option.id;
@@ -200,7 +205,7 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
                     className="sr-only"
                   />
                   <Icon name={option.icon} size={16} strokeWidth={2} />
-                  {option.label}
+                  {t(option.label)}
                 </label>
               );
             })}
@@ -213,7 +218,7 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-text-primary mb-2">
-              Full Name *
+              {t('contact.form.name')} *
             </label>
             <input
               type="text"
@@ -224,22 +229,23 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
               className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors bg-background dark:bg-background ${
                 errors.name ? 'border-error' : 'border-border dark:border-border-strong'
               }`}
-              placeholder="Your full name"
+              placeholder={t('contact.form.namePlaceholder')}
+              dir="auto"
               required
               aria-required="true"
               aria-invalid={errors.name ? 'true' : 'false'}
             />
             {errors.name && (
               <p className="mt-1 text-sm text-error flex items-center">
-                <Icon name="AlertCircle" size={14} className="mr-1" strokeWidth={2} />
-                {errors.name}
+                <Icon name="AlertCircle" size={14} className="me-1" strokeWidth={2} />
+                {t(errors.name)}
               </p>
             )}
           </div>
 
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-text-primary mb-2">
-              Email Address *
+              {t('contact.form.email')} *
             </label>
             <input
               type="email"
@@ -251,14 +257,15 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
                 errors.email ? 'border-error' : 'border-border dark:border-border-strong'
               }`}
               placeholder="your@email.com"
+              dir="ltr"
               required
               aria-required="true"
               aria-invalid={errors.email ? 'true' : 'false'}
             />
             {errors.email && (
               <p className="mt-1 text-sm text-error flex items-center">
-                <Icon name="AlertCircle" size={14} className="mr-1" strokeWidth={2} />
-                {errors.email}
+                <Icon name="AlertCircle" size={14} className="me-1" strokeWidth={2} />
+                {t(errors.email)}
               </p>
             )}
           </div>
@@ -267,7 +274,7 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label htmlFor="company" className="block text-sm font-medium text-text-primary mb-2">
-              Company/Organization
+              {t('contact.form.company')}
             </label>
             <input
               type="text"
@@ -276,13 +283,14 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
               value={formData.company}
               onChange={handleChange}
               className="w-full px-4 py-3 border border-border dark:border-border-strong rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors bg-background dark:bg-background"
-              placeholder="Your company name"
+              placeholder={t('contact.form.companyPlaceholder')}
+              dir="auto"
             />
           </div>
 
           <div>
             <label htmlFor="phone" className="block text-sm font-medium text-text-primary mb-2">
-              Phone Number
+              {t('contact.form.phone')}
             </label>
             <input
               type="tel"
@@ -292,6 +300,7 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
               onChange={handleChange}
               className="w-full px-4 py-3 border border-border dark:border-border-strong rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors bg-background dark:bg-background"
               placeholder="+20 10 0000 0000"
+              dir="ltr"
             />
           </div>
         </div>
@@ -301,7 +310,7 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label htmlFor="budget" className="block text-sm font-medium text-text-primary mb-2">
-                Budget Range *
+                {t('contact.form.budget')} *
               </label>
               <select
                 id="budget"
@@ -323,15 +332,15 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
               </select>
               {errors.budget && (
                 <p className="mt-1 text-sm text-error flex items-center">
-                  <Icon name="AlertCircle" size={14} className="mr-1" strokeWidth={2} />
-                  {errors.budget}
+                  <Icon name="AlertCircle" size={14} className="me-1" strokeWidth={2} />
+                  {t(errors.budget)}
                 </p>
               )}
             </div>
 
             <div>
               <label htmlFor="timeline" className="block text-sm font-medium text-text-primary mb-2">
-                Project Timeline *
+                {t('contact.form.timeline')} *
               </label>
               <select
                 id="timeline"
@@ -353,8 +362,8 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
               </select>
               {errors.timeline && (
                 <p className="mt-1 text-sm text-error flex items-center">
-                  <Icon name="AlertCircle" size={14} className="mr-1" strokeWidth={2} />
-                  {errors.timeline}
+                  <Icon name="AlertCircle" size={14} className="me-1" strokeWidth={2} />
+                  {t(errors.timeline)}
                 </p>
               )}
             </div>
@@ -364,7 +373,7 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
         {/* Subject and Message */}
         <div>
           <label htmlFor="subject" className="block text-sm font-medium text-text-primary mb-2">
-            Subject *
+            {t('contact.form.subject')} *
           </label>
           <input
             type="text"
@@ -375,22 +384,23 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
             className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors bg-background dark:bg-background ${
               errors.subject ? 'border-error' : 'border-border dark:border-border-strong'
             }`}
-            placeholder="Brief subject line"
+            placeholder={t('contact.form.subjectPlaceholder')}
+            dir="auto"
             required
             aria-required="true"
             aria-invalid={errors.subject ? 'true' : 'false'}
           />
           {errors.subject && (
             <p className="mt-1 text-sm text-error flex items-center">
-              <Icon name="AlertCircle" size={14} className="mr-1" strokeWidth={2} />
-              {errors.subject}
+              <Icon name="AlertCircle" size={14} className="me-1" strokeWidth={2} />
+              {t(errors.subject)}
             </p>
           )}
         </div>
 
         <div>
           <label htmlFor="message" className="block text-sm font-medium text-text-primary mb-2">
-            Message *
+            {t('contact.form.message')} *
           </label>
           <textarea
             id="message"
@@ -401,19 +411,20 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
             className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-accent focus:border-accent transition-colors resize-vertical bg-background dark:bg-background ${
               errors.message ? 'border-error' : 'border-border dark:border-border-strong'
             }`}
-            placeholder="Tell me more about your project, goals, or questions..."
+            placeholder={t('contact.form.messagePlaceholder')}
+            dir="auto"
             required
             aria-required="true"
             aria-invalid={errors.message ? 'true' : 'false'}
           />
           {errors.message && (
             <p className="mt-1 text-sm text-error flex items-center">
-              <Icon name="AlertCircle" size={14} className="mr-1" strokeWidth={2} />
-              {errors.message}
+              <Icon name="AlertCircle" size={14} className="me-1" strokeWidth={2} />
+              {t(errors.message)}
             </p>
           )}
           <p className="mt-2 text-sm text-muted">
-            {formData.message.length}/1000 characters
+            {t('contact.form.chars', { n: formData.message.length, max: 1000 })}
           </p>
         </div>
 
@@ -422,8 +433,8 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
             <TurnstileField onToken={setTurnstileToken} />
             {errors.captcha && (
               <p className="mt-1 text-sm text-error flex items-center">
-                <Icon name="AlertCircle" size={14} className="mr-1" strokeWidth={2} />
-                {errors.captcha}
+                <Icon name="AlertCircle" size={14} className="me-1" strokeWidth={2} />
+                {t(errors.captcha)}
               </p>
             )}
           </div>
@@ -434,17 +445,17 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-accent hover:bg-accent-600 disabled:bg-secondary-400 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2"
+            className="w-full bg-accent hover:bg-accent-600 disabled:bg-secondary-400 text-white font-semibold py-4 px-6 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 rtl:space-x-reverse"
           >
             {isSubmitting ? (
               <>
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Sending...</span>
+                <span>{t('contact.form.sending')}</span>
               </>
             ) : (
               <>
                 <Icon name="Send" size={18} strokeWidth={2} />
-                <span>Send Message</span>
+                <span>{t('contact.form.send')}</span>
               </>
             )}
           </button>
@@ -453,7 +464,7 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
         {/* Privacy Notice */}
         <div className="text-sm text-muted text-center">
           <p>
-            Your message is stored so I can reply. I don&apos;t share these details with anyone else.
+            {t('contact.form.privacy')}
           </p>
         </div>
       </form>

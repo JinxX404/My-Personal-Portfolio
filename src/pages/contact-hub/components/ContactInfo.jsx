@@ -4,6 +4,7 @@ import Icon from "components/AppIcon";
 import { usePortfolioSettings } from "context/PortfolioSettingsContext";
 import { safeHref } from "lib/safeUrl";
 import SocialLinks from "./SocialLinks";
+import { useI18n } from "i18n/I18nContext";
 
 const contactMethodColorMap = {
   accent: { bg10: "bg-accent/10 dark:bg-accent-subtle", bg20: "bg-accent/20 dark:bg-accent-fill/20", text: "text-accent dark:text-accent-text" },
@@ -21,31 +22,32 @@ const contactMethodColorMap = {
 
 const ContactInfo = () => {
   const { profile } = usePortfolioSettings();
+  const { t } = useI18n();
   
   const cvUrl = safeHref(profile?.cv_url || profile?.resume_url);
 
   const contactMethods = [
     profile?.email && {
       icon: "Mail",
-      title: "Email",
+      title: t("contact.info.email"),
       value: profile.email,
-      description: "Best for detailed inquiries",
+      description: t("contact.info.emailHint"),
       action: safeHref(`mailto:${profile.email}`),
       color: "accent",
     },
     profile?.phone && {
       icon: "Phone",
-      title: "Phone",
+      title: t("contact.info.phone"),
       value: profile.phone,
-      description: "Available All Week, 9AM-6PM EET",
+      description: t("contact.info.phoneHint"),
       action: safeHref(`tel:${profile.phone.replace(/[^\d+]/g, "")}`),
       color: "success",
     },
     profile?.location && {
       icon: "MapPin",
-      title: "Location",
+      title: t("contact.info.location"),
       value: profile.location,
-      description: "Let's meet or work remotely",
+      description: t("contact.info.locationHint"),
       action: null,
       color: "warning",
     },
@@ -60,11 +62,10 @@ const ContactInfo = () => {
     >
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-text-primary dark:text-text-primary mb-2">
-          Get in Touch
+          {t("contact.info.title")}
         </h2>
         <p className="text-text-secondary dark:text-text-secondary">
-          Choose the method that works best for you. I'm here to help bring your
-          ideas to life.
+          {t("contact.info.subtitle")}
         </p>
       </div>
 
@@ -75,7 +76,7 @@ const ContactInfo = () => {
           const MotionTag = method.action ? motion.a : motion.div;
           return (
             <MotionTag
-              key={method.title}
+              key={method.icon}
               {...(method.action
                 ? {
                     href: method.action,
@@ -87,7 +88,7 @@ const ContactInfo = () => {
               initial={false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="flex items-start space-x-4 p-4 rounded-lg hover:bg-primary-100/50 dark:hover:bg-primary-900/30 transition-colors duration-200 group"
+              className="flex items-start space-x-4 rtl:space-x-reverse p-4 rounded-lg hover:bg-primary-100/50 dark:hover:bg-primary-900/30 transition-colors duration-200 group"
             >
               <div
                 className={`w-12 h-12 rounded-lg flex items-center justify-center ${colors.bg10} group-hover:${colors.bg20} transition-colors duration-200`}
@@ -104,7 +105,7 @@ const ContactInfo = () => {
                   {method.title}
                 </h3>
                 <p
-                  dir={method.icon === "Phone" ? "ltr" : "auto"}
+                  dir={method.icon === "Phone" || method.icon === "Mail" ? "ltr" : "auto"}
                   className="text-text-primary font-medium mb-1 [overflow-wrap:anywhere] text-start"
                 >
                   {method.value}
@@ -131,7 +132,7 @@ const ContactInfo = () => {
 
       {/* Calendar Integration */}
       {/* <div className="mt-6">
-        <button className="w-full bg-gradient-to-r from-accent to-cta text-white font-semibold py-3 px-4 rounded-lg hover:shadow-lg transition-all duration-300 flex items-center justify-center space-x-2">
+        <button className="w-full bg-gradient-to-r from-accent to-cta text-white font-semibold py-3 px-4 rounded-lg hover:shadow-lg transition-all duration-300 flex items-center justify-center space-x-2 rtl:space-x-reverse">
           <Icon name="Calendar" size={18} strokeWidth={2} />
           <span>Schedule a Free Consultation</span>
         </button>
@@ -144,13 +145,13 @@ const ContactInfo = () => {
       {cvUrl && (
         <div className="mt-6 p-4 rounded-lg bg-gradient-to-r from-accent-50 to-cta-50 dark:from-accent-900/20 dark:to-cta-900/20 border border-accent/20 dark:border-accent/30">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 rtl:space-x-reverse">
               <div className="w-10 h-10 rounded-lg bg-accent/10 dark:bg-accent/20 flex items-center justify-center">
                 <Icon name="FileText" size={20} className="text-accent dark:text-accent-text" strokeWidth={2} />
               </div>
               <div>
-                <p className="font-semibold text-text-primary dark:text-white text-sm">Download My CV</p>
-                <p className="text-xs text-text-secondary">Get my resume in PDF format</p>
+                <p className="font-semibold text-text-primary dark:text-white text-sm">{t("contact.info.cvTitle")}</p>
+                <p className="text-xs text-text-secondary">{t("contact.info.cvBody")}</p>
               </div>
             </div>
             <a
@@ -158,8 +159,8 @@ const ContactInfo = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center w-10 h-10 rounded-lg bg-accent hover:bg-accent-600 text-white transition-colors duration-200 shadow-md hover:shadow-lg"
-              aria-label="Download CV"
-              title="Download CV"
+              aria-label={t("common.downloadCv")}
+              title={t("common.downloadCv")}
             >
               <Icon name="Download" size={18} strokeWidth={2} />
             </a>
@@ -180,7 +181,7 @@ const ContactInfo = () => {
                 : "bg-secondary-50 border-secondary-200 dark:bg-surface-elevated dark:border-border"
           }`}
         >
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3 rtl:space-x-reverse">
             <div
               className={`w-3 h-3 rounded-full ${
                 profile.availability === "available"
@@ -201,10 +202,10 @@ const ContactInfo = () => {
                 }`}
               >
                 {profile.availability === "available"
-                  ? "Currently Available"
+                  ? t("contact.info.available")
                   : profile.availability === "busy"
-                    ? "Limited Availability"
-                    : "Currently Unavailable"}
+                    ? t("availability.busy")
+                    : t("home.hero.unavailable")}
               </p>
               <p
                 className={`text-xs ${
@@ -216,10 +217,10 @@ const ContactInfo = () => {
                 }`}
               >
                 {profile.availability === "available"
-                  ? "Accepting new projects"
+                  ? t("contact.info.availableBody")
                   : profile.availability === "busy"
-                    ? "Selected projects only"
-                    : "Not taking new projects at this time"}
+                    ? t("contact.info.busyBody")
+                    : t("contact.info.closedBody")}
               </p>
             </div>
           </div>

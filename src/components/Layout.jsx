@@ -6,8 +6,11 @@ import Footer from "components/Footer";
 import LoadError from 'components/ui/LoadError';
 import { usePageMetaOverride } from 'components/PageMeta';
 import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
+import { useI18n } from 'i18n/I18nContext';
+import { stripLanguage } from 'i18n/paths.mjs';
 import {
   absoluteHttpsUrl,
+  alternateUrls,
   canonicalUrl,
   formatPageTitle,
   personJsonLd,
@@ -21,9 +24,10 @@ const Layout = ({ children }) => {
   const location = useLocation();
   const { siteSettings, seoSettings, profile, socialLinks, error: settingsError, loadSettings } = usePortfolioSettings();
   const pageMeta = usePageMetaOverride();
+  const { t, lang } = useI18n();
   const routeMeta = resolveRouteMeta(location.pathname);
-  const pageName = pageMeta?.override?.page || routeMeta.page;
-  const pageDescription = pageMeta?.override?.description || routeMeta.description;
+  const pageName = pageMeta?.override?.page || (routeMeta.isHome ? null : t(routeMeta.page));
+  const pageDescription = pageMeta?.override?.description || t(routeMeta.description);
 
   // Google Analytics: load gtag once per ID, then report each route change.
   const gaId = GA_ID_PATTERN.test(seoSettings?.google_analytics_id || '') ? seoSettings.google_analytics_id : '';
@@ -61,15 +65,16 @@ const Layout = ({ children }) => {
 
   const shouldHide = hideLayoutRoutes.some(route => location.pathname.startsWith(route));
 
-  const siteTitle = formatPageTitle(pageName, profile);
-  const siteDescription = pageDescription || seoSettings?.meta_description || siteSettings?.site_description || 'Full-Stack .NET developer portfolio.';
+  const siteTitle = formatPageTitle(pageName, profile, { name: t('site.defaultName'), role: t('site.defaultRole') });
+  const siteDescription = pageDescription || seoSettings?.meta_description || siteSettings?.site_description || t('meta.fallbackDescription');
   const siteKeywords = publicKeywords(siteSettings?.site_keywords);
   const ogImage = absoluteHttpsUrl(pageMeta?.override?.image || seoSettings?.og_image);
   const pageUrl = canonicalUrl(location.pathname);
   const twitterHandle = seoSettings?.twitter_handle || '';
   const googleVerification = seoSettings?.google_site_verification || '';
   const noindex = Boolean(routeMeta.noindex);
-  const isHome = location.pathname === '/';
+  const alternates = noindex ? [] : alternateUrls(location.pathname);
+  const isHome = stripLanguage(location.pathname) === '/';
   const structuredData = pageMeta?.override?.jsonLd
     || (isHome ? JSON.stringify(personJsonLd(profile, socialLinks)) : '');
 
@@ -83,6 +88,10 @@ const Layout = ({ children }) => {
         <meta property="og:description" content={siteDescription} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={pageUrl} />
+        <meta property="og:locale" content={lang === 'ar' ? 'ar_EG' : 'en_US'} />
+        {alternates.length > 0 && (
+          <meta property="og:locale:alternate" content={lang === 'ar' ? 'en_US' : 'ar_EG'} />
+        )}
         <meta property="og:image" content={ogImage} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={siteTitle} />
@@ -91,6 +100,9 @@ const Layout = ({ children }) => {
         {twitterHandle && <meta name="twitter:creator" content={twitterHandle} />}
         {googleVerification && <meta name="google-site-verification" content={googleVerification} />}
         {noindex ? <meta name="robots" content="noindex, nofollow" /> : <link rel="canonical" href={pageUrl} />}
+        {alternates.map((alt) => (
+          <link key={alt.hrefLang} rel="alternate" hrefLang={alt.hrefLang} href={alt.href} />
+        ))}
         {!noindex && structuredData && structuredData !== 'null' && (
           <script type="application/ld+json">{structuredData}</script>
         )}
@@ -99,9 +111,9 @@ const Layout = ({ children }) => {
       {!shouldHide && (
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-surface focus:text-text-primary focus:shadow-lg focus:ring-2 focus:ring-accent"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:start-3 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-surface focus:text-text-primary focus:shadow-lg focus:ring-2 focus:ring-accent"
         >
-          Skip to content
+          {t('layout.skip')}
         </a>
       )}
 
@@ -109,7 +121,7 @@ const Layout = ({ children }) => {
       {!shouldHide && settingsError && (
         <div className="max-w-3xl mx-auto px-4 pt-24">
           <LoadError
-            title="Site content could not be loaded"
+            title={t('layout.settingsError')}
             message={settingsError}
             onRetry={loadSettings}
           />

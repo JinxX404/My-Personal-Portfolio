@@ -3,12 +3,14 @@ import { Link } from "react-router-dom";
 import Icon from "components/AppIcon";
 import Image from "components/AppImage";
 import { coverForProject } from "lib/projectMedia";
+import { useI18n } from "i18n/I18nContext";
 
 /**
  * Previous / next project plus up to two related projects (same category
  * first). Uses the published list already loaded by ProjectsContext.
  */
 const MoreProjects = ({ currentId, category, projects }) => {
+  const { t, lp } = useI18n();
   const published = useMemo(
     () =>
       (projects || []).filter(
@@ -34,8 +36,8 @@ const MoreProjects = ({ currentId, category, projects }) => {
   if (!previous && !next && related.length === 0) {
     return (
       <div className="text-center">
-        <Link to="/projects" className="btn-primary inline-flex items-center space-x-2">
-          <span>View All Projects</span>
+        <Link to={lp("/projects")} className="btn-primary inline-flex items-center space-x-2 rtl:space-x-reverse">
+          <span>{t('projects.viewAllButton')}</span>
           <Icon name="ArrowRight" size={16} strokeWidth={2} />
         </Link>
       </div>
@@ -49,13 +51,13 @@ const MoreProjects = ({ currentId, category, projects }) => {
     >
       <div className="flex flex-wrap items-end justify-between gap-4 mb-8">
         <h2 id="more-projects-title" className="text-3xl font-bold text-text-primary dark:text-white">
-          More Projects
+          {t('caseStudy.moreProjects')}
         </h2>
         <Link
-          to="/projects"
+          to={lp("/projects")}
           className="inline-flex items-center gap-1 text-sm font-semibold text-accent dark:text-accent-text"
         >
-          All projects
+          {t('caseStudy.allProjects')}
           <Icon name="ArrowRight" size={16} strokeWidth={2} />
         </Link>
       </div>
@@ -65,7 +67,7 @@ const MoreProjects = ({ currentId, category, projects }) => {
           {related.map((project) => (
             <Link
               key={project.id}
-              to={`/projects/${project.id}`}
+              to={lp(`/projects/${project.id}`)}
               className="group block rounded-xl overflow-hidden border border-border dark:border-border-strong bg-background hover:border-accent hover:shadow-lg transition-all duration-300"
             >
               <div className="relative overflow-hidden aspect-[16/9]">
@@ -79,7 +81,7 @@ const MoreProjects = ({ currentId, category, projects }) => {
               </div>
               <div className="p-5">
                 {project.category && (
-                  <span className="text-xs font-semibold uppercase tracking-wide text-accent dark:text-accent-text">
+                  <span dir="auto" className="text-xs font-semibold uppercase tracking-wide text-accent dark:text-accent-text">
                     {project.category}
                   </span>
                 )}
@@ -99,17 +101,17 @@ const MoreProjects = ({ currentId, category, projects }) => {
 
       {(previous || next) && (
         <nav
-          aria-label="Project navigation"
+          aria-label={t('caseStudy.projectNav')}
           className="grid sm:grid-cols-2 gap-4 pt-6 border-t border-border dark:border-border-strong"
         >
           {previous ? (
             <Link
-              to={`/projects/${previous.id}`}
+              to={lp(`/projects/${previous.id}`)}
               className="group flex items-center gap-3 p-4 rounded-lg hover:bg-background transition-colors"
             >
               <Icon name="ArrowLeft" size={18} className="text-text-secondary group-hover:text-accent flex-shrink-0" />
               <span className="min-w-0">
-                <span className="block text-xs uppercase tracking-wide text-muted">Previous</span>
+                <span className="block text-xs uppercase tracking-wide text-muted">{t('caseStudy.previous')}</span>
                 <span dir="auto" className="block font-semibold text-text-primary truncate">{previous.title}</span>
               </span>
             </Link>
@@ -118,11 +120,11 @@ const MoreProjects = ({ currentId, category, projects }) => {
           )}
           {next && (
             <Link
-              to={`/projects/${next.id}`}
-              className="group flex items-center justify-end gap-3 p-4 rounded-lg hover:bg-background transition-colors text-right"
+              to={lp(`/projects/${next.id}`)}
+              className="group flex items-center justify-end gap-3 p-4 rounded-lg hover:bg-background transition-colors text-end"
             >
               <span className="min-w-0">
-                <span className="block text-xs uppercase tracking-wide text-muted">Next</span>
+                <span className="block text-xs uppercase tracking-wide text-muted">{t('caseStudy.next')}</span>
                 <span dir="auto" className="block font-semibold text-text-primary truncate">{next.title}</span>
               </span>
               <Icon name="ArrowRight" size={18} className="text-text-secondary group-hover:text-accent flex-shrink-0" />
