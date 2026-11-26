@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useLayoutEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import Icon from 'components/AppIcon';
@@ -19,7 +19,7 @@ const categoryIconMap = {
 };
 
 const PortfolioGallery = () => {
-  const { getPublishedProjects, loading: projectsLoading, useSupabase } = useProjects();
+  const { projects: knownProjects, loading: projectsLoading, useSupabase } = useProjects();
   const [activeFilter, setActiveFilter] = useState('All');
   const [viewMode, setViewMode] = useState('grid');
   const [searchQuery, setSearchQuery] = useState('');
@@ -92,8 +92,27 @@ const PortfolioGallery = () => {
     setIsFetching(false);
   };
 
+  // Public projects the app already holds (cached, refreshed in the background).
+  // Same rule and order as fetchPublishedProjects.
+  const listedProjects = useMemo(
+    () => (knownProjects || []).filter(
+      (project) =>
+        project?.visibility === 'public' &&
+        (project.publishing_status === 'published' || project.publishing_status === 'in_progress')
+    ),
+    [knownProjects]
+  );
+
   const loadMoreProjects = async () => {
     if (!useSupabase || isLoadingMore || !hasMore) return;
+
+    // Serve the next page from memory when we have it.
+    if (listedProjects.length > portfolioProjects.length) {
+      const next = listedProjects.slice(0, portfolioProjects.length + PAGE_SIZE);
+      setPortfolioProjects(transformProjects(next));
+      setHasMore(listedProjects.length > next.length);
+      return;
+    }
 
     setIsLoadingMore(true);
     const { fetchPublishedProjects } = await import('../../services/projectsService.js');
@@ -110,9 +129,20 @@ const PortfolioGallery = () => {
     setIsLoadingMore(false);
   };
 
-  useEffect(() => {
-    loadInitialProjects();
-  }, [useSupabase]);
+  // Show what the app already has right away; only go to the network when the
+  // shared list is empty (first visit straight to this page, or it failed).
+  // Layout effect: the list is in place before the first paint, no empty frame.
+  useLayoutEffect(() => {
+    if (listedProjects.length > 0) {
+      const count = Math.min(listedProjects.length, Math.max(portfolioProjects.length, PAGE_SIZE));
+      setPortfolioProjects(transformProjects(listedProjects.slice(0, count)));
+      setHasMore(listedProjects.length > count);
+      setLoadError(null);
+      return;
+    }
+    if (!projectsLoading) loadInitialProjects();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listedProjects, projectsLoading, useSupabase]);
 
 
   const displayProjects = portfolioProjects;
@@ -148,7 +178,8 @@ const PortfolioGallery = () => {
     return techArray.slice(0, 12);
   }, [displayProjects]);
 
-  const isLoading = useSupabase && (projectsLoading || isFetching);
+  // Skeletons only when there is nothing at all to show yet.
+  const isLoading = useSupabase && portfolioProjects.length === 0 && (projectsLoading || isFetching || listedProjects.length > 0);
 
   // Filter and search logic
   const filteredProjects = useMemo(() => {
@@ -295,11 +326,7 @@ const PortfolioGallery = () => {
       {/* Hero Section */}
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          <div>
             <h1 className="text-4xl md:text-6xl font-bold text-text-primary mb-6">
               Selected <span className="text-gradient">Projects</span>
             </h1>
@@ -317,7 +344,7 @@ const PortfolioGallery = () => {
                 <span>{displayProjects.filter(p => p.featured).length} Featured</span>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
@@ -420,7 +447,9 @@ const PortfolioGallery = () => {
       {/* Projects Grid */}
       <section className="px-4 pb-20">
         <div className="max-w-7xl mx-auto">
-          <AnimatePresence mode="wait">
+          {/* No AnimatePresence here: waiting for the skeleton to fade out before
+              mounting the grid added a blank gap on every visit. */}
+          <>
             {loadError ? (
               <LoadError message={loadError} onRetry={loadInitialProjects} />
             ) : isLoading ? (
@@ -495,7 +524,7 @@ const PortfolioGallery = () => {
                 </button>
               </motion.div>
             )}
-          </AnimatePresence>
+          </>
         </div>
       </section>
 

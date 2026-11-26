@@ -157,7 +157,7 @@ const SocialLinks = ({ embedded = false }) => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 20 }}
+      initial={false}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5, delay: 0.4 }}
       className={embedded ? "" : "space-y-8"}
@@ -185,7 +185,7 @@ const SocialLinks = ({ embedded = false }) => {
                 href={platform.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={false}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.2, delay: index * 0.05 }}
                 className="flex flex-col items-center justify-center p-3 rounded-xl bg-surface dark:bg-primary-900/30 border border-border dark:border-border-strong hover:border-accent hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 group"

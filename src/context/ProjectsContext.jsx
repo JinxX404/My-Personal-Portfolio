@@ -1,5 +1,5 @@
 // src/context/ProjectsContext.jsx
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import {
   fetchProjects,
   fetchPublishedProjects,
@@ -25,25 +25,56 @@ export const useProjects = () => {
   return context;
 };
 
-export const ProjectsProvider = ({ children }) => {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [useSupabase] = useState(isSupabaseConfigured());
+// Public projects are cached in the browser so a repeat visit renders the list
+// immediately and refreshes it quietly. Drafts and private rows are never cached.
+const CACHE_KEY = 'portfolio-cache:projects:v1';
 
-  // Fetch all projects
+const isCacheable = (project) =>
+  project &&
+  project.visibility === 'public' &&
+  (project.publishing_status === 'published' || project.publishing_status === 'in_progress');
+
+const readCache = () => {
+  try {
+    const raw = window.localStorage.getItem(CACHE_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    return Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+};
+
+const writeCache = (rows) => {
+  try {
+    window.localStorage.setItem(CACHE_KEY, JSON.stringify((rows || []).filter(isCacheable)));
+  } catch {
+    // Storage full or blocked: the site still works, it just refetches.
+  }
+};
+
+export const ProjectsProvider = ({ children }) => {
+  const [useSupabase] = useState(isSupabaseConfigured());
+  const [cached] = useState(() => (useSupabase ? readCache() : null));
+  const [projects, setProjects] = useState(() => cached || []);
+  // `loading` means "nothing to show yet". A background refresh keeps it false.
+  const [loading, setLoading] = useState(!cached);
+  const [error, setError] = useState(null);
+  const projectsRef = useRef(projects);
+  projectsRef.current = projects;
+
   const loadProjects = useCallback(async (filters = {}) => {
     if (!useSupabase) {
       setLoading(false);
       return;
     }
 
-    setLoading(true);
+    if (projectsRef.current.length === 0) setLoading(true);
     try {
       const result = await fetchProjects(filters);
       if (result.success) {
         setProjects(result.data);
         setError(null);
+        if (!filters || Object.keys(filters).length === 0) writeCache(result.data);
       } else {
         setError(result.error);
       }
@@ -54,113 +85,88 @@ export const ProjectsProvider = ({ children }) => {
     }
   }, [useSupabase]);
 
-  // Load projects on mount
   useEffect(() => {
     loadProjects();
   }, [loadProjects]);
 
-  // Get published projects
-  const getPublishedProjects = async () => {
-    if (!useSupabase) return { success: true, data: projects.filter(p => p.publishing_status === 'published') };
+  const getPublishedProjects = useCallback(async () => {
+    if (!useSupabase) return { success: true, data: projectsRef.current.filter(p => p.publishing_status === 'published') };
     return await fetchPublishedProjects();
-  };
+  }, [useSupabase]);
 
-  // Get featured projects
-  const getFeaturedProjects = async () => {
-    if (!useSupabase) return { success: true, data: projects.filter(p => p.featured) };
+  const getFeaturedProjects = useCallback(async () => {
+    if (!useSupabase) return { success: true, data: projectsRef.current.filter(p => p.featured) };
     return await fetchFeaturedProjects();
-  };
+  }, [useSupabase]);
 
-  // Get project by ID
-  const getProjectById = async (projectId) => {
+  const getProjectById = useCallback(async (projectId) => {
     if (!useSupabase) {
-      const project = projects.find(p => p.id === projectId);
+      const project = projectsRef.current.find(p => p.id === projectId);
       return { success: !!project, data: project };
     }
     return await fetchProjectById(projectId);
-  };
+  }, [useSupabase]);
 
-  // Create new project
-  const addProject = async (projectData) => {
-    if (!useSupabase) {
-      return { success: false, error: 'Supabase not configured' };
-    }
+  const notConfigured = { success: false, error: 'Supabase not configured' };
 
+  const addProject = useCallback(async (projectData) => {
+    if (!useSupabase) return notConfigured;
     const result = await createProject(projectData);
-    if (result.success) {
-      setProjects(prev => [result.data, ...prev]);
-    }
+    if (result.success) setProjects(prev => [result.data, ...prev]);
     return result;
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [useSupabase]);
 
-  // Update project
-  const editProject = async (projectId, updates) => {
-    if (!useSupabase) {
-      return { success: false, error: 'Supabase not configured' };
-    }
-
+  const editProject = useCallback(async (projectId, updates) => {
+    if (!useSupabase) return notConfigured;
     const result = await updateProject(projectId, updates);
-    if (result.success) {
-      setProjects(prev => prev.map(p => p.id === projectId ? result.data : p));
-    }
+    if (result.success) setProjects(prev => prev.map(p => p.id === projectId ? result.data : p));
     return result;
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [useSupabase]);
 
-  // Delete project
-  const removeProject = async (projectId) => {
-    if (!useSupabase) {
-      return { success: false, error: 'Supabase not configured' };
-    }
-
+  const removeProject = useCallback(async (projectId) => {
+    if (!useSupabase) return notConfigured;
     const result = await deleteProject(projectId);
-    if (result.success) {
-      setProjects(prev => prev.filter(p => p.id !== projectId));
-    }
+    if (result.success) setProjects(prev => prev.filter(p => p.id !== projectId));
     return result;
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [useSupabase]);
 
-  // Publish/Unpublish project
-  const togglePublish = async (projectId, publish = true) => {
-    if (!useSupabase) {
-      return { success: false, error: 'Supabase not configured' };
-    }
-
+  const togglePublish = useCallback(async (projectId, publish = true) => {
+    if (!useSupabase) return notConfigured;
     const result = publish ? await publishProject(projectId) : await unpublishProject(projectId);
-    if (result.success) {
-      setProjects(prev => prev.map(p => p.id === projectId ? result.data : p));
-    }
+    if (result.success) setProjects(prev => prev.map(p => p.id === projectId ? result.data : p));
     return result;
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [useSupabase]);
 
-  // Toggle featured status
-  const toggleFeatured = async (projectId, featured) => {
-    if (!useSupabase) {
-      return { success: false, error: 'Supabase not configured' };
-    }
-
+  const toggleFeatured = useCallback(async (projectId, featured) => {
+    if (!useSupabase) return notConfigured;
     const result = await toggleFeaturedProject(projectId, featured);
-    if (result.success) {
-      setProjects(prev => prev.map(p => p.id === projectId ? result.data : p));
-    }
+    if (result.success) setProjects(prev => prev.map(p => p.id === projectId ? result.data : p));
     return result;
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [useSupabase]);
 
-  // Get project statistics
-  const getStats = async () => {
+  const getStats = useCallback(async () => {
     if (!useSupabase) {
+      const list = projectsRef.current;
       return {
         success: true,
         data: {
-          total: projects.length,
-          published: projects.filter(p => p.publishing_status === 'published').length,
-          draft: projects.filter(p => p.publishing_status === 'draft').length,
-          featured: projects.filter(p => p.featured).length,
+          total: list.length,
+          published: list.filter(p => p.publishing_status === 'published').length,
+          draft: list.filter(p => p.publishing_status === 'draft').length,
+          featured: list.filter(p => p.featured).length,
         },
       };
     }
     return await getProjectStats();
-  };
+  }, [useSupabase]);
 
+  // The callbacks above are stable, so this value only changes when the data does.
+  // Pages that depend on getProjectById no longer refetch each time the list updates.
   const value = useMemo(() => ({
     projects,
     loading,

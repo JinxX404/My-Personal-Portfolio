@@ -63,9 +63,34 @@ const defaultSettings = {
   }
 };
 
+// The public settings row (name, bio, links...) is cached in the browser so a
+// repeat visit paints the real profile at once instead of empty defaults first.
+const CACHE_KEY = 'portfolio-cache:settings:v1';
+
+const readCachedSettings = () => {
+  try {
+    const raw = window.localStorage.getItem(CACHE_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    return parsed && typeof parsed === 'object' && parsed.profile ? parsed : null;
+  } catch {
+    return null;
+  }
+};
+
+const writeCachedSettings = (value) => {
+  try {
+    window.localStorage.setItem(CACHE_KEY, JSON.stringify(value));
+  } catch {
+    // Storage blocked or full: settings simply load from the network each time.
+  }
+};
+
 export const PortfolioSettingsProvider = ({ children }) => {
-  const [settings, setSettings] = useState(defaultSettings);
+  const [cached] = useState(readCachedSettings);
+  const [settings, setSettings] = useState(() => cached || defaultSettings);
+  // isLoading: a request is in flight. isReady: real settings (cached or fresh) are on screen.
   const [isLoading, setIsLoading] = useState(true);
+  const [isReady, setIsReady] = useState(Boolean(cached));
   const [error, setError] = useState(null);
 
   const loadSettings = useCallback(async () => {
@@ -83,19 +108,22 @@ export const PortfolioSettingsProvider = ({ children }) => {
       }
 
       if (data && data.length > 0) {
-        setSettings({
+        const next = {
           profile: data[0].profile || defaultSettings.profile,
           freelance_projects: data[0].freelance_projects || defaultSettings.freelance_projects,
           social_links: data[0].social_links || defaultSettings.social_links,
           site_settings: data[0].site_settings || defaultSettings.site_settings,
           seo_settings: data[0].seo_settings || defaultSettings.seo_settings,
           career_data: data[0].career_data || defaultSettings.career_data
-        });
+        };
+        setSettings(next);
+        writeCachedSettings(next);
       }
     } catch (err) {
       setError(err.message);
     } finally {
       setIsLoading(false);
+      setIsReady(true);
     }
   }, []);
 
@@ -145,6 +173,7 @@ export const PortfolioSettingsProvider = ({ children }) => {
       }
 
       setSettings(newSettings);
+      writeCachedSettings(newSettings);
       return { success: true };
     } catch (err) {
       return { success: false, error: err.message };
@@ -154,6 +183,7 @@ export const PortfolioSettingsProvider = ({ children }) => {
   const value = useMemo(() => ({
     settings,
     isLoading,
+    isReady,
     error,
     loadSettings,
     updateSettings,
@@ -163,7 +193,7 @@ export const PortfolioSettingsProvider = ({ children }) => {
     siteSettings: settings.site_settings,
     seoSettings: settings.seo_settings,
     careerData: settings.career_data
-  }), [settings, isLoading, error, loadSettings, updateSettings]);
+  }), [settings, isLoading, isReady, error, loadSettings, updateSettings]);
 
   return (
     <PortfolioSettingsContext.Provider value={value}>

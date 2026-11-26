@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
@@ -30,68 +30,36 @@ const toCard = (project) => {
 };
 
 const FeaturedWork = () => {
-  const { projects, loading, error, loadProjects, getFeaturedProjects } = useProjects();
-  const [cards, setCards] = useState([]);
-  const [usingFallback, setUsingFallback] = useState(false);
+  const { projects, loading, error, loadProjects } = useProjects();
   const [activeProject, setActiveProject] = useState(0);
-  const [loadError, setLoadError] = useState(null);
-  const [fetching, setFetching] = useState(true);
+
+  // Built from the project list the app already holds (cached and refreshed in
+  // the background), so returning to Home shows the cards at once instead of
+  // refetching and flashing "Loading projects…" on every visit.
+  const { cards, usingFallback } = useMemo(() => {
+    const publicProjects = (projects || []).filter(isPublicProject);
+    // Same rule the old featured query used: featured and fully published.
+    const featured = publicProjects
+      .filter((project) => project.featured && project.publishing_status === 'published')
+      .map(toCard);
+    if (featured.length > 0) return { cards: featured, usingFallback: false };
+    const latest = publicProjects.slice(0, 4).map(toCard);
+    return { cards: latest, usingFallback: latest.length > 0 };
+  }, [projects]);
 
   useEffect(() => {
-    let cancelled = false;
+    if (activeProject >= cards.length) setActiveProject(0);
+  }, [cards.length, activeProject]);
 
-    const load = async () => {
-      setFetching(true);
-      const result = await getFeaturedProjects();
-      if (cancelled) return;
-
-      if (!result?.success) {
-        const latest = (projects || []).filter(isPublicProject).slice(0, 4).map(toCard);
-        if (latest.length > 0) {
-          setCards(latest);
-          setUsingFallback(true);
-          setLoadError(null);
-        } else {
-          setCards([]);
-          setLoadError(result?.error || error || 'Featured projects could not be loaded.');
-        }
-        setFetching(false);
-        return;
-      }
-
-      const featured = (result.data || []).filter(isPublicProject).map(toCard);
-      if (featured.length > 0) {
-        setCards(featured);
-        setUsingFallback(false);
-        setLoadError(null);
-      } else {
-        const latest = (projects || [])
-          .filter(isPublicProject)
-          .slice(0, 4)
-          .map(toCard);
-        setCards(latest);
-        setUsingFallback(latest.length > 0);
-        setLoadError(null);
-      }
-      setActiveProject(0);
-      setFetching(false);
-    };
-
-    load();
-    return () => {
-      cancelled = true;
-    };
-    // getFeaturedProjects is recreated each render; run when the project list settles.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loading, projects]);
+  const loadError = cards.length === 0 && error ? error : null;
 
   const retry = () => {
-    setLoadError(null);
     loadProjects();
   };
 
-  if (loading || fetching) {
-    return <p className="text-center text-text-secondary">Loading projects…</p>;
+  if (loading && cards.length === 0) {
+    // Same footprint as the real block, so the page below does not jump when it arrives.
+    return <div className="min-h-[28rem]" aria-busy="true" aria-label="Loading projects" />;
   }
 
   if (loadError) {

@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import Icon from '../AppIcon';
 import ThemeToggle from './ThemeToggle';
 import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
+import { prefetchPath } from 'lib/routeChunks';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -11,8 +12,8 @@ const Header = () => {
   const { profile } = usePortfolioSettings();
 
   const navigationItems = [
-    { name: 'Home', path: '/homepage', icon: 'Home' },
-    { name: 'Portfolio', path: '/portfolio-gallery', icon: 'Briefcase' },
+    { name: 'Home', path: '/', icon: 'Home' },
+    { name: 'Portfolio', path: '/projects', icon: 'Briefcase' },
     { name: 'About', path: '/about-story', icon: 'User' },
     { name: 'Contact', path: '/contact-hub', icon: 'Mail' }
   ];
@@ -117,6 +118,8 @@ const Header = () => {
               <Link
                 key={item.path}
                 to={item.path}
+                onMouseEnter={() => prefetchPath(item.path)}
+                onFocus={() => prefetchPath(item.path)}
                 aria-current={isActivePath(item.path) ? 'page' : undefined}
                 className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-theme group ${
                   isActivePath(item.path)
@@ -187,6 +190,7 @@ const Header = () => {
                 key={item.path}
                 to={item.path}
                 onClick={closeMobileMenu}
+                onTouchStart={() => prefetchPath(item.path)}
                 aria-current={isActivePath(item.path) ? 'page' : undefined}
                 className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium transition-theme ${
                   isActivePath(item.path)

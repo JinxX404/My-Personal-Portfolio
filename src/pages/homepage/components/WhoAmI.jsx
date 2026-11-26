@@ -5,7 +5,7 @@ import Image from 'components/AppImage';
 import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
 
 const WhoAmI = () => {
-  const { profile } = usePortfolioSettings();
+  const { profile, isReady } = usePortfolioSettings();
 
   // Years, project count, and role are already in the hero right above,
   // so this strip only adds what the hero does not say.
@@ -22,7 +22,9 @@ const WhoAmI = () => {
   return (
     <section className="py-16 bg-surface dark:bg-surface border-y border-border dark:border-border-strong transition-theme">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col lg:flex-row items-center gap-8">
+        {/* Hidden (space kept) until the real profile is known, so the default
+            photo and "Not taking new projects" never flash on a first visit. */}
+        <div className={`flex flex-col lg:flex-row items-center gap-8 ${isReady ? '' : 'invisible'}`}>
           {/* Image */}
           <div className="flex-shrink-0">
             <div className="relative">
