@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Icon from "components/AppIcon";
 import { usePortfolioSettings } from "context/PortfolioSettingsContext";
 import { safeHref } from "lib/safeUrl";
+import { useI18n } from "i18n/I18nContext";
 
 const socialColorMap = {
   "blue-600": {
@@ -70,6 +71,7 @@ const socialColorMap = {
 
 const SocialLinks = ({ embedded = false }) => {
   const { socialLinks } = usePortfolioSettings();
+  const { t } = useI18n();
 
   const platformMeta = {
     github: {
@@ -167,10 +169,10 @@ const SocialLinks = ({ embedded = false }) => {
         {!embedded && (
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-text-primary mb-2">
-              Connect Online
+              {t("contact.social.title")}
             </h2>
             <p className="text-text-secondary">
-              Follow my journey and stay updated with my latest work and insights.
+              {t("contact.social.subtitle")}
             </p>
           </div>
         )}

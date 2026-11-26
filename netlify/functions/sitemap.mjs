@@ -24,22 +24,36 @@ const isoDate = (value) => {
   return date && !Number.isNaN(date.getTime()) ? date.toISOString().slice(0, 10) : '';
 };
 
+const arabicPath = (path) => (path === '/' ? '/ar' : `/ar${path}`);
+
+// Every page is listed in English and Arabic (/ar), each with hreflang links to
+// both versions plus x-default (English), as Google asks for bilingual sites.
 export function buildSitemap(projects = []) {
-  const urls = [
-    ...STATIC_PATHS.map((path) => ({ loc: `${SITE_ORIGIN}${path}` })),
+  const pages = [
+    ...STATIC_PATHS.map((path) => ({ path })),
     ...projects
       .filter((p) => p && typeof p.id === 'string' && /^[A-Za-z0-9-]+$/.test(p.id))
       .map((p) => ({
-        loc: `${SITE_ORIGIN}/projects/${p.id}`,
+        path: `/projects/${p.id}`,
         lastmod: isoDate(p.updated_at || p.created_at),
       })),
   ];
-  const body = urls
-    .map(({ loc, lastmod }) =>
-      `  <url>\n    <loc>${escapeXml(loc)}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ''}\n  </url>`
-    )
+  const body = pages
+    .flatMap(({ path, lastmod }) => {
+      const en = `${SITE_ORIGIN}${path}`;
+      const ar = `${SITE_ORIGIN}${arabicPath(path)}`;
+      const links = [
+        `    <xhtml:link rel="alternate" hreflang="en" href="${escapeXml(en)}"/>`,
+        `    <xhtml:link rel="alternate" hreflang="ar" href="${escapeXml(ar)}"/>`,
+        `    <xhtml:link rel="alternate" hreflang="x-default" href="${escapeXml(en)}"/>`,
+      ].join('\n');
+      return [en, ar].map(
+        (loc) =>
+          `  <url>\n    <loc>${escapeXml(loc)}</loc>${lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : ''}\n${links}\n  </url>`
+      );
+    })
     .join('\n');
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${body}\n</urlset>\n`;
 }
 
 async function loadProjects() {

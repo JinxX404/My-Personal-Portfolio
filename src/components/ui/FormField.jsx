@@ -23,7 +23,7 @@ const FormField = ({
     transition-colors
     dark:bg-surface-elevated dark:text-text-primary
     ${error ? 'border-error-500 dark:border-error-500' : 'border-primary-200 dark:border-border'}
-    ${icon ? 'pl-10' : ''}
+    ${icon ? 'ps-10' : ''}
     ${className}
   `;
 
@@ -32,13 +32,13 @@ const FormField = ({
       {label && (
         <label className="block text-sm font-semibold text-primary-700 dark:text-text-secondary mb-2">
           {label}
-          {required && <span className="text-error-500 ml-1">*</span>}
+          {required && <span className="text-error-500 ms-1">*</span>}
         </label>
       )}
 
       <div className="relative">
         {icon && (
-          <Icon name={icon} size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary-400 dark:text-muted" />
+          <Icon name={icon} size={18} className="absolute start-3 top-1/2 -translate-y-1/2 text-secondary-400 dark:text-muted" />
         )}
         {multiline ? (
           <textarea

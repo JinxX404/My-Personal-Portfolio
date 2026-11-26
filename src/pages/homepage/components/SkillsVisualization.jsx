@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import Icon from 'components/AppIcon';
 import LoadError from 'components/ui/LoadError';
 import { useSkills } from 'context/SkillsContext';
+import { useI18n } from 'i18n/I18nContext';
 
 const SkillsVisualization = () => {
   const { skillCategories, techStack, loading, error, resyncFromDatabase } = useSkills();
   const [activeCategory, setActiveCategory] = useState('');
+  const { t } = useI18n();
   const categoryKey = Object.keys(skillCategories || {}).join('|');
 
   const getColorClasses = (color) => {
@@ -49,7 +51,7 @@ const SkillsVisualization = () => {
   const currentCategory = skillCategories[activeCategory] || { title: '', icon: 'Code', color: 'accent', skills: [] };
 
   if (loading && categoryKey.length === 0) {
-    return <p className="text-center text-text-secondary">Loading skills…</p>;
+    return <p className="text-center text-text-secondary">{t('home.skills.loading')}</p>;
   }
 
   return (
@@ -66,14 +68,14 @@ const SkillsVisualization = () => {
             type="button"
             key={key}
             onClick={() => setActiveCategory(key)}
-            className={`flex items-center space-x-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:-translate-y-1 ${
+            className={`flex items-center space-x-2 rtl:space-x-reverse px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:-translate-y-1 ${
               activeCategory === key
                 ? getColorClasses(category.color)
                 : 'bg-white dark:bg-white/10 text-text-secondary dark:text-white/70 hover:bg-primary-50 dark:hover:bg-white/20 shadow-md dark:shadow-lg dark:shadow-black/20 border border-secondary-200 dark:border-white/10'
             }`}
           >
             <Icon name={category.icon} size={20} strokeWidth={2} />
-            <span>{category.title}</span>
+            <span dir="auto">{category.title}</span>
           </button>
         ))}
       </div>
@@ -84,7 +86,7 @@ const SkillsVisualization = () => {
           <div className={`inline-flex items-center justify-center w-16 h-16 ${getColorClasses(currentCategory.color)} rounded-full mb-4`}>
             <Icon name={currentCategory.icon} size={32} color="white" strokeWidth={2} />
           </div>
-          <h3 className="text-2xl font-bold text-text-primary dark:text-white">
+          <h3 dir="auto" className="text-2xl font-bold text-text-primary dark:text-white">
             {currentCategory.title}
           </h3>
         </div>
@@ -93,7 +95,7 @@ const SkillsVisualization = () => {
           {(currentCategory.skills || []).map((skill, index) => (
             <div
               key={skill.name}
-              className="flex items-center space-x-2 px-4 py-3 bg-secondary-50 dark:bg-white/10 rounded-xl border border-secondary-300 dark:border-white/10 hover:border-accent-500 dark:hover:border-accent-400 hover:shadow-lg transition-all duration-300 cursor-default"
+              className="flex items-center space-x-2 rtl:space-x-reverse px-4 py-3 bg-secondary-50 dark:bg-white/10 rounded-xl border border-secondary-300 dark:border-white/10 hover:border-accent-500 dark:hover:border-accent-400 hover:shadow-lg transition-all duration-300 cursor-default"
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <Icon 
@@ -102,7 +104,7 @@ const SkillsVisualization = () => {
                 strokeWidth={2} 
                 className="text-accent-500 dark:text-accent-400 flex-shrink-0"
               />
-              <span className="font-bold text-primary-800 dark:text-white text-sm truncate">
+              <span dir="auto" className="font-bold text-primary-800 dark:text-white text-sm truncate">
                 {skill.name}
               </span>
             </div>
@@ -113,12 +115,13 @@ const SkillsVisualization = () => {
       {/* Tech Stack Cloud */}
       <div className="mt-12 text-center">
         <h4 className="text-xl font-bold text-text-primary dark:text-white mb-6">
-          Technologies I Work With
+          {t('home.skills.tech')}
         </h4>
         <div className="flex flex-wrap justify-center gap-3">
           {techStack.map((tech, index) => (
             <span
               key={tech}
+              dir="auto"
               className="px-4 py-2 bg-white dark:bg-white/10 text-primary-700 dark:text-white/80 rounded-full text-sm font-medium hover:bg-accent-50 dark:hover:bg-accent-900/30 hover:text-accent-700 dark:hover:text-accent-400 shadow-sm border border-secondary-200 dark:border-white/10 transition-all duration-200 cursor-default dark:hover:bg-accent-subtle dark:hover:text-accent-text"
               style={{ animationDelay: `${index * 50}ms` }}
             >

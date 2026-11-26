@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { useI18n } from 'i18n/I18nContext';
 
 export function turnstileSiteKey() {
   const key = import.meta.env.VITE_TURNSTILE_SITE_KEY;
@@ -14,6 +15,7 @@ export function turnstileSiteKey() {
  */
 const TurnstileField = ({ onToken }) => {
   const siteKey = turnstileSiteKey();
+  const { lang } = useI18n();
   const containerRef = useRef(null);
   const onTokenRef = useRef(onToken);
   onTokenRef.current = onToken;
@@ -28,6 +30,7 @@ const TurnstileField = ({ onToken }) => {
       if (cancelled || !window.turnstile || !containerRef.current) return;
       widgetId = window.turnstile.render(containerRef.current, {
         sitekey: siteKey,
+        language: lang,
         callback: (token) => onTokenRef.current(token || ''),
         'expired-callback': () => onTokenRef.current(''),
         'error-callback': () => onTokenRef.current(''),
@@ -58,7 +61,7 @@ const TurnstileField = ({ onToken }) => {
         window.turnstile.remove(widgetId);
       }
     };
-  }, [siteKey]);
+  }, [siteKey, lang]);
 
   if (!siteKey) return null;
 

@@ -11,17 +11,19 @@ import ProjectGallery, { normalizeGalleryImages } from "./ProjectGallery";
 import MoreProjects from "./MoreProjects";
 import { coverForProject } from "lib/projectMedia";
 import { SITE_ORIGIN, absoluteHttpsUrl } from "lib/pageMeta";
+import { useI18n } from "i18n/I18nContext";
+import { localizePath } from "i18n/paths.mjs";
 
 // Shape a project record for the detail page.
 const toCaseStudy = (project) => {
   return {
     id: project.id,
-    title: project.title || "Untitled Project",
+    title: project.title || "",
     subtitle:
       project.tagline ||
       project.short_description ||
       project.description ||
-      "Project Overview",
+      "",
     client: project.client,
     duration: project.duration,
     role: project.role,
@@ -51,7 +53,7 @@ const toCaseStudy = (project) => {
           title:
             typeof img === "object"
               ? img.caption
-              : `Screenshot ${idx + 1}`,
+              : "",
           image: typeof img === "object" ? img.url : img,
           type: "desktop",
         }))
@@ -62,11 +64,8 @@ const toCaseStudy = (project) => {
         ? {
             quote: project.testimonials[0].content,
             author: project.testimonials[0].name,
-            position:
-              project.testimonials[0].role +
-              (project.testimonials[0].company
-                ? ` at ${project.testimonials[0].company}`
-                : ""),
+            role: project.testimonials[0].role || "",
+            company: project.testimonials[0].company || "",
             avatar: project.testimonials[0].avatar || null,
           }
         : null,
@@ -77,6 +76,7 @@ const CaseStudyDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { getProjectById, projects } = useProjects();
+  const { t, lp, lang } = useI18n();
 
   const [activeSection, setActiveSection] = useState("");
   // Start from the project the app already holds (list cache), so opening a
@@ -101,7 +101,7 @@ const CaseStudyDetail = () => {
 
     const loadProject = async () => {
       if (!id) {
-        navigate("/projects");
+        navigate(lp("/projects"));
         return;
       }
 
@@ -126,13 +126,13 @@ const CaseStudyDetail = () => {
           setLoadError(null);
         } else if (!cached) {
           setCaseStudy(null);
-          setLoadError(result?.error || "This project could not be loaded.");
+          setLoadError(result?.error || t("caseStudy.loadError"));
         }
       } catch (error) {
         if (cancelled) return;
         if (!cached) {
           setCaseStudy(null);
-          setLoadError(error?.message || "This project could not be loaded.");
+          setLoadError(error?.message || t("caseStudy.loadError"));
         }
       }
 
@@ -143,6 +143,8 @@ const CaseStudyDetail = () => {
     return () => {
       cancelled = true;
     };
+    // t/lp only feed error text and the redirect; a language switch should not refetch.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, getProjectById, navigate, reloadKey]);
 
   // Dynamic navigation based on available content
@@ -150,14 +152,14 @@ const CaseStudyDetail = () => {
     const sections = [];
 
     if (caseStudy?.screenshots?.length > 0) {
-      sections.push({ id: "gallery", label: "Gallery", icon: "Image" });
+      sections.push({ id: "gallery", label: t("caseStudy.gallery"), icon: "Image" });
     }
 
     if (caseStudy?.content_sections && caseStudy.content_sections.length > 0) {
       caseStudy.content_sections.forEach((section, index) => {
         sections.push({
           id: `section-${section.id || index}`,
-          label: section.title || `Section ${index + 1}`,
+          label: section.title || t("caseStudy.section", { n: index + 1 }),
           icon: "FileText"
         });
       });
@@ -167,13 +169,13 @@ const CaseStudyDetail = () => {
       caseStudy?.enableCaseStudy &&
       (caseStudy.problem || caseStudy.solution || caseStudy.results)
     ) {
-      sections.push({ id: "project-details", label: "Project Details", icon: "FileText" });
+      sections.push({ id: "project-details", label: t("caseStudy.details"), icon: "FileText" });
     }
 
     if (caseStudy?.testimonial) {
       sections.push({
         id: "testimonial",
-        label: "Testimonial",
+        label: t("caseStudy.testimonial"),
         icon: "MessageSquare",
       });
     }
@@ -214,8 +216,8 @@ const CaseStudyDetail = () => {
   };
 
   const galleryImages = useMemo(
-    () => normalizeGalleryImages(caseStudy?.screenshots),
-    [caseStudy]
+    () => normalizeGalleryImages(caseStudy?.screenshots, (n) => t("gallery.screenshot", { n })),
+    [caseStudy, t]
   );
 
   // Loading state
@@ -290,8 +292,8 @@ const CaseStudyDetail = () => {
         <div className="max-w-lg w-full">
           <LoadError message={loadError} onRetry={() => setReloadKey((value) => value + 1)} />
           <div className="text-center mt-6">
-            <Link to="/projects" className="text-accent font-semibold dark:text-accent-text">
-              Back to portfolio
+            <Link to={lp("/projects")} className="text-accent font-semibold dark:text-accent-text">
+              {t("caseStudy.back")}
             </Link>
           </div>
         </div>
@@ -310,13 +312,13 @@ const CaseStudyDetail = () => {
             className="mx-auto text-error mb-4"
           />
           <h2 className="text-2xl font-bold text-text-primary dark:text-white mb-2">
-            Project Not Found
+            {t("caseStudy.notFoundTitle")}
           </h2>
           <p className="text-text-secondary dark:text-white/70 mb-6">
-            The project you're looking for doesn't exist.
+            {t("caseStudy.notFoundBody")}
           </p>
-          <Link to="/projects" className="btn-primary">
-            Back to Portfolio
+          <Link to={lp("/projects")} className="btn-primary">
+            {t("caseStudy.back")}
           </Link>
         </div>
       </div>
@@ -326,15 +328,16 @@ const CaseStudyDetail = () => {
   return (
     <div className="min-h-screen bg-background dark:bg-background">
       <PageMeta
-        page={caseStudy.title}
+        page={caseStudy.title || t("project.untitled")}
         description={caseStudy.description}
         image={caseStudy.heroImage}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "CreativeWork",
-          name: caseStudy.title,
+          name: caseStudy.title || t("project.untitled"),
+          inLanguage: lang,
           ...(caseStudy.description ? { description: caseStudy.description } : {}),
-          url: `${SITE_ORIGIN}/projects/${caseStudy.id}`,
+          url: `${SITE_ORIGIN}${localizePath(`/projects/${caseStudy.id}`, lang)}`,
           image: absoluteHttpsUrl(caseStudy.heroImage),
           ...(caseStudy.tags.length ? { keywords: caseStudy.tags.join(", ") } : {}),
           author: { "@id": `${SITE_ORIGIN}/#person` },
@@ -346,44 +349,44 @@ const CaseStudyDetail = () => {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="flex items-center space-x-2 mb-4">
+              <div className="flex items-center space-x-2 rtl:space-x-reverse mb-4">
                 <Link
-                  to="/projects"
-                  className="text-accent-200 hover:text-accent-100 transition-colors duration-200 flex items-center space-x-1"
+                  to={lp("/projects")}
+                  className="text-accent-200 hover:text-accent-100 transition-colors duration-200 flex items-center space-x-1 rtl:space-x-reverse"
                 >
                   <Icon name="ArrowLeft" size={16} strokeWidth={2} />
-                  <span className="text-sm">Back to Portfolio</span>
+                  <span className="text-sm">{t("caseStudy.back")}</span>
                 </Link>
               </div>
 
               <h1 dir="auto" className="text-4xl lg:text-5xl font-bold mb-4 leading-tight text-white text-start">
-                {caseStudy.title}
+                {caseStudy.title || t("project.untitled")}
               </h1>
               <p dir="auto" className="text-xl text-accent-100 mb-6 text-start">
-                {caseStudy.subtitle}
+                {caseStudy.subtitle || t("caseStudy.overview")}
               </p>
 
               <div className="grid grid-cols-2 gap-6 mb-8">
                 {caseStudy.category && (
                   <div>
                     <h3 className="text-sm font-semibold text-accent-200 uppercase tracking-wide mb-2">
-                      Category
+                      {t("caseStudy.category")}
                     </h3>
-                    <p className="text-lg text-white">{caseStudy.category}</p>
+                    <p dir="auto" className="text-lg text-white">{caseStudy.category}</p>
                   </div>
                 )}
                 {/in[-_ ]?progress/i.test(caseStudy.status || "") && (
                   <div>
                     <h3 className="text-sm font-semibold text-accent-200 uppercase tracking-wide mb-2">
-                      Status
+                      {t("caseStudy.status")}
                     </h3>
-                    <p className="text-lg text-white">In progress</p>
+                    <p className="text-lg text-white">{t("caseStudy.inProgress")}</p>
                   </div>
                 )}
                 {caseStudy.client && (
                   <div>
                     <h3 className="text-sm font-semibold text-accent-200 uppercase tracking-wide mb-2">
-                      Client
+                      {t("caseStudy.client")}
                     </h3>
                     <p dir="auto" className="text-lg text-white text-start">{caseStudy.client}</p>
                   </div>
@@ -391,9 +394,9 @@ const CaseStudyDetail = () => {
                 {caseStudy.duration && (
                   <div>
                     <h3 className="text-sm font-semibold text-accent-200 uppercase tracking-wide mb-2">
-                      Duration
+                      {t("caseStudy.duration")}
                     </h3>
-                    <p className="text-lg text-white">{caseStudy.duration}</p>
+                    <p dir="auto" className="text-lg text-white">{caseStudy.duration}</p>
                   </div>
                 )}
               </div>
@@ -406,10 +409,10 @@ const CaseStudyDetail = () => {
                       href={safeHref(caseStudy.repositoryUrl)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center space-x-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                      className="inline-flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
                     >
                       <Icon name="Github" size={18} />
-                      <span>View Code</span>
+                      <span>{t("caseStudy.viewCode")}</span>
                     </a>
                   )}
                   {safeHref(caseStudy.demoUrl) && (
@@ -417,10 +420,10 @@ const CaseStudyDetail = () => {
                       href={safeHref(caseStudy.demoUrl)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center space-x-2 px-4 py-2 bg-accent hover:bg-accent-600 rounded-lg transition-colors"
+                      className="inline-flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 bg-accent hover:bg-accent-600 rounded-lg transition-colors"
                     >
                       <Icon name="ExternalLink" size={18} />
-                      <span>Live Demo</span>
+                      <span>{t("project.liveDemo")}</span>
                     </a>
                   )}
                 </div>
@@ -430,6 +433,7 @@ const CaseStudyDetail = () => {
                 {caseStudy.tags.map((tag, index) => (
                   <span
                     key={index}
+                    dir="auto"
                     className="px-3 py-1 bg-white/15 text-white rounded-full text-sm font-medium"
                   >
                     {tag}
@@ -460,21 +464,21 @@ const CaseStudyDetail = () => {
           <div className="lg:col-span-1">
             <div className="sticky top-24 bg-surface dark:bg-surface rounded-lg shadow-sm border border-border dark:border-border-strong p-6 mb-8 lg:mb-0">
               <h3 className="font-semibold text-text-primary dark:text-white mb-4">
-                Navigation
+                {t("caseStudy.navigation")}
               </h3>
               <nav className="space-y-2">
                 {navigationSections.map((section) => (
                   <button
                     key={section.id}
                     onClick={() => scrollToSection(section.id)}
-                    className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-all duration-200 ${
+                    className={`w-full flex items-center space-x-3 rtl:space-x-reverse px-3 py-2 rounded-lg text-start transition-all duration-200 ${
                       activeSection === section.id
                         ? "bg-accent text-white"
                         : "text-text-secondary dark:text-white/70 hover:bg-surface dark:hover:bg-white/10 hover:text-text-primary dark:hover:text-white"
                     }`}
                   >
                     <Icon name={section.icon} size={16} strokeWidth={2} />
-                    <span className="text-sm font-medium">{section.label}</span>
+                    <span dir="auto" className="text-sm font-medium">{section.label}</span>
                   </button>
                 ))}
               </nav>
@@ -484,7 +488,7 @@ const CaseStudyDetail = () => {
           {/* Main Content */}
           <div className="lg:col-span-3 space-y-8">
             {galleryImages.length > 0 && (
-              <ProjectGallery images={galleryImages} projectTitle={caseStudy.title} />
+              <ProjectGallery images={galleryImages} projectTitle={caseStudy.title || t("project.untitled")} />
             )}
 
             {/* Dynamic Content Sections */}
@@ -492,10 +496,10 @@ const CaseStudyDetail = () => {
               caseStudy.content_sections.map((section, index) => (
                 <section key={section.id || index} id={`section-${section.id || index}`} className="scroll-mt-24">
                   <div className="bg-surface dark:bg-surface rounded-lg shadow-sm border border-border dark:border-border-strong p-6">
-                    <h2 className="text-2xl font-bold text-text-primary dark:text-white mb-4">
-                      {section.title || `Section ${index + 1}`}
+                    <h2 dir="auto" className="text-2xl font-bold text-text-primary dark:text-white mb-4">
+                      {section.title || t("caseStudy.section", { n: index + 1 })}
                     </h2>
-                    <div className="prose prose-lg max-w-none text-text-secondary dark:text-white/70 whitespace-pre-wrap">
+                    <div dir="auto" className="prose prose-lg max-w-none text-text-secondary dark:text-white/70 whitespace-pre-wrap">
                       {section.content}
                     </div>
                   </div>
@@ -511,56 +515,56 @@ const CaseStudyDetail = () => {
                 <section id="project-details" className="scroll-mt-24">
                   <div className="bg-surface dark:bg-surface rounded-lg shadow-sm border border-border dark:border-border-strong p-8">
                     <h2 className="text-3xl font-bold text-text-primary dark:text-white mb-8">
-                      Project Details
+                      {t("caseStudy.details")}
                     </h2>
 
                     <div className="space-y-8">
                       {caseStudy.problem && (
-                        <div className="border-l-4 border-error pl-6">
+                        <div className="border-s-4 border-error ps-6">
                           <h3 className="text-xl font-semibold text-text-primary dark:text-white mb-4 flex items-center">
                             <Icon
                               name="AlertCircle"
                               size={20}
-                              className="mr-2 text-error"
+                              className="me-2 text-error"
                               strokeWidth={2}
                             />
-                            The Problem
+                            {t("caseStudy.problem")}
                           </h3>
-                          <div className="prose prose-lg max-w-none text-text-secondary dark:text-white/70 whitespace-pre-wrap">
+                          <div dir="auto" className="prose prose-lg max-w-none text-text-secondary dark:text-white/70 whitespace-pre-wrap">
                             {caseStudy.problem}
                           </div>
                         </div>
                       )}
 
                       {caseStudy.solution && (
-                        <div className="border-l-4 border-accent pl-6">
+                        <div className="border-s-4 border-accent ps-6">
                           <h3 className="text-xl font-semibold text-text-primary dark:text-white mb-4 flex items-center">
                             <Icon
                               name="Lightbulb"
                               size={20}
-                              className="mr-2 text-accent dark:text-accent-text"
+                              className="me-2 text-accent dark:text-accent-text"
                               strokeWidth={2}
                             />
-                            The Solution
+                            {t("caseStudy.solution")}
                           </h3>
-                          <div className="prose prose-lg max-w-none text-text-secondary dark:text-white/70 whitespace-pre-wrap">
+                          <div dir="auto" className="prose prose-lg max-w-none text-text-secondary dark:text-white/70 whitespace-pre-wrap">
                             {caseStudy.solution}
                           </div>
                         </div>
                       )}
 
                       {caseStudy.results && (
-                        <div className="border-l-4 border-success pl-6">
+                        <div className="border-s-4 border-success ps-6">
                           <h3 className="text-xl font-semibold text-text-primary dark:text-white mb-4 flex items-center">
                             <Icon
                               name="TrendingUp"
                               size={20}
-                              className="mr-2 text-success"
+                              className="me-2 text-success"
                               strokeWidth={2}
                             />
-                            Results & Impact
+                            {t("caseStudy.results")}
                           </h3>
-                          <div className="prose prose-lg max-w-none text-text-secondary dark:text-white/70 whitespace-pre-wrap">
+                          <div dir="auto" className="prose prose-lg max-w-none text-text-secondary dark:text-white/70 whitespace-pre-wrap">
                             {caseStudy.results}
                           </div>
                         </div>
@@ -575,7 +579,7 @@ const CaseStudyDetail = () => {
               <section id="testimonial" className="scroll-mt-24">
                 <div className="bg-surface dark:bg-surface rounded-lg shadow-sm border border-border dark:border-border-strong p-8">
                   <h2 className="text-3xl font-bold text-text-primary dark:text-white mb-8 text-center">
-                    Client Testimonial
+                    {t("caseStudy.clientTestimonial")}
                   </h2>
 
                   <div className="max-w-4xl mx-auto">
@@ -586,12 +590,12 @@ const CaseStudyDetail = () => {
                         className="text-accent mx-auto mb-6 dark:text-accent-text"
                         strokeWidth={1}
                       />
-                      <blockquote className="text-xl text-text-primary dark:text-white leading-relaxed mb-8 italic">
-                        "{caseStudy.testimonial.quote}"
+                      <blockquote dir="auto" className="text-xl text-text-primary dark:text-white leading-relaxed mb-8 italic">
+                        {t("caseStudy.quoteOpen")}{caseStudy.testimonial.quote}{t("caseStudy.quoteClose")}
                       </blockquote>
                     </div>
 
-                    <div className="flex items-center justify-center space-x-4">
+                    <div className="flex items-center justify-center space-x-4 rtl:space-x-reverse">
                       <Image
                         src={caseStudy.testimonial.avatar}
                         alt={caseStudy.testimonial.author}
@@ -600,11 +604,13 @@ const CaseStudyDetail = () => {
                         className="w-16 h-16 rounded-full object-cover"
                       />
                       <div>
-                        <h4 className="font-semibold text-text-primary dark:text-white">
+                        <h4 dir="auto" className="font-semibold text-text-primary dark:text-white">
                           {caseStudy.testimonial.author}
                         </h4>
-                        <p className="text-text-secondary dark:text-white/70">
-                          {caseStudy.testimonial.position}
+                        <p dir="auto" className="text-text-secondary dark:text-white/70">
+                          {caseStudy.testimonial.company
+                            ? t("caseStudy.roleAt", { role: caseStudy.testimonial.role, company: caseStudy.testimonial.company })
+                            : caseStudy.testimonial.role}
                         </p>
                       </div>
                     </div>

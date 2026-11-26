@@ -8,12 +8,37 @@
   descent-override: 22.52%;
   line-gap-override: 0%;
   size-adjust: 107.12%;
+  /* Latin only: Arial also has Arabic letters, and without this range they
+     would be drawn in Arial instead of the Arabic web font below. */
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-205F, U+2070-209F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 body {
   margin: 0;
   padding: 0;
-  font-family: Inter, 'Inter Fallback', system-ui, sans-serif;
+  /* Inter has no Arabic letters, so Arabic text (UI strings on /ar and Arabic
+     CMS content anywhere) falls through to IBM Plex Sans Arabic. */
+  font-family: Inter, 'Inter Fallback', 'IBM Plex Sans Arabic', system-ui, sans-serif;
+}
+
+/* Arabic pages. Letter spacing breaks the joins between Arabic letters, and
+   browsers fake italics for Arabic by slanting the glyphs. */
+html[dir="rtl"] body,
+html[dir="rtl"] body * {
+  letter-spacing: normal !important;
+}
+html[dir="rtl"] .italic {
+  font-style: normal;
+}
+html[lang="ar"] body {
+  line-height: 1.75;
+}
+
+/* Text that must stay left-to-right inside Arabic pages (emails, phone
+   numbers, URLs, code) without pulling the surrounding text around. */
+.ltr-isolate {
+  direction: ltr;
+  unicode-bidi: isolate;
 }
 
 * {

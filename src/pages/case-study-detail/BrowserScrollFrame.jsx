@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Icon from 'components/AppIcon';
 import { useReducedMotion } from 'hooks/useReducedMotion';
+import { useI18n } from 'i18n/I18nContext';
 import { SCROLL_SPEED, frameScrollAllowed } from 'lib/screenshotLayout.mjs';
 import {
   FRAME_SIZES,
@@ -52,6 +53,7 @@ const BrowserScrollFrame = ({
 }) => {
   const reduced = useReducedMotion();
   const fineHover = useFineHover();
+  const { t } = useI18n();
   const partsKey = `${src || ''}::${Array.isArray(partList) ? partList.map((part) => part.src).join('|') : ''}`;
   const parts = useMemo(() => {
     if (Array.isArray(partList) && partList.length) return partList;
@@ -332,17 +334,17 @@ const BrowserScrollFrame = ({
     settleSlice(event.currentTarget, index, generationRef.current);
   };
 
-  const hint = phase === 'error'
-    ? 'Preview unavailable'
+  const hint = t(phase === 'error'
+    ? 'frame.unavailable'
     : phase !== 'ready'
-      ? 'Loading preview'
+      ? 'frame.loading'
       : holding
-        ? 'Loading the next section'
+        ? 'frame.loadingNext'
         : reduced
-          ? 'Scroll inside the frame to move through the page'
+          ? 'frame.scrollInside'
           : fineHover
-            ? 'Hover to scroll the page'
-            : 'Scrolls while this preview is on screen';
+            ? 'frame.hover'
+            : 'frame.auto');
 
   const showPlaceholder = phase === 'loading';
   const readyCount = contiguousReadyCount(ready);
@@ -361,7 +363,7 @@ const BrowserScrollFrame = ({
           <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
           <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
         </div>
-        <div className="mx-auto flex h-7 min-w-0 max-w-xs flex-1 items-center justify-center truncate rounded-md bg-white/10 px-3 text-center text-xs font-medium text-white/80 sm:max-w-sm">
+        <div dir="auto" className="mx-auto flex h-7 min-w-0 max-w-xs flex-1 items-center justify-center truncate rounded-md bg-white/10 px-3 text-center text-xs font-medium text-white/80 sm:max-w-sm">
           {projectName}
         </div>
         {reduced ? (
@@ -369,7 +371,7 @@ const BrowserScrollFrame = ({
             type="button"
             onClick={onOpen}
             className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-            aria-label={`Open ${title} full screen`}
+            aria-label={t('gallery.openFull', { title })}
           >
             <Icon name="ZoomIn" size={16} />
           </button>
@@ -470,7 +472,7 @@ const BrowserScrollFrame = ({
                       reduced ? '' : 'animate-spin'
                     }`}
                   />
-                  Loading preview
+                  {t('frame.loading')}
                 </span>
               </div>
             </div>
@@ -479,7 +481,7 @@ const BrowserScrollFrame = ({
 
         {phase === 'error' && (
           <div className="absolute inset-0 z-[2] flex items-center justify-center bg-[#10182c] px-6 text-center text-sm text-white/70">
-            Preview unavailable
+            {t('frame.unavailable')}
           </div>
         )}
 
@@ -488,7 +490,7 @@ const BrowserScrollFrame = ({
             type="button"
             onClick={onOpen}
             className="absolute inset-0 z-[3] cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white"
-            aria-label={`Open ${title} full screen`}
+            aria-label={t('gallery.openFull', { title })}
           />
         )}
       </div>

@@ -7,6 +7,7 @@ import ScrollToTop from "components/ScrollToTop";
 import ErrorBoundary from "components/ErrorBoundary";
 import RequireAuth from "components/RequireAuth";
 import { pageLoaders, prefetchPublicPagesWhenIdle } from "lib/routeChunks";
+import { I18nProvider, useI18n } from "i18n/I18nContext";
 
 // Lazy-loaded page imports for code splitting
 const Homepage = lazy(pageLoaders.home);
@@ -36,11 +37,25 @@ const LegacyProjectRedirect = () => {
 // Shown only on the very first page load. Later navigations run as React
 // transitions (see `future` below), so the current page stays on screen until
 // the next one is ready instead of being swapped for this spinner.
-const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-background pt-20" role="status" aria-label="Loading">
-    <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
-  </div>
-);
+const PageLoader = () => {
+  const { t } = useI18n();
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-background pt-20" role="status" aria-label={t('common.loading')}>
+      <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
+};
+
+// Public pages, rendered at their English address and again under /ar.
+// The language itself comes from the URL (I18nProvider), so the same page
+// components serve both.
+const localizedRoutes = (prefix) => [
+  <Route key={`${prefix}home`} path={prefix || "/"} element={<Homepage />} />,
+  <Route key={`${prefix}projects`} path={`${prefix}/projects`} element={<PortfolioGallery />} />,
+  <Route key={`${prefix}project`} path={`${prefix}/projects/:id`} element={<CaseStudyDetail />} />,
+  <Route key={`${prefix}about`} path={`${prefix}/about-story`} element={<AboutStory />} />,
+  <Route key={`${prefix}contact`} path={`${prefix}/contact-hub`} element={<ContactHub />} />,
+];
 
 const Routes = () => {
   useEffect(() => {
@@ -49,20 +64,18 @@ const Routes = () => {
 
   return (
     <BrowserRouter future={{ v7_startTransition: true }}>
+      <I18nProvider>
       <ErrorBoundary>
         <ScrollToTop />
         <Layout>
           <Suspense fallback={<PageLoader />}>
             <RouterRoutes>
               {/* Public routes */}
-              <Route path="/" element={<Homepage />} />
+              {localizedRoutes("")}
+              {localizedRoutes("/ar")}
               <Route path="/homepage" element={<Navigate to="/" replace />} />
-              <Route path="/projects" element={<PortfolioGallery />} />
               <Route path="/portfolio-gallery" element={<Navigate to="/projects" replace />} />
-              <Route path="/projects/:id" element={<CaseStudyDetail />} />
               <Route path="/case-study-detail/:id" element={<LegacyProjectRedirect />} />
-              <Route path="/about-story" element={<AboutStory />} />
-              <Route path="/contact-hub" element={<ContactHub />} />
               <Route path="/login" element={<Login />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               
@@ -114,6 +127,7 @@ const Routes = () => {
           </Suspense>
         </Layout>
       </ErrorBoundary>
+      </I18nProvider>
     </BrowserRouter>
   );
 };

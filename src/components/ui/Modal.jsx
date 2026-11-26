@@ -2,9 +2,11 @@ import React, { useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Icon from 'components/AppIcon';
 import { useFocusTrap } from 'hooks/useFocusTrap';
+import { useI18n } from 'i18n/I18nContext';
 
 const Modal = ({ isOpen, onClose, title, children, footer }) => {
   const modalRef = useRef(null);
+  const { t } = useI18n();
   const focusTrapRef = useFocusTrap(isOpen);
 
   const combinedRef = useCallback((node) => {
@@ -55,7 +57,7 @@ const Modal = ({ isOpen, onClose, title, children, footer }) => {
             <button
               onClick={onClose}
               className="p-2 hover:bg-primary-100 dark:hover:bg-primary-800 rounded-lg transition-colors text-text-secondary hover:text-text-primary dark:hover:bg-surface-elevated"
-              aria-label="Close modal"
+              aria-label={t('modal.close')}
             >
               <Icon name="X" size={20} />
             </button>
@@ -66,7 +68,7 @@ const Modal = ({ isOpen, onClose, title, children, footer }) => {
 
           {/* Footer */}
           {footer && (
-            <div className="flex space-x-3 mt-6">
+            <div className="flex space-x-3 rtl:space-x-reverse mt-6">
               {footer}
             </div>
           )}

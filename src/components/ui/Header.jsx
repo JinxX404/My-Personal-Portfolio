@@ -4,18 +4,24 @@ import Icon from '../AppIcon';
 import ThemeToggle from './ThemeToggle';
 import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
 import { prefetchPath } from 'lib/routeChunks';
+import { useI18n } from 'i18n/I18nContext';
+import { stripLanguage } from 'i18n/paths.mjs';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const { profile } = usePortfolioSettings();
+  const { t, lp } = useI18n();
+  // Active-link and header-style checks use the path without the /ar prefix.
+  const pathname = stripLanguage(location.pathname);
 
   const navigationItems = [
-    { name: 'Home', path: '/', icon: 'Home' },
-    { name: 'Portfolio', path: '/projects', icon: 'Briefcase' },
-    { name: 'About', path: '/about-story', icon: 'User' },
-    { name: 'Contact', path: '/contact-hub', icon: 'Mail' }
+    { name: t('nav.home'), path: '/', icon: 'Home' },
+    { name: t('nav.portfolio'), path: '/projects', icon: 'Briefcase' },
+    { name: t('nav.about'), path: '/about-story', icon: 'User' },
+    { name: t('nav.contact'), path: '/contact-hub', icon: 'Mail' }
   ];
 
   // Throttle scroll handler for performance
@@ -69,17 +75,17 @@ const Header = () => {
 
   // A project page counts as "Portfolio"; Home only matches the root.
   const isActivePath = (path) => {
-    if (path === '/') return location.pathname === '/';
-    return location.pathname === path || location.pathname.startsWith(`${path}/`);
+    if (path === '/') return pathname === '/';
+    return pathname === path || pathname.startsWith(`${path}/`);
   };
 
   // Only the home hero is designed to sit under a see-through header. Other
   // pages (project heroes are dark in both themes) get the solid bar at once.
-  const isSolid = isScrolled || isMobileMenuOpen || location.pathname !== '/';
+  const isSolid = isScrolled || isMobileMenuOpen || pathname !== '/';
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 border-b transition-theme ${
+      className={`fixed top-0 start-0 end-0 z-50 border-b transition-theme ${
         isSolid
           ? `${isScrolled || isMobileMenuOpen ? 'bg-surface/90 backdrop-blur-glass' : 'bg-surface'} border-border/70 dark:border-border-strong/40 shadow-md`
           : 'bg-transparent border-transparent'
@@ -89,7 +95,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link 
-            to="/" 
+            to={lp('/')}
             className="flex items-center gap-3 group transition-theme"
             onClick={closeMobileMenu}
           >
@@ -102,22 +108,22 @@ const Header = () => {
                   strokeWidth={2.5}
                 />
               </div>
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-success-500 rounded-full animate-pulse-soft"></div>
+              <div className="absolute -top-1 -end-1 w-3 h-3 bg-success-500 rounded-full animate-pulse-soft"></div>
             </div>
             <div className="hidden sm:block">
               <span className="block text-xl font-bold text-text-primary group-hover:text-accent-500 transition-colors duration-200">
-                {profile?.full_name || 'Moataz Mohammed'}
+                {profile?.full_name || t('site.defaultName')}
               </span>
-              <p className="text-xs text-text-secondary font-mono transition-theme">{profile?.title || 'Full-Stack .NET Developer'}</p>
+              <p className="text-xs text-text-secondary font-mono transition-theme">{profile?.title || t('site.defaultRole')}</p>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1" aria-label="Main">
+          <nav className="hidden lg:flex items-center gap-1" aria-label={t('nav.main')}>
             {navigationItems.map((item) => (
               <Link
                 key={item.path}
-                to={item.path}
+                to={lp(item.path)}
                 onMouseEnter={() => prefetchPath(item.path)}
                 onFocus={() => prefetchPath(item.path)}
                 aria-current={isActivePath(item.path) ? 'page' : undefined}
@@ -127,7 +133,7 @@ const Header = () => {
                     : 'text-text-secondary hover:text-text-primary hover:bg-surface/60 dark:hover:bg-background/60'
                 }`}
               >
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 rtl:space-x-reverse">
                   <Icon 
                     name={item.icon} 
                     size={16} 
@@ -144,13 +150,14 @@ const Header = () => {
 
           {/* CTA Button + Theme Toggle */}
           <div className="hidden lg:flex items-center gap-3">
+            <LanguageSwitcher />
             <ThemeToggle />
 
             <Link
-              to="/contact-hub"
+              to={lp('/contact-hub')}
               className="btn-primary text-sm px-5 py-2 rounded-xl"
             >
-              Let's Talk
+              {t('nav.cta')}
             </Link>
           </div>
 
@@ -161,7 +168,7 @@ const Header = () => {
               type="button"
               onClick={toggleMobileMenu}
               className="p-2.5 rounded-lg text-text-primary hover:text-accent-500 hover:bg-surface/80 dark:hover:bg-background/60 transition-theme dark:hover:text-accent-text"
-              aria-label="Toggle mobile menu"
+              aria-label={t('nav.toggleMenu')}
               aria-expanded={isMobileMenuOpen}
               aria-controls="mobile-navigation"
             >
@@ -188,11 +195,11 @@ const Header = () => {
             {navigationItems.map((item, index) => (
               <Link
                 key={item.path}
-                to={item.path}
+                to={lp(item.path)}
                 onClick={closeMobileMenu}
                 onTouchStart={() => prefetchPath(item.path)}
                 aria-current={isActivePath(item.path) ? 'page' : undefined}
-                className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium transition-theme ${
+                className={`flex items-center space-x-3 rtl:space-x-reverse px-4 py-3 rounded-lg text-base font-medium transition-theme ${
                   isActivePath(item.path)
                     ? 'text-accent-500 bg-accent-500/10 border border-accent-500/20 dark:text-accent-text dark:bg-accent-subtle dark:border-accent-fill/40'
                     : 'text-text-secondary hover:text-text-primary hover:bg-surface/70 dark:hover:bg-background/60'
@@ -206,7 +213,7 @@ const Header = () => {
                 />
                 <span>{item.name}</span>
                 {isActivePath(item.path) && (
-                  <div className="ml-auto w-2 h-2 bg-cta rounded-full"></div>
+                  <div className="ms-auto w-2 h-2 bg-cta rounded-full"></div>
                 )}
               </Link>
             ))}
@@ -214,14 +221,15 @@ const Header = () => {
             {/* Mobile CTA */}
             <div className="pt-4 border-t border-border dark:border-border-strong/40 transition-theme">
               <Link
-                to="/contact-hub"
+                to={lp('/contact-hub')}
                 onClick={closeMobileMenu}
-                className="flex items-center justify-center space-x-2 w-full btn-primary"
+                className="flex items-center justify-center space-x-2 rtl:space-x-reverse w-full btn-primary"
               >
                 <Icon name="MessageCircle" size={18} strokeWidth={2} />
-                <span>Let's Talk</span>
+                <span>{t('nav.cta')}</span>
               </Link>
-              <ThemeToggle variant="row" className="mt-4" />
+              <LanguageSwitcher variant="row" className="mt-4" onNavigate={closeMobileMenu} />
+              <ThemeToggle variant="row" className="mt-3" />
             </div>
           </div>
         </div>

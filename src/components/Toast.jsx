@@ -2,9 +2,12 @@
 import React from 'react';
 import Icon from 'components/AppIcon';
 import { useToast } from 'context/ToastContext';
+import { translate } from 'i18n/I18nContext';
 
 const Toast = () => {
   const { toasts, removeToast, pauseToast, resumeToast } = useToast();
+  // Rendered outside the router (App.jsx), so the language comes from <html lang>.
+  const lang = typeof document !== 'undefined' && document.documentElement.lang === 'ar' ? 'ar' : 'en';
 
   const iconMap = {
     success: 'CheckCircle',
@@ -26,7 +29,7 @@ const Toast = () => {
     // Plain CSS entrance (see .toast-enter) so the global shell does not
     // pull framer-motion into the first page load.
     <div
-      className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"
+      className="fixed bottom-4 end-4 z-50 flex flex-col gap-2 pointer-events-none"
       role="status"
       aria-live="polite"
     >
@@ -42,13 +45,13 @@ const Toast = () => {
               size={20} 
               className="flex-shrink-0"
             />
-            <p className="flex-1 text-sm font-medium">{toast.message}</p>
+            <p dir="auto" className="flex-1 text-sm font-medium">{toast.message}</p>
             <button
               type="button"
               onClick={() => removeToast(toast.id)}
               className="flex-shrink-0 hover:bg-white/20 p-1 rounded transition-colors"
-              aria-label="Dismiss notification"
-              title="Dismiss"
+              aria-label={translate(lang, 'toast.dismissLabel')}
+              title={translate(lang, 'toast.dismiss')}
             >
               <Icon name="X" size={16} />
             </button>

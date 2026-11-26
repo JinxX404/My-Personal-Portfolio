@@ -4,6 +4,7 @@ import Icon from 'components/AppIcon';
 import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
 import { useProjects } from 'context/ProjectsContext';
 import { safeHref } from 'lib/safeUrl';
+import { useI18n } from 'i18n/I18nContext';
 
 const codeSnippets = [
   {
@@ -17,7 +18,7 @@ app.MapGet("/api/health", () => Results.Ok(new
 }));
 
 app.Run();`,
-    output: '// ASP.NET Core minimal API'
+    output: 'home.hero.snippet1'
   },
   {
     language: 'EF Core',
@@ -28,7 +29,7 @@ app.Run();`,
         .OrderByDescending(order => order.CreatedAt)
         .ToListAsync();
 }`,
-    output: '// Query the data the UI actually needs'
+    output: 'home.hero.snippet2'
   },
   {
     language: 'ASP.NET',
@@ -40,13 +41,14 @@ app.Run();`,
     return Results.Created(
         $"/api/invoices/{invoice.Id}", invoice);
 });`,
-    output: '// A small endpoint with a real service behind it'
+    output: 'home.hero.snippet3'
   }
 ];
 
 const HeroSection = ({ shouldReduceMotion }) => {
   const { profile, freelanceProjects, isReady } = usePortfolioSettings();
   const { projects, loading: projectsLoading } = useProjects();
+  const { t, lp, formatNumber } = useI18n();
   // Until the real profile is known (first visit only; later visits use the
   // cached copy) keep its space but hide placeholder text, so the hero never
   // shows a default title or the wrong availability and then swaps it.
@@ -75,19 +77,20 @@ const HeroSection = ({ shouldReduceMotion }) => {
     <section className="relative min-h-screen flex items-center justify-center bg-background dark:bg-background text-text-primary transition-theme overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-70 dark:opacity-60">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-accent-500/20 dark:bg-accent-500/25 rounded-full mix-blend-screen filter blur-3xl animate-pulse"></div>
-        <div className="absolute top-40 right-16 w-72 h-72 bg-cta-400/20 dark:bg-cta-400/30 rounded-full mix-blend-screen filter blur-3xl animate-pulse animation-delay-200"></div>
-        <div className="absolute -bottom-8 left-32 w-72 h-72 bg-success/15 dark:bg-success-500/25 rounded-full mix-blend-screen filter blur-3xl animate-pulse animation-delay-400"></div>
+        <div className="absolute top-20 start-10 w-72 h-72 bg-accent-500/20 dark:bg-accent-500/25 rounded-full mix-blend-screen filter blur-3xl animate-pulse"></div>
+        <div className="absolute top-40 end-16 w-72 h-72 bg-cta-400/20 dark:bg-cta-400/30 rounded-full mix-blend-screen filter blur-3xl animate-pulse animation-delay-200"></div>
+        <div className="absolute -bottom-8 start-32 w-72 h-72 bg-success/15 dark:bg-success-500/25 rounded-full mix-blend-screen filter blur-3xl animate-pulse animation-delay-400"></div>
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Side - Interactive Code Demo */}
           <div className="order-2 lg:order-1 hidden lg:block">
-            <div className="glass-panel rounded-2xl overflow-hidden border border-border dark:border-border-strong/40 max-w-full">
+            {/* Code is left-to-right on both sites. */}
+            <div dir="ltr" className="glass-panel rounded-2xl overflow-hidden border border-border dark:border-border-strong/40 max-w-full">
               {/* Terminal Header */}
               <div className="flex items-center justify-between px-4 py-3 bg-surface/70 dark:bg-background/50 border-b border-border dark:border-border-strong/40">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 rtl:space-x-reverse">
                   <div className="w-3 h-3 bg-error-500 rounded-full"></div>
                   <div className="w-3 h-3 bg-warning-500 rounded-full"></div>
                   <div className="w-3 h-3 bg-success-500 rounded-full"></div>
@@ -95,9 +98,9 @@ const HeroSection = ({ shouldReduceMotion }) => {
                 <div className="text-sm text-text-secondary font-mono truncate">
                   {currentSnippet.language}
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 rtl:space-x-reverse">
                   <Icon name="Play" size={16} className="text-success-800 dark:text-success-text" strokeWidth={2} />
-                  <span className="text-xs text-success-800 dark:text-success-text hidden sm:inline">Running</span>
+                  <span className="text-xs text-success-800 dark:text-success-text hidden sm:inline">{t('home.hero.running')}</span>
                 </div>
               </div>
 
@@ -107,13 +110,13 @@ const HeroSection = ({ shouldReduceMotion }) => {
                   <code>{currentSnippet.code}</code>
                 </pre>
                 <div className="mt-4 pt-4 border-t border-border dark:border-border-strong/40">
-                  <p className="text-success-800 dark:text-success-text text-xs">{currentSnippet.output}</p>
+                  <p className="text-success-800 dark:text-success-text text-xs">// <bdi>{t(currentSnippet.output)}</bdi></p>
                 </div>
               </div>
 
               {/* Language Indicators */}
               <div className="px-4 sm:px-6 pb-4">
-                <div className="flex space-x-2 overflow-x-auto">
+                <div className="flex space-x-2 rtl:space-x-reverse overflow-x-auto">
                   {codeSnippets.map((snippet, index) => (
                     <button
                       key={index}
@@ -133,67 +136,67 @@ const HeroSection = ({ shouldReduceMotion }) => {
           </div>
 
           {/* Right Side - Hero Content */}
-          <div className="order-1 lg:order-2 text-center lg:text-left transition-theme">
+          <div className="order-1 lg:order-2 text-center lg:text-start transition-theme">
             <div className={`mb-6 ${settled}`}>
               <div className="inline-flex items-center px-4 py-2 bg-accent-500/10 text-accent-500 rounded-full text-sm font-medium mb-4 dark:text-accent-text">
-                <Icon name="Code2" size={16} strokeWidth={2} className="mr-2" />
-                {profile?.availability === 'available' ? 'Available for new opportunities' : 
-                 profile?.availability === 'busy' ? 'Limited availability' : 'Currently unavailable'}
+                <Icon name="Code2" size={16} strokeWidth={2} className="me-2" />
+                {profile?.availability === 'available' ? t('home.hero.available') :
+                 profile?.availability === 'busy' ? t('availability.busy') : t('home.hero.unavailable')}
               </div>
               
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 text-text-primary dark:text-white">
-                {(profile?.title || 'Full-Stack .NET Developer').split(' ').map((word, index) => (
+              <h1 dir="auto" className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 text-text-primary dark:text-white">
+                {(profile?.title || t('site.defaultRole')).split(' ').map((word, index) => (
                   <span key={index} className="block">{word}</span>
                 ))}
               </h1>
-              <p className="text-xl md:text-2xl text-text-secondary max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                {profile?.tagline || 'Full-stack .NET developer building APIs, data-backed applications, and the interfaces in front of them.'}
+              <p dir="auto" className="text-xl md:text-2xl text-text-secondary max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                {profile?.tagline || t('home.hero.defaultTagline')}
               </p>
             </div>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row flex-wrap gap-4 justify-center lg:justify-start mb-8">
               <Link
-                to="/projects"
-                className="btn-primary text-base px-6 py-3 inline-flex items-center justify-center space-x-2"
+                to={lp('/projects')}
+                className="btn-primary text-base px-6 py-3 inline-flex items-center justify-center space-x-2 rtl:space-x-reverse"
               >
                 <Icon name="Eye" size={18} strokeWidth={2} />
-                <span>View My Work</span>
+                <span>{t('home.hero.viewWork')}</span>
               </Link>
               <Link
-                to="/contact-hub"
-                className="btn-secondary text-base px-6 py-3 inline-flex items-center justify-center space-x-2"
+                to={lp('/contact-hub')}
+                className="btn-secondary text-base px-6 py-3 inline-flex items-center justify-center space-x-2 rtl:space-x-reverse"
               >
                 <Icon name="MessageCircle" size={18} strokeWidth={2} />
-                <span>Let's Connect</span>
+                <span>{t('home.hero.connect')}</span>
               </Link>
               {cvUrl && (
                 <a
                   href={cvUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-secondary text-base px-6 py-3 inline-flex items-center justify-center space-x-2"
+                  className="btn-secondary text-base px-6 py-3 inline-flex items-center justify-center space-x-2 rtl:space-x-reverse"
                 >
                   <Icon name="Download" size={18} strokeWidth={2} />
-                  <span>Download CV</span>
+                  <span>{t('common.downloadCv')}</span>
                 </a>
               )}
             </div>
 
             {/* Quick Stats */}
             <div className={`grid grid-cols-3 gap-6 max-w-xl mx-auto lg:mx-0 ${isReady && !projectsLoading ? '' : 'invisible'}`}>
-              <div className="text-center lg:text-left">
-                <div className="text-2xl font-bold text-accent-500 dark:text-accent-text">{profile?.experience_years ? `${profile.experience_years}+` : '—'}</div>
-                <div className="text-sm text-text-secondary">Years Experience</div>
+              <div className="text-center lg:text-start">
+                <div className="text-2xl font-bold text-accent-500 dark:text-accent-text">{profile?.experience_years ? `${formatNumber(Number(profile.experience_years) || 0)}+` : '—'}</div>
+                <div className="text-sm text-text-secondary">{t('home.hero.years')}</div>
               </div>
-              <div className="text-center lg:text-left">
-                <div className="text-2xl font-bold text-accent-500 dark:text-accent-text">{projects?.filter(p => p.publishing_status === 'published').length || 0}+</div>
-                <div className="text-sm text-text-secondary">Projects Delivered</div>
+              <div className="text-center lg:text-start">
+                <div className="text-2xl font-bold text-accent-500 dark:text-accent-text">{formatNumber(projects?.filter(p => p.publishing_status === 'published').length || 0)}+</div>
+                <div className="text-sm text-text-secondary">{t('home.hero.delivered')}</div>
               </div>
               {freelanceProjects > 0 && (
-                <div className="text-center lg:text-left">
-                  <div className="text-2xl font-bold text-success">{freelanceProjects}+</div>
-                  <div className="text-sm text-text-secondary">Freelance</div>
+                <div className="text-center lg:text-start">
+                  <div className="text-2xl font-bold text-success">{formatNumber(freelanceProjects)}+</div>
+                  <div className="text-sm text-text-secondary">{t('home.hero.freelance')}</div>
                 </div>
               )}
             </div>

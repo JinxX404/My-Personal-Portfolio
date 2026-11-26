@@ -252,22 +252,29 @@ const ICONS = {
     ZoomIn,
 };
 
+// Icons that point along the reading direction. On right-to-left pages they
+// are mirrored, so "next" and "back" arrows point the way the page reads.
+// Pass `flip={false}` for icons that mean a physical direction.
+const DIRECTIONAL = new Set(['ArrowLeft', 'ArrowRight', 'ChevronLeft', 'ChevronRight', 'Send', 'Reply']);
+
 function Icon({
     name,
     size = 24,
     color = 'currentColor',
     className = '',
     strokeWidth = 2,
+    flip = true,
     ...props
 }) {
     const IconComponent = ICONS[name] || HelpCircle;
+    const classes = flip && DIRECTIONAL.has(name) ? `rtl:-scale-x-100 ${className}`.trim() : className;
 
     return (
         <IconComponent
             size={size}
             color={color}
             strokeWidth={strokeWidth}
-            className={className}
+            className={classes}
             {...props}
         />
     );
@@ -279,6 +286,7 @@ Icon.propTypes = {
     color: PropTypes.string,
     className: PropTypes.string,
     strokeWidth: PropTypes.number,
+    flip: PropTypes.bool,
 };
 
 export default Icon;

@@ -129,8 +129,8 @@ module.exports = {
         'banner-to': withOpacity('--color-banner-to'),
       },
       fontFamily: {
-        'sans': ['Inter', 'Inter Fallback', 'system-ui', 'sans-serif'],
-        'mono': ['JetBrains Mono', 'monospace'],
+        'sans': ['Inter', 'Inter Fallback', 'IBM Plex Sans Arabic', 'system-ui', 'sans-serif'],
+        'mono': ['JetBrains Mono', 'IBM Plex Sans Arabic', 'monospace'],
       },
       fontSize: {
         'xs': ['0.75rem', { lineHeight: '1rem' }],

@@ -10,6 +10,7 @@ import { useDebounce } from 'hooks/useDebounce';
 import { safeHref } from 'lib/safeUrl';
 import TiltCard from 'components/TiltCard';
 import { coverForProject } from 'lib/projectMedia';
+import { useI18n } from 'i18n/I18nContext';
 
 const categoryIconMap = {
   'Web Apps': 'Monitor',
@@ -31,6 +32,7 @@ const PortfolioGallery = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const PAGE_SIZE = 20;
+  const { t, lp, formatNumber } = useI18n();
 
   const transformProjects = (projects) => {
     return projects.map((project) => {
@@ -38,7 +40,7 @@ const PortfolioGallery = () => {
       const tags = Array.isArray(project.tags) ? project.tags : [];
       const metrics = Array.isArray(project.metrics) ? project.metrics : [];
 
-      let metricsLabel = project.results || 'Proven Results';
+      let metricsLabel = project.results || t('projects.provenResults');
       if (metrics.length) {
         const metric = metrics[0];
         if (typeof metric === 'string') {
@@ -50,10 +52,10 @@ const PortfolioGallery = () => {
 
       return {
         id: project.id,
-        title: project.title || 'Untitled Project',
-        category: project.category || 'General',
+        title: project.title || t('project.untitled'),
+        category: project.category || t('projects.general'),
         technologies,
-        description: project.description || 'No description available yet.',
+        description: project.description || t('projects.noDescription'),
         image: coverForProject(project),
         metrics: metricsLabel,
         featured: Boolean(project.featured),
@@ -78,7 +80,7 @@ const PortfolioGallery = () => {
     if (!result.success) {
       setPortfolioProjects([]);
       setHasMore(false);
-      setLoadError(result.error || 'Projects could not be loaded.');
+      setLoadError(result.error || t('projects.loadError'));
     } else if (Array.isArray(result.data) && result.data.length) {
       setPortfolioProjects(transformProjects(result.data));
       setHasMore(result.data.length >= PAGE_SIZE || (result.count && result.data.length < result.count));
@@ -142,7 +144,7 @@ const PortfolioGallery = () => {
     }
     if (!projectsLoading) loadInitialProjects();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listedProjects, projectsLoading, useSupabase]);
+  }, [listedProjects, projectsLoading, useSupabase, t]);
 
 
   const displayProjects = portfolioProjects;
@@ -150,19 +152,20 @@ const PortfolioGallery = () => {
   const filterCategories = useMemo(() => {
     const counts = new Map();
     displayProjects.forEach((project) => {
-      const category = project.category || 'General';
+      const category = project.category || t('projects.general');
       counts.set(category, (counts.get(category) || 0) + 1);
     });
 
     return [
-      { name: 'All', icon: 'Grid3X3', count: displayProjects.length },
+      { name: 'All', label: t('projects.all'), icon: 'Grid3X3', count: displayProjects.length },
       ...Array.from(counts.entries()).map(([name, count]) => ({
         name,
+        label: name,
         icon: categoryIconMap[name] || 'Folder',
         count
       }))
     ];
-  }, [displayProjects]);
+  }, [displayProjects, t]);
 
   const techFilters = useMemo(() => {
     const techs = new Set();
@@ -224,13 +227,13 @@ const PortfolioGallery = () => {
         
         {/* Overlay Actions */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="flex space-x-3">
+          <div className="flex space-x-3 rtl:space-x-reverse">
             <button
               type="button"
               onClick={() => setSelectedProject(project)}
               className="bg-surface/90 dark:bg-surface hover:bg-surface dark:hover:bg-surface/80 text-text-primary p-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
-              aria-label={`Preview ${project.title}`}
-              title={`Preview ${project.title}`}
+              aria-label={t('projects.preview', { title: project.title })}
+              title={t('projects.preview', { title: project.title })}
             >
               <Icon name="Eye" size={20} strokeWidth={2} />
             </button>
@@ -240,8 +243,8 @@ const PortfolioGallery = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="bg-accent/90 hover:bg-accent text-white p-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
-              aria-label={`View live demo of ${project.title}`}
-              title={`View live demo of ${project.title}`}
+              aria-label={t('project.openDemoOf', { title: project.title })}
+              title={t('project.openDemoOf', { title: project.title })}
             >
               <Icon name="ExternalLink" size={20} strokeWidth={2} />
             </a>
@@ -252,8 +255,8 @@ const PortfolioGallery = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="bg-primary-600/90 hover:bg-primary-600 text-white p-3 rounded-full shadow-lg transform hover:scale-105 transition-all duration-200"
-              aria-label={`View source code of ${project.title} on GitHub`}
-              title={`View source code of ${project.title} on GitHub`}
+              aria-label={t('projects.sourceOf', { title: project.title })}
+              title={t('projects.sourceOf', { title: project.title })}
             >
               <Icon name="Github" size={20} strokeWidth={2} />
             </a>
@@ -263,15 +266,15 @@ const PortfolioGallery = () => {
 
         {/* Featured Badge */}
         {project.featured && (
-          <div className="absolute top-4 left-4 bg-cta text-white px-3 py-1 rounded-full text-sm font-semibold">
-            Featured
+          <div className="absolute top-4 start-4 bg-cta text-white px-3 py-1 rounded-full text-sm font-semibold">
+            {t('projects.featured')}
           </div>
         )}
         
         {/* In Progress Badge */}
         {project.publishingStatus === 'in_progress' && (
-          <div className="absolute top-4 right-4 bg-warning-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
-            In Progress
+          <div className="absolute top-4 end-4 bg-warning-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+            {t('projects.inProgress')}
           </div>
         )}
       </div>
@@ -280,15 +283,15 @@ const PortfolioGallery = () => {
       <div className="flex flex-1 flex-col p-6">
         <div>
           <div className="flex items-start justify-between mb-3">
-            <h3 className="text-xl font-bold text-text-primary group-hover:text-accent dark:group-hover:text-accent-text transition-colors duration-200">
+            <h3 dir="auto" className="text-xl font-bold text-text-primary group-hover:text-accent dark:group-hover:text-accent-text transition-colors duration-200">
               {project.title}
             </h3>
-            <span className="text-sm font-medium text-accent-700 bg-cta-50 dark:bg-accent-subtle dark:text-accent-text px-2 py-1 rounded-full">
+            <span dir="auto" className="shrink-0 text-sm font-medium text-accent-700 bg-cta-50 dark:bg-accent-subtle dark:text-accent-text px-2 py-1 rounded-full">
               {project.category}
             </span>
           </div>
 
-          <p className="text-text-secondary mb-4 line-clamp-3">
+          <p dir="auto" className="text-text-secondary mb-4 line-clamp-3">
             {project.description}
           </p>
 
@@ -297,6 +300,7 @@ const PortfolioGallery = () => {
             {project.technologies.map((tech, techIndex) => (
               <span
                 key={techIndex}
+                dir="auto"
                 className="text-xs font-medium text-accent-700 bg-accent-50 dark:bg-accent-900/30 px-2 py-1 rounded-full dark:text-accent-text"
               >
                 {tech}
@@ -307,10 +311,10 @@ const PortfolioGallery = () => {
 
         {/* Action Button */}
         <Link
-          to={`/projects/${project.id}`}
-          className="mt-auto inline-flex items-center space-x-2 text-accent hover:text-accent-700 font-semibold transition-colors duration-200 dark:text-accent-text dark:hover:text-accent-text"
+          to={lp(`/projects/${project.id}`)}
+          className="mt-auto inline-flex items-center space-x-2 rtl:space-x-reverse text-accent hover:text-accent-700 font-semibold transition-colors duration-200 dark:text-accent-text dark:hover:text-accent-text"
         >
-          <span>View Project</span>
+          <span>{t('project.view')}</span>
           <Icon name="ArrowRight" size={16} strokeWidth={2} />
         </Link>
       </div>
@@ -328,20 +332,19 @@ const PortfolioGallery = () => {
         <div className="max-w-7xl mx-auto text-center">
           <div>
             <h1 className="text-4xl md:text-6xl font-bold text-text-primary mb-6">
-              Selected <span className="text-gradient">Projects</span>
+              {t('projects.titleBefore')}<span className="text-gradient">{t('projects.titleHighlight')}</span>{t('projects.titleAfter')}
             </h1>
             <p className="text-xl text-text-secondary max-w-3xl mx-auto mb-8">
-              Client and personal work. Filter by type or technology, or search
-              for something specific.
+              {t('projects.subtitle')}
             </p>
-            <div className="flex items-center justify-center space-x-6 text-sm text-muted">
-              <div className="flex items-center space-x-2">
+            <div className="flex items-center justify-center space-x-6 rtl:space-x-reverse text-sm text-muted">
+              <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <Icon name="Code2" size={16} strokeWidth={2} />
-                <span>{displayProjects.length} Projects</span>
+                <span>{t('projects.count', { count: displayProjects.length, n: formatNumber(displayProjects.length) })}</span>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <Icon name="Star" size={16} strokeWidth={2} />
-                <span>{displayProjects.filter(p => p.featured).length} Featured</span>
+                <span>{t('projects.featuredCount', { count: displayProjects.filter(p => p.featured).length, n: formatNumber(displayProjects.filter(p => p.featured).length) })}</span>
               </div>
             </div>
           </div>
@@ -357,15 +360,16 @@ const PortfolioGallery = () => {
               <Icon 
                 name="Search" 
                 size={20} 
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted" 
+                className="absolute start-4 top-1/2 transform -translate-y-1/2 text-muted" 
                 strokeWidth={2}
               />
               <input
                 type="text"
-                placeholder="Search projects by name, technology, or description..."
+                placeholder={t('projects.searchPlaceholder')}
+                aria-label={t('projects.searchLabel')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent transition-all duration-200 bg-surface dark:bg-surface text-text-primary"
+                className="w-full ps-12 pe-4 py-3 border border-border rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent transition-all duration-200 bg-surface dark:bg-surface text-text-primary"
               />
             </div>
 
@@ -375,14 +379,14 @@ const PortfolioGallery = () => {
                 <button
                   key={category.name}
                   onClick={() => setActiveFilter(category.name)}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
+                  className={`flex items-center space-x-2 rtl:space-x-reverse px-4 py-2 rounded-lg font-medium transition-all duration-200 ${
                     activeFilter === category.name
                       ? 'bg-accent text-white shadow-md'
                       : 'bg-primary-50 dark:bg-primary-900/30 text-text-secondary dark:text-text-secondary hover:bg-primary-100 dark:hover:bg-primary-800/30'
                   }`}
                 >
                   <Icon name={category.icon} size={16} strokeWidth={2} />
-                  <span>{category.name}</span>
+                  <span dir="auto">{category.label}</span>
                   <span className={`text-xs px-2 py-0.5 rounded-full ${
                     activeFilter === category.name
                       ? 'bg-black/20 text-white' : 'bg-primary-100 dark:bg-primary-800/30 text-text-secondary dark:text-muted'
@@ -395,10 +399,11 @@ const PortfolioGallery = () => {
 
             {/* Tech Filters */}
             <div className="flex flex-wrap gap-2 mb-6">
-              <span className="text-sm font-medium text-muted mr-2">Technologies:</span>
+              <span className="text-sm font-medium text-muted me-2">{t('projects.technologies')}</span>
               {techFilters.map((tech) => (
                 <button
                   key={tech}
+                  dir="auto"
                   onClick={() => setSearchQuery(tech)}
                   className="text-xs font-medium text-accent-700 bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-800/30 px-3 py-1 rounded-full transition-colors duration-200 dark:text-accent-text"
                 >
@@ -409,21 +414,21 @@ const PortfolioGallery = () => {
 
             {/* View Controls */}
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 rtl:space-x-reverse">
                 <span className="text-sm font-medium text-muted">
-                  {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''} found
+                  {t('projects.found', { count: filteredProjects.length, n: formatNumber(filteredProjects.length) })}
                 </span>
               </div>
-              <div className="flex items-center space-x-2">
-                <span className="text-sm font-medium text-muted">View:</span>
+              <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                <span className="text-sm font-medium text-muted">{t('projects.view')}</span>
                 <div className="flex bg-primary-50 dark:bg-primary-900/30 rounded-lg p-1">
                   <button
                     onClick={() => setViewMode('grid')}
                     className={`p-2 rounded-md transition-all duration-200 ${
                       viewMode === 'grid' ? 'bg-surface dark:bg-surface text-accent shadow-sm' : 'text-text-secondary dark:text-text-secondary hover:text-text-primary dark:hover:text-text-primary'
                     }`}
-                    aria-label="Grid view"
-                    title="Grid view"
+                    aria-label={t('projects.gridView')}
+                    title={t('projects.gridView')}
                   >
                     <Icon name="Grid3X3" size={16} strokeWidth={2} />
                   </button>
@@ -432,8 +437,8 @@ const PortfolioGallery = () => {
                     className={`p-2 rounded-md transition-all duration-200 ${
                       viewMode === 'list' ? 'bg-surface dark:bg-surface text-accent shadow-sm' : 'text-text-secondary dark:text-text-secondary hover:text-text-primary dark:hover:text-text-primary'
                     }`}
-                    aria-label="List view"
-                    title="List view"
+                    aria-label={t('projects.listView')}
+                    title={t('projects.listView')}
                   >
                     <Icon name="List" size={16} strokeWidth={2} />
                   </button>
@@ -487,12 +492,12 @@ const PortfolioGallery = () => {
                     {isLoadingMore ? (
                       <>
                         <Icon name="Loader" size={18} className="animate-spin" />
-                        <span>Loading...</span>
+                        <span>{t('common.loadingDots')}</span>
                       </>
                     ) : (
                       <>
                         <Icon name="Plus" size={18} />
-                        <span>Load More Projects</span>
+                        <span>{t('projects.loadMore')}</span>
                       </>
                     )}
                   </button>
@@ -508,9 +513,9 @@ const PortfolioGallery = () => {
                 <div className="w-24 h-24 bg-primary-50 dark:bg-primary-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Icon name="Search" size={32} color="var(--color-muted)" strokeWidth={2} />
                 </div>
-                <h3 className="text-2xl font-bold text-text-primary mb-4">No Projects Found</h3>
+                <h3 className="text-2xl font-bold text-text-primary mb-4">{t('projects.noneTitle')}</h3>
                 <p className="text-text-secondary mb-6 max-w-md mx-auto">
-                  Try adjusting your search criteria or browse all projects to discover amazing work.
+                  {t('projects.noneBody')}
                 </p>
                 <button
                   type="button"
@@ -520,7 +525,7 @@ const PortfolioGallery = () => {
                   }}
                   className="btn-primary"
                 >
-                  View All Projects
+                  {t('projects.viewAllButton')}
                 </button>
               </motion.div>
             )}
@@ -556,9 +561,9 @@ const PortfolioGallery = () => {
                 <button
                   type="button"
                   onClick={() => setSelectedProject(null)}
-                  className="absolute top-4 right-4 bg-white/90 hover:bg-white text-primary-800 p-2 rounded-full shadow-lg transition-all duration-200 dark:bg-surface-elevated dark:hover:bg-surface dark:text-text-primary"
-                  aria-label="Close preview"
-                  title="Close preview"
+                  className="absolute top-4 end-4 bg-white/90 hover:bg-white text-primary-800 p-2 rounded-full shadow-lg transition-all duration-200 dark:bg-surface-elevated dark:hover:bg-surface dark:text-text-primary"
+                  aria-label={t('projects.closePreview')}
+                  title={t('projects.closePreview')}
                 >
                   <Icon name="X" size={20} strokeWidth={2} />
                 </button>
@@ -567,7 +572,7 @@ const PortfolioGallery = () => {
               <div className="p-8">
                 <div className="flex items-start justify-between mb-6">
                   <div>
-                    <h2 className="text-3xl font-bold text-primary-800 mb-2 dark:text-text-primary">
+                    <h2 dir="auto" className="text-3xl font-bold text-primary-800 mb-2 dark:text-text-primary">
                       {selectedProject.title}
                     </h2>
                     <span className="text-accent-700 bg-cta-50 px-3 py-1 rounded-full text-sm font-semibold dark:bg-accent-subtle dark:text-accent-text">
@@ -576,7 +581,7 @@ const PortfolioGallery = () => {
                   </div>
                 </div>
 
-                <p className="text-secondary-600 text-lg mb-6 dark:text-text-secondary">
+                <p dir="auto" className="text-secondary-600 text-lg mb-6 dark:text-text-secondary">
                   {selectedProject.description}
                 </p>
 
@@ -584,6 +589,7 @@ const PortfolioGallery = () => {
                   {selectedProject.technologies.map((tech, index) => (
                     <span
                       key={index}
+                      dir="auto"
                       className="text-sm font-medium text-accent-700 bg-accent-50 px-3 py-2 rounded-lg dark:text-accent-text dark:bg-accent-subtle"
                     >
                       {tech}
@@ -591,24 +597,24 @@ const PortfolioGallery = () => {
                   ))}
                 </div>
 
-                <div className="flex space-x-4">
+                <div className="flex space-x-4 rtl:space-x-reverse">
                   <Link
-                    to={`/projects/${selectedProject.id}`}
-                    className="btn-primary flex items-center space-x-2"
+                    to={lp(`/projects/${selectedProject.id}`)}
+                    className="btn-primary flex items-center space-x-2 rtl:space-x-reverse"
                     onClick={() => setSelectedProject(null)}
                   >
                     <Icon name="FolderOpen" size={18} strokeWidth={2} />
-                    <span>View Project</span>
+                    <span>{t('project.view')}</span>
                   </Link>
                   {selectedProject.liveUrl && (
                   <a
                     href={selectedProject.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn-secondary flex items-center space-x-2"
+                    className="btn-secondary flex items-center space-x-2 rtl:space-x-reverse"
                   >
                     <Icon name="ExternalLink" size={18} strokeWidth={2} />
-                    <span>Live Demo</span>
+                    <span>{t('project.liveDemo')}</span>
                   </a>
                   )}
                   {selectedProject.githubUrl && (
@@ -616,10 +622,10 @@ const PortfolioGallery = () => {
                     href={selectedProject.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center space-x-2 px-6 py-3 border border-primary-300 text-primary-700 hover:bg-primary-50 rounded-lg transition-colors duration-200 dark:text-text-primary dark:hover:bg-surface-elevated"
+                    className="flex items-center space-x-2 rtl:space-x-reverse px-6 py-3 border border-primary-300 text-primary-700 hover:bg-primary-50 rounded-lg transition-colors duration-200 dark:text-text-primary dark:hover:bg-surface-elevated"
                   >
                     <Icon name="Github" size={18} strokeWidth={2} />
-                    <span>Source Code</span>
+                    <span>{t('projects.sourceCode')}</span>
                   </a>
                   )}
                 </div>
@@ -639,25 +645,25 @@ const PortfolioGallery = () => {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-text-primary">
-              Have a project like these?
+              {t('projects.cta.title')}
             </h2>
             <p className="text-xl text-text-secondary mb-8 max-w-2xl mx-auto">
-              Tell me about it. I reply within one business day.
+              {t('projects.cta.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                to="/contact-hub"
-                className="bg-accent hover:bg-accent-600 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg flex items-center justify-center space-x-2"
+                to={lp('/contact-hub')}
+                className="bg-accent hover:bg-accent-600 text-white font-semibold py-4 px-8 rounded-lg transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg flex items-center justify-center space-x-2 rtl:space-x-reverse"
               >
                 <Icon name="MessageCircle" size={20} strokeWidth={2} />
-                <span>Start a Conversation</span>
+                <span>{t('common.startConversation')}</span>
               </Link>
               <Link
-                to="/about-story"
-                className="bg-transparent border-2 border-border dark:border-border-strong text-text-primary dark:text-text-primary hover:bg-primary-50 dark:hover:bg-primary-900/30 font-semibold py-4 px-8 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 dark:hover:bg-surface-elevated"
+                to={lp('/about-story')}
+                className="bg-transparent border-2 border-border dark:border-border-strong text-text-primary dark:text-text-primary hover:bg-primary-50 dark:hover:bg-primary-900/30 font-semibold py-4 px-8 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 rtl:space-x-reverse dark:hover:bg-surface-elevated"
               >
                 <Icon name="User" size={20} strokeWidth={2} />
-                <span>Learn More About Me</span>
+                <span>{t('projects.cta.about')}</span>
               </Link>
             </div>
           </motion.div>
