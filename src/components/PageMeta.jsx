@@ -15,14 +15,16 @@ export function usePageMetaOverride() {
 
 /** Page-specific title, description, image, and structured data. Layout renders the document head. */
 export function PageMeta({ page, description, image, jsonLd }) {
-  const context = usePageMetaOverride();
+  // Depend on the stable state setter, not the context value: the value changes
+  // whenever the override does, which would re-run this effect forever.
+  const setOverride = usePageMetaOverride()?.setOverride;
   const jsonLdText = jsonLd ? JSON.stringify(jsonLd) : '';
 
   useEffect(() => {
-    if (!context) return undefined;
-    context.setOverride({ page, description, image, jsonLd: jsonLdText });
-    return () => context.setOverride(null);
-  }, [context, page, description, image, jsonLdText]);
+    if (!setOverride) return undefined;
+    setOverride({ page, description, image, jsonLd: jsonLdText });
+    return () => setOverride(null);
+  }, [setOverride, page, description, image, jsonLdText]);
 
   return null;
 }
