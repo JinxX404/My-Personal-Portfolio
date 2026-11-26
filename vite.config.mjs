@@ -13,12 +13,12 @@ export default defineConfig({
     chunkSizeWarningLimit: 500,
     rollupOptions: {
       output: {
+        // Only group libraries every page needs. Page-specific libraries
+        // (framer-motion, zod) stay in the lazy chunks that use them, so the
+        // home page does not preload code it never runs.
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom', 'react-helmet-async'],
-          'framer-motion': ['framer-motion'],
           'supabase': ['@supabase/supabase-js'],
-          'charts': ['recharts'],
-          'utils': ['zod', 'date-fns'],
         },
       },
     },

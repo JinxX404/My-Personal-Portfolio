@@ -10,46 +10,53 @@ import {
   absoluteHttpsUrl,
   canonicalUrl,
   formatPageTitle,
+  personJsonLd,
   publicKeywords,
   resolveRouteMeta,
 } from 'lib/pageMeta';
 
+const GA_ID_PATTERN = /^(G|GT|AW)-[A-Z0-9]{4,}$/i;
+
 const Layout = ({ children }) => {
   const location = useLocation();
-  const { siteSettings, seoSettings, profile, error: settingsError, loadSettings } = usePortfolioSettings();
+  const { siteSettings, seoSettings, profile, socialLinks, error: settingsError, loadSettings } = usePortfolioSettings();
   const pageMeta = usePageMetaOverride();
   const routeMeta = resolveRouteMeta(location.pathname);
   const pageName = pageMeta?.override?.page || routeMeta.page;
   const pageDescription = pageMeta?.override?.description || routeMeta.description;
 
-  // Google Analytics
+  // Google Analytics: load gtag once per ID, then report each route change.
+  const gaId = GA_ID_PATTERN.test(seoSettings?.google_analytics_id || '') ? seoSettings.google_analytics_id : '';
   useEffect(() => {
-    const gaId = seoSettings?.google_analytics_id;
-    if (!gaId) return;
-
-    // Load GA script
+    if (!gaId || window.__portfolioGaId === gaId) return;
+    window.__portfolioGaId = gaId;
     const script = document.createElement('script');
     script.async = true;
     script.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
     document.head.appendChild(script);
-
-    // Initialize gtag
     window.dataLayer = window.dataLayer || [];
-    function gtag() { window.dataLayer.push(arguments); }
-    gtag('js', new Date());
-    gtag('config', gaId);
+    window.gtag = function gtag() { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    // Page views are sent by the effect below, not by the initial config.
+    window.gtag('config', gaId, { send_page_view: false });
+  }, [gaId]);
 
-    // Track page views on route changes
-    gtag('config', gaId, { page_path: location.pathname + location.search });
-  }, [seoSettings?.google_analytics_id, location.pathname]);
-  
+  useEffect(() => {
+    if (!gaId || typeof window.gtag !== 'function') return;
+    window.gtag('event', 'page_view', {
+      page_path: location.pathname + location.search,
+      page_location: window.location.href,
+    });
+  }, [gaId, location.pathname, location.search]);
+
   // List of routes where Header and Footer should be hidden
   const hideLayoutRoutes = [
     '/admin-dashboard',
     '/project-manager',
     '/skills-manager',
     '/projects-manager',
-    '/settings-manager'
+    '/settings-manager',
+    '/messages-manager'
   ];
 
   const shouldHide = hideLayoutRoutes.some(route => location.pathname.startsWith(route));
@@ -61,6 +68,10 @@ const Layout = ({ children }) => {
   const pageUrl = canonicalUrl(location.pathname);
   const twitterHandle = seoSettings?.twitter_handle || '';
   const googleVerification = seoSettings?.google_site_verification || '';
+  const noindex = Boolean(routeMeta.noindex);
+  const isHome = location.pathname === '/';
+  const structuredData = pageMeta?.override?.jsonLd
+    || (isHome ? JSON.stringify(personJsonLd(profile, socialLinks)) : '');
 
   return (
     <>
@@ -79,8 +90,20 @@ const Layout = ({ children }) => {
         <meta name="twitter:image" content={ogImage} />
         {twitterHandle && <meta name="twitter:creator" content={twitterHandle} />}
         {googleVerification && <meta name="google-site-verification" content={googleVerification} />}
-        <link rel="canonical" href={pageUrl} />
+        {noindex ? <meta name="robots" content="noindex, nofollow" /> : <link rel="canonical" href={pageUrl} />}
+        {!noindex && structuredData && structuredData !== 'null' && (
+          <script type="application/ld+json">{structuredData}</script>
+        )}
       </Helmet>
+
+      {!shouldHide && (
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-surface focus:text-text-primary focus:shadow-lg focus:ring-2 focus:ring-accent"
+        >
+          Skip to content
+        </a>
+      )}
 
       {!shouldHide && <Header />}
       {!shouldHide && settingsError && (
@@ -92,7 +115,11 @@ const Layout = ({ children }) => {
           />
         </div>
       )}
-      {children}
+      {shouldHide ? children : (
+        <main id="main-content" tabIndex={-1} className="outline-none">
+          {children}
+        </main>
+      )}
       {!shouldHide && <Footer />}
     </>
   );

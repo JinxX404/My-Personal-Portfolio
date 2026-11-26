@@ -28,6 +28,12 @@ export const ThemeProvider = ({ children }) => {
     }
 
     window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+
+    // Match the browser UI (mobile address bar) to the chosen theme, not just the OS one.
+    const color = nextTheme === 'dark' ? '#0b1020' : '#f8fafc';
+    document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => {
+      meta.setAttribute('content', color);
+    });
   }, []);
 
   useEffect(() => {

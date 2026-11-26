@@ -3,14 +3,11 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import Icon from "components/AppIcon";
 import Image from "components/AppImage";
-import LoadError from "components/ui/LoadError";
 import { usePortfolioSettings } from "context/PortfolioSettingsContext";
-import { useSkills } from "context/SkillsContext";
 
 const AboutStory = () => {
   const { profile, careerData } = usePortfolioSettings();
-  const { skillCategories, error: skillsError, resyncFromDatabase } = useSkills();
-  const [activeTimelineItem, setActiveTimelineItem] = useState(null);
+  const [activeTimelineItem, setActiveTimelineItem] = useState(undefined);
   const [visibleSections, setVisibleSections] = useState(new Set());
 
   const careerTimeline = careerData?.timeline || [];
@@ -19,15 +16,19 @@ const AboutStory = () => {
   const philosophy = careerData?.philosophy || "";
   const mission = careerData?.mission || "";
 
-  // Transform skillCategories context into the AboutStory format
-  const skillsData = Object.values(skillCategories || {}).map((cat) => ({
-    category: cat.title,
-    skills: (cat.skills || []).map((s) => ({
-      name: s.name,
-      level: s.level || 50,
-      years: 1,
-    })),
-  }));
+  const timelineKey = (item, index) => item.id || `timeline-${index}`;
+  // The newest entry starts open so the section never looks empty.
+  const openTimelineItem =
+    activeTimelineItem === undefined && careerTimeline.length
+      ? timelineKey(careerTimeline[0], 0)
+      : activeTimelineItem;
+  const hasApproach =
+    Boolean(philosophy || mission) || careerValues.length > 0 || careerInterests.length > 0;
+
+  const availability = {
+    available: { text: "Available for projects", dot: "bg-success" },
+    busy: { text: "Limited availability", dot: "bg-warning" },
+  }[profile?.availability] || { text: "Not taking new projects", dot: "bg-secondary-400" };
 
   // Scroll animation effect
   useEffect(() => {
@@ -72,11 +73,6 @@ const AboutStory = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-accent-50 dark:from-background dark:via-surface dark:to-background">
-      {skillsError && (
-        <div className="max-w-3xl mx-auto px-4 pt-24">
-          <LoadError message={skillsError} onRetry={resyncFromDatabase} />
-        </div>
-      )}
       {/* Hero Section */}
       <section className="pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -100,9 +96,9 @@ const AboutStory = () => {
                 </div>
                 <div className="absolute -bottom-4 -right-4 bg-surface dark:bg-background rounded-xl p-4 shadow-lg border border-primary-200 dark:border-border-strong">
                   <div className="flex items-center space-x-2">
-                    <div className="w-3 h-3 bg-success rounded-full animate-pulse"></div>
+                    <div className={`w-3 h-3 ${availability.dot} rounded-full animate-pulse`}></div>
                     <span className="text-sm font-medium text-primary-700 dark:text-text-primary">
-                      Available for projects
+                      {availability.text}
                     </span>
                   </div>
                 </div>
@@ -119,26 +115,28 @@ const AboutStory = () => {
                   {profile?.title || "Developer"}
                 </p>
                 <div className="flex flex-wrap gap-4 text-sm text-secondary-600 mb-6 dark:text-text-secondary">
-                  <div className="flex items-center space-x-2">
-                    <Icon name="MapPin" size={16} />
-                    <span>{profile?.location || "Assiut, Egypt"}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Icon name="Calendar" size={16} />
-                    <span>
-                      {profile?.experience_years || "1+"} Years Experience
-                    </span>
-                  </div>
+                  {profile?.location && (
+                    <div className="flex items-center space-x-2">
+                      <Icon name="MapPin" size={16} />
+                      <span dir="auto">{profile.location}</span>
+                    </div>
+                  )}
+                  {profile?.experience_years ? (
+                    <div className="flex items-center space-x-2">
+                      <Icon name="Calendar" size={16} />
+                      <span>{profile.experience_years}+ years of experience</span>
+                    </div>
+                  ) : null}
                 </div>
               </div>
 
               <div className="prose prose-lg max-w-none text-secondary-700 dark:text-text-secondary">
-                <p className="mb-4">{profile?.bio || ""}</p>
+                <p dir="auto" className="mb-4">{profile?.bio || ""}</p>
               </div>
 
               <div className="flex flex-wrap gap-4">
                 <Link
-                  to="/portfolio-gallery"
+                  to="/projects"
                   className="btn-primary flex items-center space-x-2"
                 >
                   <Icon name="Briefcase" size={18} />
@@ -157,6 +155,88 @@ const AboutStory = () => {
         </div>
       </section>
 
+      {/* How I work: philosophy, mission, values, interests (Career Data in the admin) */}
+      {hasApproach && (
+        <section className="py-16 px-4 sm:px-6 lg:px-8" aria-labelledby="approach-title">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 id="approach-title" className="text-3xl lg:text-4xl font-bold text-primary-800 mb-4 dark:text-text-primary">
+                How I Work
+              </h2>
+              <p className="text-lg text-secondary-600 max-w-2xl mx-auto dark:text-text-secondary">
+                What I care about when I take on a project.
+              </p>
+            </div>
+
+            {(philosophy || mission) && (
+              <div className="grid md:grid-cols-2 gap-6 mb-10">
+                {philosophy && (
+                  <figure className="bg-surface dark:bg-surface rounded-2xl p-8 border border-primary-200 dark:border-border-strong">
+                    <Icon name="Quote" size={28} className="text-accent dark:text-accent-text mb-4" />
+                    <figcaption className="text-xs font-semibold uppercase tracking-wider text-secondary-500 dark:text-muted mb-2">Philosophy</figcaption>
+                    <blockquote dir="auto" className="text-xl leading-relaxed text-primary-800 dark:text-text-primary">
+                      {philosophy}
+                    </blockquote>
+                  </figure>
+                )}
+                {mission && (
+                  <figure className="bg-surface dark:bg-surface rounded-2xl p-8 border border-primary-200 dark:border-border-strong">
+                    <Icon name="Target" size={28} className="text-accent dark:text-accent-text mb-4" />
+                    <figcaption className="text-xs font-semibold uppercase tracking-wider text-secondary-500 dark:text-muted mb-2">Mission</figcaption>
+                    <p dir="auto" className="text-xl leading-relaxed text-primary-800 dark:text-text-primary">
+                      {mission}
+                    </p>
+                  </figure>
+                )}
+              </div>
+            )}
+
+            {careerValues.length > 0 && (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+                {careerValues.map((value, index) => (
+                  <div
+                    key={value.title || index}
+                    className="bg-surface dark:bg-surface rounded-xl p-6 border border-primary-200 dark:border-border-strong"
+                  >
+                    <div className="w-11 h-11 rounded-lg bg-accent/10 dark:bg-accent-subtle flex items-center justify-center mb-4">
+                      <Icon name={value.icon || "Heart"} size={20} className="text-accent dark:text-accent-text" />
+                    </div>
+                    <h3 dir="auto" className="text-lg font-bold text-primary-800 mb-2 dark:text-text-primary">{value.title}</h3>
+                    {value.description && (
+                      <p dir="auto" className="text-secondary-600 dark:text-text-secondary">{value.description}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {careerInterests.length > 0 && (
+              <div className="text-center">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-secondary-500 dark:text-muted mb-4">
+                  Outside client work
+                </h3>
+                <ul className="flex flex-wrap justify-center gap-3">
+                  {careerInterests.map((interest, index) => {
+                    const label = interest.name || interest.title;
+                    if (!label) return null;
+                    return (
+                      <li
+                        key={label + index}
+                        title={interest.description || undefined}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-surface border border-primary-200 text-sm font-medium text-primary-700 dark:border-border-strong dark:text-text-secondary"
+                      >
+                        <Icon name={interest.icon || "Star"} size={16} className="text-accent dark:text-accent-text" />
+                        <span dir="auto">{label}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
       {/* Timeline Section */}
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-surface dark:bg-background">
         <div className="max-w-6xl mx-auto">
@@ -173,8 +253,7 @@ const AboutStory = () => {
                 Professional Journey
               </h2>
               <p className="text-lg text-secondary-600 max-w-2xl mx-auto dark:text-text-secondary">
-                Key milestones, achievements, and growth moments that shaped my
-                career path.
+                Where I have worked and studied, newest first.
               </p>
             </motion.div>
 
@@ -183,21 +262,14 @@ const AboutStory = () => {
               <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-accent via-cta to-success hidden md:block"></div>
 
               <div className="space-y-8">
-                {careerTimeline.map((item, index) => (
+                {careerTimeline.map((item, index) => {
+                  const key = timelineKey(item, index);
+                  const isOpen = openTimelineItem === key;
+                  const panelId = `timeline-panel-${index}`;
+                  return (
                   <div
-                    key={item.id || `timeline-${index}`}
-                    className={`relative flex items-start space-x-6 cursor-pointer transition-all duration-300 ${
-                      activeTimelineItem === (item.id || index)
-                        ? "transform scale-105"
-                        : ""
-                    }`}
-                    onClick={() =>
-                      setActiveTimelineItem(
-                        activeTimelineItem === (item.id || index)
-                          ? null
-                          : item.id || index,
-                      )
-                    }
+                    key={key}
+                    className="relative flex items-start space-x-6"
                   >
                     {/* Timeline Dot */}
                     <div className="flex-shrink-0 relative">
@@ -228,30 +300,34 @@ const AboutStory = () => {
                     </div>
 
                     {/* Timeline Content */}
-                    <div className="flex-1 bg-surface dark:bg-background rounded-xl p-6 shadow-sm border border-primary-200 dark:border-border-strong">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <h3 className="text-xl font-bold text-primary-800 mb-1 dark:text-text-primary">
+                    <div className={`flex-1 bg-surface dark:bg-background rounded-xl shadow-sm border transition-colors ${
+                      isOpen ? "border-accent/60 dark:border-accent-fill/60" : "border-primary-200 dark:border-border-strong"
+                    }`}>
+                      <button
+                        type="button"
+                        aria-expanded={isOpen}
+                        aria-controls={panelId}
+                        onClick={() => setActiveTimelineItem(isOpen ? null : key)}
+                        className="w-full flex items-start justify-between gap-4 p-6 text-start rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                      >
+                        <span className="min-w-0">
+                          <span dir="auto" className="block text-xl font-bold text-primary-800 mb-1 dark:text-text-primary">
                             {item.title}
-                          </h3>
-                          <p className="text-cta font-semibold dark:text-accent-text">
+                          </span>
+                          <span dir="auto" className="block text-cta font-semibold dark:text-accent-text">
                             {item.company}
-                          </p>
-                        </div>
+                          </span>
+                        </span>
                         <Icon
-                          name={
-                            activeTimelineItem === (item.id || index)
-                              ? "ChevronUp"
-                              : "ChevronDown"
-                          }
+                          name={isOpen ? "ChevronUp" : "ChevronDown"}
                           size={20}
-                          className="text-secondary-400 dark:text-muted"
+                          className="text-secondary-400 dark:text-muted flex-shrink-0 mt-1"
                         />
-                      </div>
+                      </button>
 
-                      {activeTimelineItem === (item.id || index) && (
-                        <>
-                          <p className="text-secondary-600 mb-4 dark:text-text-secondary">
+                      {isOpen && (
+                        <div id={panelId} className="px-6 pb-6">
+                          <p dir="auto" className="text-secondary-600 mb-4 dark:text-text-secondary">
                             {item.description}
                           </p>
                           <motion.div
@@ -278,7 +354,7 @@ const AboutStory = () => {
                                         size={16}
                                         className="text-success"
                                       />
-                                      <span>{achievement}</span>
+                                      <span dir="auto">{achievement}</span>
                                     </li>
                                   ))}
                                 </ul>
@@ -303,11 +379,12 @@ const AboutStory = () => {
                               </div>
                             )}
                           </motion.div>
-                        </>
+                        </div>
                       )}
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </motion.div>
           </motion.div>
@@ -325,11 +402,11 @@ const AboutStory = () => {
           >
             <motion.div variants={itemVariants}>
               <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-                Ready to Create Something Amazing?
+                Want to work together?
               </h2>
               <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
-                Let's discuss how we can bring your ideas to life with
-                thoughtful design and robust technology.
+                Send a short note about the project. I reply within one
+                business day.
               </p>
             </motion.div>
 
@@ -338,7 +415,7 @@ const AboutStory = () => {
               className="flex flex-col sm:flex-row gap-4 justify-center"
             >
               <Link
-                to="/portfolio-gallery"
+                to="/projects"
                 className="bg-white text-primary-800 hover:bg-gray-100 font-semibold py-3 px-8 rounded-lg transition-all duration-300 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl"
               >
                 <Icon name="Eye" size={18} />

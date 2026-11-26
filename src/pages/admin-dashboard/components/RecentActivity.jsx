@@ -1,5 +1,6 @@
 // src/pages/admin-dashboard/components/RecentActivity.jsx
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Icon from 'components/AppIcon';
 
 const RecentActivity = ({ activities }) => {
@@ -34,40 +35,51 @@ const RecentActivity = ({ activities }) => {
   };
 
   return (
-    <div className="card">
-      <div className="card-header">
+    <div className="card h-full">
+      <div className="mb-4">
         <div className="flex items-center space-x-2">
           <Icon name="Activity" size={20} strokeWidth={2} className="text-accent dark:text-accent-text" />
-          <h2 className="text-lg font-semibold text-primary-800 dark:text-primary-200">Recent Activity</h2>
+          <h2 className="text-lg font-semibold text-primary-800 dark:text-text-primary">Recent Activity</h2>
         </div>
-        <p className="text-sm text-secondary-600 dark:text-secondary-400 mt-1">Latest updates</p>
+        <p className="text-sm text-secondary-600 dark:text-text-secondary mt-1">Latest project edits and messages</p>
       </div>
       
-      <div className="card-content">
+      <div>
         <div className="space-y-4">
-          {(activities || []).map((activity) => (
-            <div
-              key={activity.id}
-              className="flex items-start space-x-3 p-3 rounded-lg border border-primary-100 dark:border-primary-800 bg-primary-50 dark:bg-primary-900/20"
-            >
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                getActivityColor(activity.type)
-              }`}>
-                <Icon 
-                  name={getActivityIcon(activity.type)} 
-                  size={16} 
-                  strokeWidth={2}
-                />
-              </div>
-              
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-secondary-700 dark:text-secondary-300">
-                  {activity.message}
-                </p>
-                <p className="text-xs text-secondary-500 mt-1 dark:text-muted">{activity.time}</p>
-              </div>
-            </div>
-          ))}
+          {(activities || []).map((activity) => {
+            const body = (
+              <>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                  getActivityColor(activity.type)
+                }`}>
+                  <Icon
+                    name={getActivityIcon(activity.type)}
+                    size={16}
+                    strokeWidth={2}
+                  />
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <p dir="auto" className="text-sm font-medium text-primary-800 dark:text-text-primary truncate">
+                    {activity.title || activity.message}
+                  </p>
+                  <p dir="ltr" className="text-xs text-secondary-500 mt-1 dark:text-muted">
+                    {activity.detail && <bdi>{activity.detail}</bdi>}
+                    {activity.detail && activity.time && ' · '}
+                    {activity.time}
+                  </p>
+                </div>
+              </>
+            );
+            const className = 'flex items-start space-x-3 p-3 rounded-lg border border-primary-100 dark:border-border bg-primary-50 dark:bg-background/40';
+            return activity.to ? (
+              <Link key={activity.id} to={activity.to} className={`${className} hover:border-accent transition-colors`}>
+                {body}
+              </Link>
+            ) : (
+              <div key={activity.id} className={className}>{body}</div>
+            );
+          })}
         </div>
         
         {(!activities || activities.length === 0) && (

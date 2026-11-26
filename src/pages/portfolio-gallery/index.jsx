@@ -9,32 +9,7 @@ import { SkeletonProjectCard } from 'components/ui/Skeleton';
 import { useDebounce } from 'hooks/useDebounce';
 import { safeHref } from 'lib/safeUrl';
 import TiltCard from 'components/TiltCard';
-
-const fallbackImage = '/assets/images/no_image.png';
-
-const imageUrl = (value) => {
-  if (typeof value === 'string') return value.trim();
-  if (value && typeof value === 'object') {
-    const candidate = value.url || value.src || value.image;
-    return typeof candidate === 'string' ? candidate.trim() : '';
-  }
-  return '';
-};
-
-const firstImageUrl = (items) => {
-  if (!Array.isArray(items)) return '';
-  for (const item of items) {
-    const url = imageUrl(item);
-    if (url) return url;
-  }
-  return '';
-};
-
-// Hero first, then the first screenshot, then the stock placeholder.
-const coverForProject = (project) =>
-  firstImageUrl(project?.hero_images) ||
-  firstImageUrl(project?.screenshots) ||
-  fallbackImage;
+import { coverForProject } from 'lib/projectMedia';
 
 const categoryIconMap = {
   'Web Apps': 'Monitor',
@@ -326,11 +301,11 @@ const PortfolioGallery = () => {
             transition={{ duration: 0.6 }}
           >
             <h1 className="text-4xl md:text-6xl font-bold text-text-primary mb-6">
-              Portfolio <span className="text-gradient">Gallery</span>
+              Selected <span className="text-gradient">Projects</span>
             </h1>
             <p className="text-xl text-text-secondary max-w-3xl mx-auto mb-8">
-              Explore my collection of digital experiences, from web applications to mobile solutions. 
-              Each project represents a unique challenge solved with creativity and technical expertise.
+              Client and personal work. Filter by type or technology, or search
+              for something specific.
             </p>
             <div className="flex items-center justify-center space-x-6 text-sm text-muted">
               <div className="flex items-center space-x-2">
@@ -340,10 +315,6 @@ const PortfolioGallery = () => {
               <div className="flex items-center space-x-2">
                 <Icon name="Star" size={16} strokeWidth={2} />
                 <span>{displayProjects.filter(p => p.featured).length} Featured</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Icon name="TrendingUp" size={16} strokeWidth={2} />
-                <span>Proven Results</span>
               </div>
             </div>
           </motion.div>
@@ -639,10 +610,10 @@ const PortfolioGallery = () => {
             viewport={{ once: true }}
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-text-primary">
-              Ready to Start Your Next Project?
+              Have a project like these?
             </h2>
             <p className="text-xl text-text-secondary mb-8 max-w-2xl mx-auto">
-              Let's collaborate to bring your vision to life with the same attention to detail and results-driven approach you see in my portfolio.
+              Tell me about it. I reply within one business day.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link

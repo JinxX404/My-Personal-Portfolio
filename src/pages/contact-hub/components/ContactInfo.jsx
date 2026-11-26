@@ -51,12 +51,6 @@ const ContactInfo = () => {
     },
   ].filter(Boolean);
 
-  const responseTime = {
-    email: "< 24 hours",
-    phone: "Same day",
-    urgent: "< 4 hours",
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -109,80 +103,29 @@ const ContactInfo = () => {
                 <h3 className="font-semibold text-text-primary mb-1">
                   {method.title}
                 </h3>
-                <p className="text-text-primary font-medium mb-1 break-all">
+                <p
+                  dir={method.icon === "Phone" ? "ltr" : "auto"}
+                  className="text-text-primary font-medium mb-1 [overflow-wrap:anywhere] text-start"
+                >
                   {method.value}
                 </p>
                 <p className="text-sm text-text-secondary">
                   {method.description}
                 </p>
               </div>
-              <Icon
-                name="ExternalLink"
-                size={16}
-                className="text-secondary-400 group-hover:text-secondary-600 transition-colors duration-200 dark:text-muted"
-                strokeWidth={2}
-              />
+              {method.action && (
+                <Icon
+                  name="ExternalLink"
+                  size={16}
+                  className="text-secondary-400 group-hover:text-secondary-600 transition-colors duration-200 dark:text-muted"
+                  strokeWidth={2}
+                />
+              )}
             </MotionTag>
           );
         })}
       </div>
 
-      {/* Response Time Information */}
-      {/* <div className="mt-8 pt-6 border-t border-primary-200 dark:border-border">
-        <h3 className="font-semibold text-text-primary dark:text-text-primary mb-4">
-          Response Times
-        </h3>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center space-x-2">
-              <Icon
-                name="Mail"
-                size={14}
-                className="text-accent dark:text-accent-text"
-                strokeWidth={2}
-              />
-              <span className="text-text-secondary dark:text-text-secondary">
-                Email inquiries
-              </span>
-            </div>
-            <span className="font-medium text-text-primary dark:text-text-primary">
-              {responseTime.email}
-            </span>
-          </div>
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center space-x-2">
-              <Icon
-                name="Phone"
-                size={14}
-                className="text-success"
-                strokeWidth={2}
-              />
-              <span className="text-text-secondary dark:text-text-secondary">
-                Phone calls
-              </span>
-            </div>
-            <span className="font-medium text-text-primary dark:text-text-primary">
-              {responseTime.phone}
-            </span>
-          </div>
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center space-x-2">
-              <Icon
-                name="Zap"
-                size={14}
-                className="text-warning"
-                strokeWidth={2}
-              />
-              <span className="text-text-secondary dark:text-text-secondary">
-                Urgent matters
-              </span>
-            </div>
-            <span className="font-medium text-text-primary dark:text-text-primary">
-              {responseTime.urgent}
-            </span>
-          </div>
-        </div>
-      </div>*/}
 
       {/* Availability Status */}
 

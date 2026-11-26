@@ -6,6 +6,7 @@ Disallow: /project-manager
 Disallow: /skills-manager
 Disallow: /projects-manager
 Disallow: /settings-manager
+Disallow: /messages-manager
 Disallow: /login
 Disallow: /forgot-password
 

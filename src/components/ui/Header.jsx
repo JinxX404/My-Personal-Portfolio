@@ -52,15 +52,35 @@ const Header = () => {
     return () => document.documentElement.classList.remove('mobile-nav-open');
   }, [isMobileMenuOpen]);
 
+  // Close the mobile menu on navigation (back/forward too) and on Escape.
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) return undefined;
+    const onKey = (event) => {
+      if (event.key === 'Escape') setIsMobileMenuOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isMobileMenuOpen]);
+
+  // A project page counts as "Portfolio"; Home only matches the root.
   const isActivePath = (path) => {
-    return location.pathname === path;
+    if (path === '/') return location.pathname === '/';
+    return location.pathname === path || location.pathname.startsWith(`${path}/`);
   };
+
+  // Only the home hero is designed to sit under a see-through header. Other
+  // pages (project heroes are dark in both themes) get the solid bar at once.
+  const isSolid = isScrolled || isMobileMenuOpen || location.pathname !== '/';
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 border-b transition-theme ${
-        isScrolled
-          ? 'bg-surface/90 backdrop-blur-glass border-border/70 dark:border-border-strong/40 shadow-md'
+        isSolid
+          ? `${isScrolled || isMobileMenuOpen ? 'bg-surface/90 backdrop-blur-glass' : 'bg-surface'} border-border/70 dark:border-border-strong/40 shadow-md`
           : 'bg-transparent border-transparent'
       }`}
     >
@@ -68,7 +88,7 @@ const Header = () => {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <Link 
-            to="/homepage" 
+            to="/" 
             className="flex items-center gap-3 group transition-theme"
             onClick={closeMobileMenu}
           >
@@ -92,11 +112,12 @@ const Header = () => {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-1" aria-label="Main">
             {navigationItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
+                aria-current={isActivePath(item.path) ? 'page' : undefined}
                 className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-theme group ${
                   isActivePath(item.path)
                     ? 'text-accent-500 bg-accent-500/10 dark:text-accent-text dark:bg-accent-subtle'
@@ -139,6 +160,7 @@ const Header = () => {
               className="p-2.5 rounded-lg text-text-primary hover:text-accent-500 hover:bg-surface/80 dark:hover:bg-background/60 transition-theme dark:hover:text-accent-text"
               aria-label="Toggle mobile menu"
               aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-navigation"
             >
               <Icon
                 name={isMobileMenuOpen ? "X" : "Menu"}
@@ -151,10 +173,11 @@ const Header = () => {
       </div>
 
       {/* Mobile Menu */}
-      <div 
+      <div
+        id="mobile-navigation"
         className={`lg:hidden transition-all duration-300 ease-out ${
           isMobileMenuOpen 
-            ? 'max-h-screen opacity-100' :'max-h-0 opacity-0 overflow-hidden'
+            ? 'max-h-screen opacity-100' :'max-h-0 opacity-0 overflow-hidden invisible'
         }`}
       >
         <div className="bg-surface/95 dark:bg-background/95 backdrop-blur-glass border-t border-border dark:border-border-strong/50 transition-theme">
@@ -164,6 +187,7 @@ const Header = () => {
                 key={item.path}
                 to={item.path}
                 onClick={closeMobileMenu}
+                aria-current={isActivePath(item.path) ? 'page' : undefined}
                 className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-base font-medium transition-theme ${
                   isActivePath(item.path)
                     ? 'text-accent-500 bg-accent-500/10 border border-accent-500/20 dark:text-accent-text dark:bg-accent-subtle dark:border-accent-fill/40'

@@ -1,92 +1,81 @@
 // src/pages/admin-dashboard/index.jsx
-import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
-import Icon from 'components/AppIcon';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useProjects } from 'context/ProjectsContext';
 import { usePortfolioSettings } from 'context/PortfolioSettingsContext';
+import { listMessages, MESSAGES_CHANGED_EVENT } from 'services/messagesService';
 
 import MetricCard from './components/MetricCard';
-import QuickActions from './components/QuickActions';
 import RecentActivity from './components/RecentActivity';
-import Sidebar from './components/Sidebar';
-const PerformanceCharts = lazy(() => import('./components/PerformanceCharts'));
+import ContentChecklist from './components/ContentChecklist';
+
+const formatDay = (value) => {
+  const date = value ? new Date(value) : null;
+  if (!date || Number.isNaN(date.getTime())) return '';
+  return new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }).format(date);
+};
+
+const STATUS_LABELS = {
+  published: 'Published',
+  draft: 'Draft',
+  in_progress: 'In progress',
+};
 
 const AdminDashboard = () => {
-  const { projects, getStats: getProjectStats, loading: projectsLoading } = useProjects();
-  const { profile } = usePortfolioSettings();
-
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [metrics, setMetrics] = useState({
-    publishedProjects: 0,
-    drafts: 0
-  });
-
-  const [chartData, setChartData] = useState({
-    composition: []
-  });
-  const [isLoadingMetrics, setIsLoadingMetrics] = useState(true);
-
-  // Build recent activities from actual projects
-  const recentActivities = React.useMemo(() => {
-    const activities = [];
-    
-    // Add recent projects as activities
-    projects.slice(0, 5).forEach((project) => {
-      activities.push({
-        id: `project-${project.id}`,
-        type: 'project',
-        message: `Project "${project.title}" - ${project.publishing_status || project.status}`,
-        time: project.updated_at ? new Date(project.updated_at).toLocaleDateString() : 'Recently',
-        status: project.publishing_status === 'draft' ? 'unread' : 'read'
-      });
-    });
-
-    return activities;
-  }, [projects]);
-
-
-  // Load real metrics from contexts
-  const loadMetrics = useCallback(async () => {
-    setIsLoadingMetrics(true);
-    
-    try {
-      const projectStats = await getProjectStats();
-
-      setMetrics({
-        publishedProjects: projectStats.success ? projectStats.data.published : projects.filter(p => p.publishing_status === 'published').length,
-        drafts: (projectStats.success ? projectStats.data.draft : 0)
-      });
-
-      // Process Chart Data
-      
-      // Composition
-      const compositionData = [
-        { name: 'Projects', value: projects.filter(p => p.publishing_status === 'published').length },
-        { name: 'Drafts', value: projects.filter(p => p.publishing_status === 'draft').length }
-      ];
-
-      setChartData({
-        composition: compositionData
-      });
-
-    } catch (error) {
-      console.error("Failed to load metrics", error);
-      // Fallback to local counts
-      setMetrics({
-        publishedProjects: projects.filter(p => p.publishing_status === 'published').length,
-        drafts: projects.filter(p => p.publishing_status === 'draft').length
-      });
-    } finally {
-      setIsLoadingMetrics(false);
-    }
-  }, [getProjectStats, projects]);
+  const navigate = useNavigate();
+  const { projects, loading: projectsLoading } = useProjects();
+  const { profile, careerData } = usePortfolioSettings();
+  const [messages, setMessages] = useState([]);
+  const [messagesLoading, setMessagesLoading] = useState(true);
 
   useEffect(() => {
-    if (!projectsLoading) {
-      loadMetrics();
-    }
-  }, [projectsLoading, loadMetrics]);
+    let active = true;
+    const load = () =>
+      listMessages().then((result) => {
+        if (!active) return;
+        setMessages(result.success ? result.data : []);
+        setMessagesLoading(false);
+      });
+    load();
+    window.addEventListener(MESSAGES_CHANGED_EVENT, load);
+    return () => {
+      active = false;
+      window.removeEventListener(MESSAGES_CHANGED_EVENT, load);
+    };
+  }, []);
 
-  const isLoading = projectsLoading || isLoadingMetrics;
+  const metrics = useMemo(() => ({
+    published: projects.filter((p) => p.publishing_status === 'published').length,
+    drafts: projects.filter((p) => p.publishing_status === 'draft').length,
+    featured: projects.filter((p) => p.featured && p.publishing_status === 'published').length,
+    newMessages: messages.filter((m) => (m.status || 'new') === 'new').length,
+  }), [projects, messages]);
+
+  // Project edits and incoming messages in one timeline, newest first.
+  const recentActivities = useMemo(() => {
+    const projectItems = projects.map((project) => ({
+      id: `project-${project.id}`,
+      type: 'project',
+      title: project.title,
+      detail: STATUS_LABELS[project.publishing_status] || project.publishing_status || 'Project',
+      at: project.updated_at || project.created_at,
+      to: `/project-manager?id=${project.id}`,
+    }));
+    const messageItems = messages.map((message) => ({
+      id: `message-${message.id}`,
+      type: 'form',
+      title: message.subject || 'New message',
+      detail: `Message from ${message.name}`,
+      at: message.created_at,
+      to: '/messages-manager',
+    }));
+    return [...projectItems, ...messageItems]
+      .sort((a, b) => new Date(b.at || 0) - new Date(a.at || 0))
+      .slice(0, 6)
+      .map((item) => ({ ...item, time: formatDay(item.at) }));
+  }, [projects, messages]);
+
+  const loadingValue = (value, isLoading) => (isLoading ? '...' : value);
 
   return (
     <>
@@ -94,56 +83,50 @@ const AdminDashboard = () => {
       <header className="bg-white dark:bg-surface shadow-sm border-b border-primary-100 dark:border-border">
         <div className="flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <div>
-            <h1 className="text-2xl font-bold text-primary-800 dark:text-primary-200">Admin Dashboard</h1>
-            <p className="text-sm text-secondary-600 dark:text-secondary-400 mt-1">Welcome back, {profile?.full_name || 'Admin'}! Here's what's happening with your portfolio.</p>
+            <h1 className="text-2xl font-bold text-primary-800 dark:text-text-primary">Admin Dashboard</h1>
+            <p className="text-sm text-secondary-600 dark:text-text-secondary mt-1">
+              Welcome back, <span dir="auto">{profile?.full_name || 'Admin'}</span>. Here is where the portfolio stands.
+            </p>
           </div>
         </div>
       </header>
 
       {/* Dashboard Content */}
       <main className="p-4 sm:p-6 lg:p-8">
-        {/* Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
           <MetricCard
             title="Published Projects"
-            value={isLoading ? '...' : metrics.publishedProjects}
-            change=""
-            changeType="neutral"
+            value={loadingValue(metrics.published, projectsLoading)}
             icon="Briefcase"
-            description="Live portfolio projects"
+            description="Live on the portfolio"
+            onClick={() => navigate('/projects-manager')}
           />
           <MetricCard
-            title="Draft Projects"
-            value={isLoading ? '...' : metrics.drafts}
-            change=""
-            changeType="neutral"
+            title="Featured"
+            value={loadingValue(metrics.featured, projectsLoading)}
+            icon="Star"
+            description="Shown first on the home page"
+            onClick={() => navigate('/projects-manager')}
+          />
+          <MetricCard
+            title="Drafts"
+            value={loadingValue(metrics.drafts, projectsLoading)}
             icon="Edit3"
-            description="Unpublished projects"
+            description="Not visible to visitors"
+            onClick={() => navigate('/projects-manager')}
+          />
+          <MetricCard
+            title="New Messages"
+            value={loadingValue(metrics.newMessages, messagesLoading)}
+            icon="Inbox"
+            description="From the contact form"
+            onClick={() => navigate('/messages-manager')}
           />
         </div>
 
-        {/* Quick Actions */}
-        <div className="mb-8">
-          <QuickActions />
-        </div>
-
-        {/* Content and Analytics Grid */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
-          
-          {/* Recent Activity */}
-          <div>
-            <RecentActivity 
-              activities={recentActivities}
-            />
-          </div>
-
-           {/* Performance Charts */}
-            <div>
-            {/* Disabled chart prop passing for now as we removed some data */}
-            <Suspense fallback={<div>Loading chart...</div>}>
-              <PerformanceCharts data={chartData} />
-            </Suspense>
-            </div>
+          <RecentActivity activities={recentActivities} />
+          <ContentChecklist projects={projects} profile={profile} careerData={careerData} />
         </div>
       </main>
     </>

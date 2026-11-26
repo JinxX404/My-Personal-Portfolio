@@ -150,7 +150,7 @@ const HeroSection = ({ shouldReduceMotion }) => {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row flex-wrap gap-4 justify-center lg:justify-start mb-8">
               <Link
-                to="/portfolio-gallery"
+                to="/projects"
                 className="btn-primary text-base px-6 py-3 inline-flex items-center justify-center space-x-2"
               >
                 <Icon name="Eye" size={18} strokeWidth={2} />
@@ -186,10 +186,12 @@ const HeroSection = ({ shouldReduceMotion }) => {
                 <div className="text-2xl font-bold text-accent-500 dark:text-accent-text">{projects?.filter(p => p.publishing_status === 'published').length || 0}+</div>
                 <div className="text-sm text-text-secondary">Projects Delivered</div>
               </div>
-              <div className="text-center lg:text-left">
-                <div className="text-2xl font-bold text-success">{freelanceProjects}+</div>
-                <div className="text-sm text-text-secondary">Freelance</div>
-              </div>
+              {freelanceProjects > 0 && (
+                <div className="text-center lg:text-left">
+                  <div className="text-2xl font-bold text-success">{freelanceProjects}+</div>
+                  <div className="text-sm text-text-secondary">Freelance</div>
+                </div>
+              )}
             </div>
           </div>
         </div>

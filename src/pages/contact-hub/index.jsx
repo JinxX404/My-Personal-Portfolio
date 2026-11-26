@@ -4,50 +4,19 @@ import Icon from "components/AppIcon";
 
 import ContactForm from "./components/ContactForm";
 import ContactInfo from "./components/ContactInfo";
+import { usePortfolioSettings } from "context/PortfolioSettingsContext";
+import { safeHref } from "lib/safeUrl";
 
 const ContactHub = () => {
   const [selectedInquiryType, setSelectedInquiryType] = useState("general");
   const [isVisible, setIsVisible] = useState(false);
+  const { siteSettings, profile } = usePortfolioSettings();
+  const formEnabled = siteSettings?.enable_contact_form !== false;
+  const email = profile?.email?.trim();
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
-
-  const inquiryTypes = [
-    {
-      id: "project",
-      title: "Project Inquiries",
-      description: "Ready to start a new project or need development help",
-      icon: "Briefcase",
-      color: "accent",
-    },
-    {
-      id: "general",
-      title: "General Questions",
-      description: "Any other questions or feedback",
-      icon: "MessageCircle",
-      color: "secondary",
-    },
-  ];
-
-  const inquiryColorMap = {
-    accent: { border: "border-accent", bg: "bg-accent/5", solid: "bg-accent" },
-    success: {
-      border: "border-success",
-      bg: "bg-success/5",
-      solid: "bg-success",
-    },
-    warning: {
-      border: "border-warning",
-      bg: "bg-warning/5",
-      solid: "bg-warning",
-    },
-    secondary: {
-      border: "border-secondary",
-      bg: "bg-secondary/5",
-      solid: "bg-secondary",
-    },
-  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -72,13 +41,13 @@ const ContactHub = () => {
   return (
     <div className="min-h-screen bg-background dark:bg-background">
       {/* Hero Section */}
-      <section className="pt-24 lg:pt-32 pb-16 px-4 sm:px-6 lg:px-8">
+      <section className="pt-24 lg:pt-32 pb-6 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial="hidden"
             animate={isVisible ? "visible" : "hidden"}
             variants={containerVariants}
-            className="text-center mb-16"
+            className="text-center mb-12"
           >
             <motion.div variants={itemVariants} className="mb-6">
               <div className="inline-flex items-center justify-center w-20 h-20 bg-accent rounded-2xl mb-6">
@@ -95,17 +64,16 @@ const ContactHub = () => {
               variants={itemVariants}
               className="text-4xl md:text-5xl lg:text-6xl font-bold text-text-primary mb-6"
             >
-              Let's Create Something
-              <span className="text-gradient block">Amazing Together</span>
+              Let's talk about
+              <span className="text-gradient block">your next project</span>
             </motion.h1>
 
             <motion.p
               variants={itemVariants}
               className="text-xl text-text-secondary max-w-3xl mx-auto mb-8"
             >
-              Whether you have a project in mind, want to collaborate, or just
-              want to say hello, I'd love to hear from you. Choose the option
-              that best describes your inquiry.
+              Tell me what you are building, what is in the way, or just say
+              hello. Every message reaches me directly.
             </motion.p>
 
             <motion.div
@@ -117,60 +85,6 @@ const ContactHub = () => {
             </motion.div>
           </motion.div>
 
-          {/* Inquiry Type Selection */}
-          <motion.div
-            initial="hidden"
-            animate={isVisible ? "visible" : "hidden"}
-            variants={containerVariants}
-            className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16"
-          >
-            {inquiryTypes.map((type, index) => {
-              const colors =
-                inquiryColorMap[type.color] || inquiryColorMap.accent;
-              return (
-                <motion.button
-                  key={type.id}
-                  type="button"
-                  variants={itemVariants}
-                  onClick={() => setSelectedInquiryType(type.id)}
-                  className={`p-6 rounded-xl border-2 transition-all duration-300 text-left group bg-surface dark:bg-surface ${
-                    selectedInquiryType === type.id
-                      ? `border-accent ${colors.bg} shadow-lg`
-                      : "border-border dark:border-border-strong hover:border-accent hover:shadow-md"
-                  }`}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <div
-                    className={`w-12 h-12 rounded-lg mb-4 flex items-center justify-center ${
-                      selectedInquiryType === type.id
-                        ? `${colors.solid} text-white`
-                        : "bg-primary-100 dark:bg-primary-900/50 text-text-secondary dark:text-text-secondary group-hover:bg-accent/10"
-                    }`}
-                  >
-                    <Icon name={type.icon} size={20} strokeWidth={2} />
-                  </div>
-                  <h3 className="font-semibold text-text-primary mb-2">
-                    {type.title}
-                  </h3>
-                  <p className="text-sm text-text-secondary">
-                    {type.description}
-                  </p>
-                  {selectedInquiryType === type.id && (
-                    <div className="mt-3 flex items-center text-sm font-medium text-accent dark:text-accent-text">
-                      <span>Selected</span>
-                      <Icon
-                        name="Check"
-                        size={16}
-                        className="ml-1"
-                        strokeWidth={2}
-                      />
-                    </div>
-                  )}
-                </motion.button>
-              );
-            })}
-          </motion.div>
         </div>
       </section>
 
@@ -180,7 +94,25 @@ const ContactHub = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* Contact Form */}
             <div className="lg:col-span-2">
-              <ContactForm selectedInquiryType={selectedInquiryType} />
+              {formEnabled ? (
+                <ContactForm
+                  selectedInquiryType={selectedInquiryType}
+                  onInquiryTypeChange={setSelectedInquiryType}
+                />
+              ) : (
+                <div className="bg-surface rounded-2xl shadow-lg p-8 border border-border dark:border-border-strong text-center">
+                  <Icon name="Mail" size={32} className="mx-auto text-accent dark:text-accent-text mb-4" />
+                  <h2 className="text-2xl font-bold text-text-primary mb-2">Email me directly</h2>
+                  <p className="text-text-secondary mb-6">
+                    The contact form is closed for now. Email still reaches me.
+                  </p>
+                  {email && safeHref(`mailto:${email}`) && (
+                    <a href={`mailto:${email}`} className="btn-primary inline-flex">
+                      {email}
+                    </a>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Contact Information */}
@@ -191,12 +123,6 @@ const ContactHub = () => {
         </div>
       </section>
 
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-surface dark:bg-surface border-t border-border dark:border-border-strong">
-        <div className="max-w-7xl mx-auto text-center text-sm text-text-secondary">
-          <span>Based in </span>
-          <span className="font-medium text-text-primary">EET (UTC+2)</span>
-        </div>
-      </section>
     </div>
   );
 };

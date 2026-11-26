@@ -143,8 +143,8 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <div className="border-t border-gray-200 dark:border-white/10 pt-6 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-500 dark:text-white/50 text-sm">
-            © {currentYear} {profile?.full_name || siteSettings?.site_title || 'Portfolio'}. All rights reserved.
+          <p dir="ltr" className="text-gray-500 dark:text-white/50 text-sm">
+            © {currentYear} <bdi>{profile?.full_name || siteSettings?.site_title || 'Portfolio'}</bdi>. All rights reserved.
           </p>
         </div>
       </div>
