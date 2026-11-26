@@ -29,6 +29,7 @@ import VisualAssets from './components/VisualAssets';
 import TechnicalDetails from './components/TechnicalDetails';
 import CaseStudyContent from './components/CaseStudyContent';
 import PublishingOptions from './components/PublishingOptions';
+import ShareImagePanel from './components/ShareImagePanel';
 import ContentSections from './components/ContentSections';
 
 const formatPublishingStatus = (value) => {
@@ -148,6 +149,8 @@ const ProjectManager = () => {
             metaDescription: p.meta_description || '',
             content_sections: p.content_sections || [],
             enableCaseStudy: p.enable_case_study || false,
+            shareImage: p.share_image || '',
+            shareImageAr: p.share_image_ar || '',
             ...Object.fromEntries(AR_FIELDS.map((key) => [key, p[key] || ''])),
           });
         } else {
@@ -418,7 +421,12 @@ const ProjectManager = () => {
       case 'content':
         return <CaseStudyContent formData={formData} setFormData={setFormData} />;
       case 'publishing':
-        return <PublishingOptions formData={formData} setFormData={setFormData} />;
+        return (
+          <div className="space-y-6">
+            <PublishingOptions formData={formData} setFormData={setFormData} />
+            <ShareImagePanel projectId={editId} formData={formData} setFormData={setFormData} />
+          </div>
+        );
       default:
         return <BasicInformation formData={formData} setFormData={setFormData} />;
     }

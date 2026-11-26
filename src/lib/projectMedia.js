@@ -25,3 +25,10 @@ export const projectCover = (project) =>
 
 /** Same as projectCover, falling back to the stock placeholder. */
 export const coverForProject = (project) => projectCover(project) || FALLBACK_PROJECT_IMAGE;
+
+/** Share image for the page language, falling back to the other language. */
+export function projectShareImage(project, lang) {
+  const ar = typeof project?.share_image_ar === 'string' ? project.share_image_ar.trim() : '';
+  const en = typeof project?.share_image === 'string' ? project.share_image.trim() : '';
+  return lang === 'ar' ? ar || en : en || ar;
+}

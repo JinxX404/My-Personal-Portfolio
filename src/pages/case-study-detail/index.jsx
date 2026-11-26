@@ -9,7 +9,7 @@ import { SkeletonCard, SkeletonText } from "components/ui/Skeleton";
 import { safeHref } from "lib/safeUrl";
 import ProjectGallery, { normalizeGalleryImages } from "./ProjectGallery";
 import MoreProjects from "./MoreProjects";
-import { coverForProject } from "lib/projectMedia";
+import { coverForProject, projectShareImage } from "lib/projectMedia";
 import { SITE_ORIGIN, absoluteHttpsUrl } from "lib/pageMeta";
 import { useI18n } from "i18n/I18nContext";
 import { localizePath } from "i18n/paths.mjs";
@@ -40,6 +40,7 @@ const toCaseStudy = (raw, lang) => {
     categoryKey: raw.category,
     status: project.status,
     heroImage: coverForProject(project),
+    shareImage: projectShareImage(project, lang),
     description: project.description,
     metaTitle: project.meta_title,
     metaDescription: project.meta_description,
@@ -336,7 +337,7 @@ const CaseStudyDetail = () => {
       <PageMeta
         page={caseStudy.metaTitle || caseStudy.title || t("project.untitled")}
         description={caseStudy.metaDescription || caseStudy.description}
-        image={caseStudy.heroImage}
+        image={caseStudy.shareImage || caseStudy.heroImage}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "CreativeWork",
