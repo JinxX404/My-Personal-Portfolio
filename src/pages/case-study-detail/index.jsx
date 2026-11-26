@@ -13,9 +13,12 @@ import { coverForProject } from "lib/projectMedia";
 import { SITE_ORIGIN, absoluteHttpsUrl } from "lib/pageMeta";
 import { useI18n } from "i18n/I18nContext";
 import { localizePath } from "i18n/paths.mjs";
+import { localizeProject } from "i18n/content.mjs";
 
-// Shape a project record for the detail page.
-const toCaseStudy = (project) => {
+// Shape a project record for the detail page, in the page language (Arabic
+// fields on /ar where filled in, English otherwise).
+const toCaseStudy = (raw, lang) => {
+  const project = localizeProject(raw, lang);
   return {
     id: project.id,
     title: project.title || "",
@@ -34,9 +37,12 @@ const toCaseStudy = (project) => {
       ? project.technologies
       : [],
     category: project.category,
+    categoryKey: raw.category,
     status: project.status,
     heroImage: coverForProject(project),
     description: project.description,
+    metaTitle: project.meta_title,
+    metaDescription: project.meta_description,
     repositoryUrl: project.repository_url,
     demoUrl: project.demo_url,
     enableCaseStudy: project.enable_case_study || false,
@@ -62,7 +68,7 @@ const toCaseStudy = (project) => {
       Array.isArray(project.testimonials) &&
       project.testimonials.length > 0
         ? {
-            quote: project.testimonials[0].content,
+            quote: project.testimonials[0].content || project.testimonials[0].quote,
             author: project.testimonials[0].name,
             role: project.testimonials[0].role || "",
             company: project.testimonials[0].company || "",
@@ -85,7 +91,7 @@ const CaseStudyDetail = () => {
     () => (projects || []).find((project) => project?.id === id) || null,
     [projects, id]
   );
-  const [caseStudy, setCaseStudy] = useState(() => (knownProject ? toCaseStudy(knownProject) : null));
+  const [caseStudy, setCaseStudy] = useState(() => (knownProject ? toCaseStudy(knownProject, lang) : null));
   const [isLoading, setIsLoading] = useState(() => !knownProject);
   const [loadError, setLoadError] = useState(null);
   const [reloadKey, setReloadKey] = useState(0);
@@ -107,7 +113,7 @@ const CaseStudyDetail = () => {
 
       const cached = knownProjectRef.current;
       if (cached) {
-        setCaseStudy(toCaseStudy(cached));
+        setCaseStudy(toCaseStudy(cached, lang));
         setLoadError(null);
         setIsLoading(false);
       } else {
@@ -119,7 +125,7 @@ const CaseStudyDetail = () => {
         if (cancelled) return;
 
         if (result.success && result.data) {
-          setCaseStudy(toCaseStudy(result.data));
+          setCaseStudy(toCaseStudy(result.data, lang));
           setLoadError(null);
         } else if (result?.success) {
           setCaseStudy(null);
@@ -328,8 +334,8 @@ const CaseStudyDetail = () => {
   return (
     <div className="min-h-screen bg-background dark:bg-background">
       <PageMeta
-        page={caseStudy.title || t("project.untitled")}
-        description={caseStudy.description}
+        page={caseStudy.metaTitle || caseStudy.title || t("project.untitled")}
+        description={caseStudy.metaDescription || caseStudy.description}
         image={caseStudy.heroImage}
         jsonLd={{
           "@context": "https://schema.org",
@@ -621,7 +627,7 @@ const CaseStudyDetail = () => {
 
             <MoreProjects
               currentId={caseStudy.id}
-              category={caseStudy.category}
+              category={caseStudy.categoryKey}
               projects={projects}
             />
           </div>

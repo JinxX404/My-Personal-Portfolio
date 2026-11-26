@@ -4,6 +4,7 @@ import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
 import LoadError from 'components/ui/LoadError';
 import { useProjects } from 'context/ProjectsContext';
+import { localizeProject } from '../../../i18n/content.mjs';
 import { safeHref } from 'lib/safeUrl';
 import { useI18n } from 'i18n/I18nContext';
 
@@ -14,7 +15,8 @@ const isPublicProject = (project) =>
   project.visibility !== 'private' &&
   (project.publishing_status === 'published' || project.publishing_status === 'in_progress');
 
-const toCard = (project, t) => {
+const toCard = (raw, t, lang) => {
+  const project = localizeProject(raw, lang);
   const technologies = Array.isArray(project.technologies) ? project.technologies : [];
   const heroImages = Array.isArray(project.hero_images) ? project.hero_images : [];
 
@@ -33,7 +35,7 @@ const toCard = (project, t) => {
 const FeaturedWork = () => {
   const { projects, loading, error, loadProjects } = useProjects();
   const [activeProject, setActiveProject] = useState(0);
-  const { t, lp } = useI18n();
+  const { t, lp, lang } = useI18n();
 
   // Built from the project list the app already holds (cached and refreshed in
   // the background), so returning to Home shows the cards at once instead of
@@ -43,11 +45,11 @@ const FeaturedWork = () => {
     // Same rule the old featured query used: featured and fully published.
     const featured = publicProjects
       .filter((project) => project.featured && project.publishing_status === 'published')
-      .map((project) => toCard(project, t));
+      .map((project) => toCard(project, t, lang));
     if (featured.length > 0) return { cards: featured, usingFallback: false };
-    const latest = publicProjects.slice(0, 4).map((project) => toCard(project, t));
+    const latest = publicProjects.slice(0, 4).map((project) => toCard(project, t, lang));
     return { cards: latest, usingFallback: latest.length > 0 };
-  }, [projects, t]);
+  }, [projects, t, lang]);
 
   useEffect(() => {
     if (activeProject >= cards.length) setActiveProject(0);

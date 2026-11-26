@@ -1,6 +1,7 @@
 // src/pages/project-manager/components/CaseStudyContent.jsx
 import React, { useState } from 'react';
 import Icon from 'components/AppIcon';
+import BilingualField from 'components/admin/BilingualField';
 
 const CaseStudyContent = ({ formData, setFormData }) => {
   const [activeTemplate, setActiveTemplate] = useState(null);
@@ -107,6 +108,13 @@ const CaseStudyContent = ({ formData, setFormData }) => {
     }
   };
 
+  const updateTestimonial = (testimonialId, field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      testimonials: (prev.testimonials || []).map(t => (t.id === testimonialId ? { ...t, [field]: value } : t))
+    }));
+  };
+
   const removeTestimonial = (testimonialId) => {
     const testimonials = formData?.testimonials || [];
     setFormData(prev => ({
@@ -167,46 +175,46 @@ const CaseStudyContent = ({ formData, setFormData }) => {
       {isCaseStudyEnabled && (
         <div className="space-y-6">
           {/* Problem Definition */}
-          <div className="mb-6">
-            <label className="text-sm font-semibold text-secondary-700 dark:text-secondary-300 mb-2 block">
-              Problem Definition
-            </label>
-            <textarea
-              value={formData?.problem || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, problem: e.target.value }))}
-              className="w-full px-4 py-3 border border-secondary-300 dark:border-primary-700 dark:bg-background dark:text-primary-200 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none"
-              rows={8}
-              placeholder="Describe the problem or challenge this project aimed to solve..."
-            />
-          </div>
+          <BilingualField
+            className="mb-6"
+            label="Problem Definition"
+            multiline
+            rows={8}
+            value={formData?.problem}
+            valueAr={formData?.problem_ar}
+            onChange={(value) => setFormData(prev => ({ ...prev, problem: value }))}
+            onChangeAr={(value) => setFormData(prev => ({ ...prev, problem_ar: value }))}
+            placeholder="Describe the problem or challenge this project aimed to solve..."
+            placeholderAr="المشكلة أو التحدي الذي عالجه المشروع"
+          />
 
           {/* Solution Approach */}
-          <div className="mb-6">
-            <label className="text-sm font-semibold text-secondary-700 dark:text-secondary-300 mb-2 block">
-              Solution Approach
-            </label>
-            <textarea
-              value={formData?.solution || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, solution: e.target.value }))}
-              className="w-full px-4 py-3 border border-secondary-300 dark:border-primary-700 dark:bg-background dark:text-primary-200 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none"
-              rows={8}
-              placeholder="Explain your approach to solving the problem..."
-            />
-          </div>
+          <BilingualField
+            className="mb-6"
+            label="Solution Approach"
+            multiline
+            rows={8}
+            value={formData?.solution}
+            valueAr={formData?.solution_ar}
+            onChange={(value) => setFormData(prev => ({ ...prev, solution: value }))}
+            onChangeAr={(value) => setFormData(prev => ({ ...prev, solution_ar: value }))}
+            placeholder="Explain your approach to solving the problem..."
+            placeholderAr="طريقتك في حل المشكلة"
+          />
 
           {/* Results */}
-          <div className="mb-6">
-            <label className="text-sm font-semibold text-secondary-700 dark:text-secondary-300 mb-2 block">
-              Results & Impact
-            </label>
-            <textarea
-              value={formData?.results || ''}
-              onChange={(e) => setFormData(prev => ({ ...prev, results: e.target.value }))}
-              className="w-full px-4 py-3 border border-secondary-300 dark:border-primary-700 dark:bg-background dark:text-primary-200 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none"
-              rows={8}
-              placeholder="Document the results and impact of your solution..."
-            />
-          </div>
+          <BilingualField
+            className="mb-6"
+            label="Results & Impact"
+            multiline
+            rows={8}
+            value={formData?.results}
+            valueAr={formData?.results_ar}
+            onChange={(value) => setFormData(prev => ({ ...prev, results: value }))}
+            onChangeAr={(value) => setFormData(prev => ({ ...prev, results_ar: value }))}
+            placeholder="Document the results and impact of your solution..."
+            placeholderAr="النتائج والأثر"
+          />
 
           {/* Prototype Embedding */}
           <div>
@@ -308,7 +316,44 @@ const CaseStudyContent = ({ formData, setFormData }) => {
                         <Icon name="Trash2" size={16} />
                       </button>
                     </div>
-                    <p className="text-secondary-700 italic dark:text-text-secondary">"{testimonial.content}"</p>
+                    <div className="mt-3 space-y-3">
+                      <BilingualField
+                        label="Testimonial"
+                        multiline
+                        rows={3}
+                        value={testimonial.content}
+                        valueAr={testimonial.content_ar}
+                        onChange={(value) => updateTestimonial(testimonial.id, 'content', value)}
+                        onChangeAr={(value) => updateTestimonial(testimonial.id, 'content_ar', value)}
+                        placeholderAr="نص الشهادة بالعربية"
+                      />
+                      <div className="grid grid-cols-1 gap-3">
+                        <BilingualField
+                          label="Name"
+                          value={testimonial.name}
+                          valueAr={testimonial.name_ar}
+                          onChange={(value) => updateTestimonial(testimonial.id, 'name', value)}
+                          onChangeAr={(value) => updateTestimonial(testimonial.id, 'name_ar', value)}
+                          placeholderAr="الاسم"
+                        />
+                        <BilingualField
+                          label="Role"
+                          value={testimonial.role}
+                          valueAr={testimonial.role_ar}
+                          onChange={(value) => updateTestimonial(testimonial.id, 'role', value)}
+                          onChangeAr={(value) => updateTestimonial(testimonial.id, 'role_ar', value)}
+                          placeholderAr="المسمى"
+                        />
+                        <BilingualField
+                          label="Company"
+                          value={testimonial.company}
+                          valueAr={testimonial.company_ar}
+                          onChange={(value) => updateTestimonial(testimonial.id, 'company', value)}
+                          onChangeAr={(value) => updateTestimonial(testimonial.id, 'company_ar', value)}
+                          placeholderAr="الشركة"
+                        />
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>

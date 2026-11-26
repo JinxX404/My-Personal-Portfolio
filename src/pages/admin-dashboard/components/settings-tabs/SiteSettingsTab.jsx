@@ -1,5 +1,6 @@
 import React from 'react';
 import Icon from 'components/AppIcon';
+import BilingualField from 'components/admin/BilingualField';
 
 const SiteSettingsTab = ({ settings, onChange }) => {
   return (
@@ -12,33 +13,31 @@ const SiteSettingsTab = ({ settings, onChange }) => {
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Site Title */}
-          <div>
-            <label className="block text-sm font-semibold text-primary-700 mb-2 dark:text-text-primary">
-              Site Title
-            </label>
-            <p className="text-xs text-secondary-500 dark:text-muted mb-2">Used in the footer when the profile has no name.</p>
-            <input
-              type="text"
-              value={settings.site_title}
-              onChange={(e) => onChange({ ...settings, site_title: e.target.value })}
-              placeholder="My Portfolio"
-              className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
-            />
-          </div>
+          <BilingualField
+            className="md:col-span-2"
+            label="Site Title"
+            hint="(used in the footer when the profile has no name)"
+            value={settings.site_title}
+            valueAr={settings.site_title_ar}
+            onChange={(value) => onChange({ ...settings, site_title: value })}
+            onChangeAr={(value) => onChange({ ...settings, site_title_ar: value })}
+            placeholder="My Portfolio"
+            placeholderAr="معرض أعمالي"
+          />
 
           {/* Site Description */}
-          <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-primary-700 mb-2 dark:text-text-primary">
-              Site Description
-            </label>
-            <textarea
-              value={settings.site_description}
-              onChange={(e) => onChange({ ...settings, site_description: e.target.value })}
-              placeholder="A brief description of your portfolio..."
-              rows="3"
-              className="w-full px-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
-            />
-          </div>
+          <BilingualField
+            className="md:col-span-2"
+            label="Site Description"
+            multiline
+            rows={3}
+            value={settings.site_description}
+            valueAr={settings.site_description_ar}
+            onChange={(value) => onChange({ ...settings, site_description: value })}
+            onChangeAr={(value) => onChange({ ...settings, site_description_ar: value })}
+            placeholder="A brief description of your portfolio..."
+            placeholderAr="وصف قصير لموقعك"
+          />
 
           {/* Keywords */}
           <div className="md:col-span-2">

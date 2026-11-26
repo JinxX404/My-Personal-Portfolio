@@ -1,5 +1,6 @@
 import React from 'react';
 import Icon from 'components/AppIcon';
+import BilingualField from 'components/admin/BilingualField';
 
 const SEOSettingsTab = ({ settings, onChange }) => {
   const metaTitle = settings.meta_title || '';
@@ -22,52 +23,32 @@ const SEOSettingsTab = ({ settings, onChange }) => {
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Meta Title */}
-          <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-primary-700 dark:text-primary-300 mb-2">
-              Meta Title
-            </label>
-            <input
-              type="text"
-              value={metaTitle}
-              onChange={(e) => onChange({ ...settings, meta_title: e.target.value })}
-              placeholder="Your Portfolio - Full Stack Developer"
-              maxLength="60"
-              className="w-full px-4 py-3 border border-primary-200 dark:border-primary-700 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:bg-background dark:text-primary-200"
-            />
-            <div className="flex items-center justify-between mt-1">
-              <p className="text-xs text-secondary-500 dark:text-muted">{metaTitle.length}/60 characters</p>
-              {metaTitle.length > 60 && (
-                <p className="text-xs text-error-500 flex items-center space-x-1">
-                  <Icon name="AlertCircle" size={12} />
-                  <span>Title too long for optimal SEO</span>
-                </p>
-              )}
-            </div>
-          </div>
+          <BilingualField
+            className="md:col-span-2"
+            label="Meta Title"
+            value={metaTitle}
+            valueAr={settings.meta_title_ar}
+            onChange={(value) => onChange({ ...settings, meta_title: value })}
+            onChangeAr={(value) => onChange({ ...settings, meta_title_ar: value })}
+            placeholder="Your Portfolio - Full Stack Developer"
+            placeholderAr="عنوان الموقع في نتائج البحث"
+            maxLength={60}
+          />
 
           {/* Meta Description */}
-          <div className="md:col-span-2">
-            <label className="block text-sm font-semibold text-primary-700 dark:text-primary-300 mb-2">
-              Meta Description
-            </label>
-            <textarea
-              value={metaDescription}
-              onChange={(e) => onChange({ ...settings, meta_description: e.target.value })}
-              placeholder="Professional web developer specializing in React, Node.js, and modern web technologies..."
-              maxLength="160"
-              rows="3"
-              className="w-full px-4 py-3 border border-primary-200 dark:border-primary-700 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:bg-background dark:text-primary-200"
-            />
-            <div className="flex items-center justify-between mt-1">
-              <p className="text-xs text-secondary-500 dark:text-muted">{metaDescription.length}/160 characters</p>
-              {metaDescription.length > 160 && (
-                <p className="text-xs text-error-500 flex items-center space-x-1">
-                  <Icon name="AlertCircle" size={12} />
-                  <span>Description too long for optimal SEO</span>
-                </p>
-              )}
-            </div>
-          </div>
+          <BilingualField
+            className="md:col-span-2"
+            label="Meta Description"
+            multiline
+            rows={3}
+            value={metaDescription}
+            valueAr={settings.meta_description_ar}
+            onChange={(value) => onChange({ ...settings, meta_description: value })}
+            onChangeAr={(value) => onChange({ ...settings, meta_description_ar: value })}
+            placeholder="Professional web developer specializing in React, Node.js, and modern web technologies..."
+            placeholderAr="وصف الموقع في نتائج البحث"
+            maxLength={160}
+          />
 
           {/* Open Graph Image */}
           <div className="md:col-span-2">

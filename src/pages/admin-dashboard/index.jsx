@@ -8,6 +8,8 @@ import { listMessages, MESSAGES_CHANGED_EVENT } from 'services/messagesService';
 import MetricCard from './components/MetricCard';
 import RecentActivity from './components/RecentActivity';
 import ContentChecklist from './components/ContentChecklist';
+import ArabicChecklist from './components/ArabicChecklist';
+import { useSkills } from 'context/SkillsContext';
 
 const formatDay = (value) => {
   const date = value ? new Date(value) : null;
@@ -24,7 +26,8 @@ const STATUS_LABELS = {
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const { projects, loading: projectsLoading } = useProjects();
-  const { profile, careerData } = usePortfolioSettings();
+  const { profile, careerData, settings } = usePortfolioSettings();
+  const { skillCategories } = useSkills();
   const [messages, setMessages] = useState([]);
   const [messagesLoading, setMessagesLoading] = useState(true);
 
@@ -127,6 +130,10 @@ const AdminDashboard = () => {
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
           <RecentActivity activities={recentActivities} />
           <ContentChecklist projects={projects} profile={profile} careerData={careerData} />
+        </div>
+
+        <div className="mb-8">
+          <ArabicChecklist projects={projects} settings={settings} skillCategories={skillCategories} />
         </div>
       </main>
     </>

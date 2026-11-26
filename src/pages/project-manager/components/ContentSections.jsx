@@ -1,6 +1,7 @@
 // src/pages/project-manager/components/ContentSections.jsx
 import React from 'react';
 import Icon from 'components/AppIcon';
+import BilingualField from 'components/admin/BilingualField';
 
 const ContentSections = ({ formData, setFormData }) => {
   const sections = formData?.content_sections || [];
@@ -9,7 +10,9 @@ const ContentSections = ({ formData, setFormData }) => {
     const newSection = {
       id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
       title: '',
-      content: ''
+      title_ar: '',
+      content: '',
+      content_ar: ''
     };
     setFormData(prev => ({
       ...prev,
@@ -129,31 +132,28 @@ const ContentSections = ({ formData, setFormData }) => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="md:col-span-1">
-                  <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
-                    Section Title
-                  </label>
-                  <input
-                    type="text"
-                    value={section.title || ''}
-                    onChange={(e) => handleUpdateSection(section.id, 'title', e.target.value)}
-                    className="w-full px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors dark:bg-surface-elevated dark:border-border dark:text-text-primary"
-                    placeholder="e.g., Overview"
-                  />
-                </div>
-                <div className="md:col-span-3">
-                  <label className="block text-sm font-semibold text-text-secondary dark:text-text-secondary mb-2">
-                    Content
-                  </label>
-                  <textarea
-                    value={section.content || ''}
-                    onChange={(e) => handleUpdateSection(section.id, 'content', e.target.value)}
-                    className="w-full px-3 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-accent-500 focus:border-accent-500 transition-colors resize-none dark:bg-surface-elevated dark:border-border dark:text-text-primary"
-                    rows={4}
-                    placeholder="Write your section content here..."
-                  />
-                </div>
+              <div className="space-y-4">
+                <BilingualField
+                  label="Section Title"
+                  value={section.title}
+                  valueAr={section.title_ar}
+                  onChange={(value) => handleUpdateSection(section.id, 'title', value)}
+                  onChangeAr={(value) => handleUpdateSection(section.id, 'title_ar', value)}
+                  placeholder="e.g., Overview"
+                  placeholderAr="مثال: نظرة عامة"
+                  maxLength={100}
+                />
+                <BilingualField
+                  label="Content"
+                  multiline
+                  rows={6}
+                  value={section.content}
+                  valueAr={section.content_ar}
+                  onChange={(value) => handleUpdateSection(section.id, 'content', value)}
+                  onChangeAr={(value) => handleUpdateSection(section.id, 'content_ar', value)}
+                  placeholder="Write your section content here..."
+                  placeholderAr="اكتب محتوى القسم هنا..."
+                />
               </div>
             </div>
           ))}

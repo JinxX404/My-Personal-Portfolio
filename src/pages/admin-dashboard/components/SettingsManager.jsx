@@ -10,6 +10,7 @@ import SocialLinksTabDynamic from './settings-tabs/SocialLinksTabDynamic';
 import SiteSettingsTab from './settings-tabs/SiteSettingsTab';
 import SEOSettingsTab from './settings-tabs/SEOSettingsTab';
 import CareerDataTab from './settings-tabs/CareerDataTab';
+import { missingArabic, PROFILE_SPEC, SITE_SPEC, SEO_SPEC, CAREER_SPEC } from '../../../i18n/content.mjs';
 
 const SettingsManager = () => {
   const { settings, updateSettings } = usePortfolioSettings();
@@ -33,6 +34,15 @@ const SettingsManager = () => {
     { id: 'seo', label: 'SEO & Analytics', icon: 'TrendingUp' },
     { id: 'career', label: 'Career Data', icon: 'Briefcase' }
   ];
+
+  // English text without Arabic, per tab (Arabic is optional but flagged).
+  const missingByTab = {
+    profile: missingArabic(profileSettings, PROFILE_SPEC).length,
+    site: missingArabic(siteSettings, SITE_SPEC).length,
+    seo: missingArabic(seoSettings, SEO_SPEC).length,
+    career: missingArabic(careerData, CAREER_SPEC).length,
+  };
+  const missingTotal = Object.values(missingByTab).reduce((sum, count) => sum + count, 0);
 
   // Sync local state with context when settings load
   useEffect(() => {
@@ -61,7 +71,12 @@ const SettingsManager = () => {
       const result = await updateSettings(settingsData);
 
       if (result.success) {
-        setSaveMessage({ type: 'success', text: 'Settings saved successfully!' });
+        setSaveMessage({
+          type: 'success',
+          text: missingTotal > 0
+            ? `Settings saved. Arabic is missing for ${missingTotal} field${missingTotal === 1 ? '' : 's'}; the Arabic site shows English there.`
+            : 'Settings saved successfully!',
+        });
         setTimeout(() => setSaveMessage(null), 3000);
       } else {
         throw new Error(result.error);
@@ -129,6 +144,14 @@ const SettingsManager = () => {
               >
                 <Icon name={tab.icon} size={20} />
                 <span className="hidden sm:inline">{tab.label}</span>
+                {missingByTab[tab.id] > 0 && (
+                  <span
+                    className="rounded-full bg-warning-100 px-2 py-0.5 text-[11px] font-semibold text-warning-800 dark:bg-warning-900/40 dark:text-warning"
+                    title={`${missingByTab[tab.id]} field(s) without Arabic`}
+                  >
+                    AR {missingByTab[tab.id]}
+                  </span>
+                )}
               </button>
             ))}
           </div>

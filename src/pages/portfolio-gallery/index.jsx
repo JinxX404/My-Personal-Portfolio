@@ -5,6 +5,7 @@ import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
 import LoadError from 'components/ui/LoadError';
 import { useProjects } from 'context/ProjectsContext';
+import { localizeProject } from '../../i18n/content.mjs';
 import { SkeletonProjectCard } from 'components/ui/Skeleton';
 import { useDebounce } from 'hooks/useDebounce';
 import { safeHref } from 'lib/safeUrl';
@@ -32,10 +33,13 @@ const PortfolioGallery = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const PAGE_SIZE = 20;
-  const { t, lp, formatNumber } = useI18n();
+  const { t, lp, formatNumber, lang } = useI18n();
 
   const transformProjects = (projects) => {
-    return projects.map((project) => {
+    return projects.map((raw) => {
+      // Arabic fields on /ar where filled in, English otherwise. Filters group
+      // by the English category so a half-translated list does not split.
+      const project = localizeProject(raw, lang);
       const technologies = Array.isArray(project.technologies) ? project.technologies : [];
       const tags = Array.isArray(project.tags) ? project.tags : [];
       const metrics = Array.isArray(project.metrics) ? project.metrics : [];
@@ -53,7 +57,8 @@ const PortfolioGallery = () => {
       return {
         id: project.id,
         title: project.title || t('project.untitled'),
-        category: project.category || t('projects.general'),
+        category: raw.category || t('projects.general'),
+        categoryLabel: project.category || t('projects.general'),
         technologies,
         description: project.description || t('projects.noDescription'),
         image: coverForProject(project),
@@ -62,6 +67,11 @@ const PortfolioGallery = () => {
         liveUrl: safeHref(project.demo_url),
         githubUrl: safeHref(project.repository_url),
         tags,
+        // Search matches both languages.
+        searchText: [raw.title, raw.title_ar, raw.description, raw.description_ar]
+          .filter((value) => typeof value === 'string')
+          .join(' ')
+          .toLowerCase(),
         publishingStatus: project.publishing_status || 'draft'
       };
     });
@@ -144,23 +154,25 @@ const PortfolioGallery = () => {
     }
     if (!projectsLoading) loadInitialProjects();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listedProjects, projectsLoading, useSupabase, t]);
+  }, [listedProjects, projectsLoading, useSupabase, t, lang]);
 
 
   const displayProjects = portfolioProjects;
 
   const filterCategories = useMemo(() => {
     const counts = new Map();
+    const labels = new Map();
     displayProjects.forEach((project) => {
       const category = project.category || t('projects.general');
       counts.set(category, (counts.get(category) || 0) + 1);
+      if (!labels.has(category) || labels.get(category) === category) labels.set(category, project.categoryLabel || category);
     });
 
     return [
       { name: 'All', label: t('projects.all'), icon: 'Grid3X3', count: displayProjects.length },
       ...Array.from(counts.entries()).map(([name, count]) => ({
         name,
-        label: name,
+        label: labels.get(name) || name,
         icon: categoryIconMap[name] || 'Folder',
         count
       }))
@@ -198,6 +210,7 @@ const PortfolioGallery = () => {
       filtered = filtered.filter(project =>
         project.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
         project.description.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        project.searchText.includes(debouncedSearch.toLowerCase()) ||
         project.technologies.some(tech => tech.toLowerCase().includes(debouncedSearch.toLowerCase()))
       );
     }
@@ -287,7 +300,7 @@ const PortfolioGallery = () => {
               {project.title}
             </h3>
             <span dir="auto" className="shrink-0 text-sm font-medium text-accent-700 bg-cta-50 dark:bg-accent-subtle dark:text-accent-text px-2 py-1 rounded-full">
-              {project.category}
+              {project.categoryLabel}
             </span>
           </div>
 
@@ -575,8 +588,8 @@ const PortfolioGallery = () => {
                     <h2 dir="auto" className="text-3xl font-bold text-primary-800 mb-2 dark:text-text-primary">
                       {selectedProject.title}
                     </h2>
-                    <span className="text-accent-700 bg-cta-50 px-3 py-1 rounded-full text-sm font-semibold dark:bg-accent-subtle dark:text-accent-text">
-                      {selectedProject.category}
+                    <span dir="auto" className="text-accent-700 bg-cta-50 px-3 py-1 rounded-full text-sm font-semibold dark:bg-accent-subtle dark:text-accent-text">
+                      {selectedProject.categoryLabel}
                     </span>
                   </div>
                 </div>

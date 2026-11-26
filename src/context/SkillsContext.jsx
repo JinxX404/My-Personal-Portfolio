@@ -12,15 +12,34 @@ import {
   deleteTechStackItem,
 } from '../services/skillsService';
 import { isSupabaseConfigured } from '../lib/supabase';
+import { useI18n } from '../i18n/I18nContext';
+import { pick } from '../i18n/content.mjs';
 
 const SkillsContext = createContext();
 
+/**
+ * Skills for the current page language: on /ar, category titles and skill
+ * names use their Arabic text where it is filled in. The admin (English)
+ * always gets the raw values, including the `_ar` fields it edits.
+ */
 export const useSkills = () => {
   const context = useContext(SkillsContext);
   if (!context) {
     throw new Error('useSkills must be used within a SkillsProvider');
   }
-  return context;
+  const { lang } = useI18n();
+  return useMemo(() => {
+    if (lang !== 'ar') return context;
+    const skillCategories = {};
+    Object.entries(context.skillCategories || {}).forEach(([key, category]) => {
+      skillCategories[key] = {
+        ...category,
+        title: pick(category, 'title', lang),
+        skills: (category.skills || []).map((skill) => ({ ...skill, name: pick(skill, 'name', lang) })),
+      };
+    });
+    return { ...context, skillCategories };
+  }, [context, lang]);
 };
 
 export const SkillsProvider = ({ children }) => {
@@ -56,11 +75,13 @@ export const SkillsProvider = ({ children }) => {
             id: cat.id,
             key: cat.key,
             title: cat.title,
+            title_ar: cat.title_ar || '',
             icon: cat.icon,
             color: cat.color,
             skills: cat.skills.map(skill => ({
               id: skill.id,
               name: skill.name,
+              name_ar: skill.name_ar || '',
               level: skill.level,
               icon: skill.icon,
             })),
@@ -104,6 +125,7 @@ export const SkillsProvider = ({ children }) => {
       const result = await createSkillCategory({
         key: categoryKey,
         title: categoryData.title,
+        ...(categoryData.title_ar ? { title_ar: categoryData.title_ar } : {}),
         icon: categoryData.icon,
         color: categoryData.color,
       });
@@ -172,6 +194,7 @@ export const SkillsProvider = ({ children }) => {
         const result = await createSkill({
           category_id: category.id,
           name: skill.name,
+          ...(skill.name_ar ? { name_ar: skill.name_ar } : {}),
           level: skill.level,
           icon: skill.icon,
         });

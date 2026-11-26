@@ -46,7 +46,7 @@ const WhoAmI = () => {
           {/* Content */}
           <div className="flex-1 text-center lg:text-start">
             <h2 className="text-2xl md:text-3xl font-bold text-text-primary dark:text-white mb-2">
-              {profile?.full_name || t('site.defaultName')}
+              <bdi>{profile?.full_name || t('site.defaultName')}</bdi>
             </h2>
             <p dir="auto" className="text-accent font-medium mb-4 dark:text-accent-text">
               {profile?.title || t('site.defaultRole')}

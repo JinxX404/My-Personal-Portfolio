@@ -4,27 +4,30 @@ import Icon from "components/AppIcon";
 import Image from "components/AppImage";
 import { coverForProject } from "lib/projectMedia";
 import { useI18n } from "i18n/I18nContext";
+import { localizeProject } from "i18n/content.mjs";
 
 /**
  * Previous / next project plus up to two related projects (same category
  * first). Uses the published list already loaded by ProjectsContext.
  */
 const MoreProjects = ({ currentId, category, projects }) => {
-  const { t, lp } = useI18n();
+  const { t, lp, lang } = useI18n();
   const published = useMemo(
     () =>
-      (projects || []).filter(
-        (p) =>
-          ["published", "in_progress"].includes(p.publishing_status) &&
-          (p.visibility || "public") === "public"
-      ),
-    [projects]
+      (projects || [])
+        .filter(
+          (p) =>
+            ["published", "in_progress"].includes(p.publishing_status) &&
+            (p.visibility || "public") === "public"
+        )
+        .map((p) => ({ ...localizeProject(p, lang), categoryKey: p.category })),
+    [projects, lang]
   );
 
   const { previous, next, related } = useMemo(() => {
     const index = published.findIndex((p) => p.id === currentId);
     const others = published.filter((p) => p.id !== currentId);
-    const sameCategory = others.filter((p) => category && p.category === category);
+    const sameCategory = others.filter((p) => category && p.categoryKey === category);
     const rest = others.filter((p) => !sameCategory.includes(p));
     return {
       previous: index > 0 ? published[index - 1] : null,
