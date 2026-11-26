@@ -33,32 +33,40 @@ export const submitContactForm = async (data) => {
     return { success: false, error: 'Supabase not configured' };
   }
 
-  if (turnstileSiteKey()) {
-    try {
-      const response = await fetch('/.netlify/functions/contact-submit', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          ...data,
-          turnstileToken: data.turnstileToken || '',
-        }),
-      });
+  // The function saves the message and sends the email alert. Local Vite has
+  // no functions runtime (404) and an unconfigured site answers 503
+  // not_configured: both fall back to the direct insert so the form still sends.
+  // (Before Phase 5 the function was used only when a captcha was configured.)
+  try {
+    const response = await fetch('/.netlify/functions/contact-submit', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        ...data,
+        turnstileToken: data.turnstileToken || '',
+      }),
+    });
 
-      if (response.ok) {
-        return { success: true };
-      }
-
-      // Local Vite has no functions runtime. Fall back so the form still sends.
-      if (response.status !== 404) {
-        const payload = await response.json().catch(() => ({}));
-        return {
-          success: false,
-          error: payload.error || 'Failed to send message. Please try again.',
-        };
-      }
-    } catch {
-      // Network failure to the function: try the direct insert below.
+    if (response.ok) {
+      return { success: true };
     }
+
+    const payload = await response.json().catch(() => ({}));
+    const fallBack =
+      response.status === 404 ||
+      (response.status === 503 && payload.code === 'not_configured') ||
+      // The function could not save (e.g. a wrong key in Netlify): nothing was stored, try directly.
+      (response.status === 502 && payload.code === 'insert_failed') ||
+      // Captcha secret set on the server but no site key in this build: same as before this change.
+      (payload.code === 'captcha_required' && !turnstileSiteKey());
+    if (!fallBack) {
+      return {
+        success: false,
+        error: payload.error || 'Failed to send message. Please try again.',
+      };
+    }
+  } catch {
+    // Network failure to the function: try the direct insert below.
   }
 
   try {

@@ -1,7 +1,14 @@
-// Optional contact endpoint. The public form calls this only when a Turnstile
-// site key is configured. Without TURNSTILE_SECRET_KEY the insert still
-// succeeds so a half-configured captcha cannot take the form offline.
-// Direct anon inserts remain allowed by RLS until that policy is tightened.
+// Contact endpoint. The public form posts here first and falls back to a
+// direct insert only when this function is missing or not configured.
+// - Without TURNSTILE_SECRET_KEY the insert still succeeds, so a
+//   half-configured captcha cannot take the form offline.
+// - With RESEND_API_KEY, ALERT_EMAIL_TO and ALERT_EMAIL_FROM set, a new
+//   message also sends an email alert; without them it is skipped silently.
+//   A failed email never fails the request: the message is already saved.
+// - Inserts use SUPABASE_SERVICE_ROLE_KEY when set, otherwise the anon key.
+//   Direct anon inserts stay allowed by RLS until that policy is tightened
+//   (see MORNING.md: only after the service key is set here).
+import { sendContactAlert } from '../lib/contactAlert.mjs';
 
 const INSERT_PATH = '/rest/v1/contact_submissions';
 
@@ -53,7 +60,7 @@ export default async (req) => {
   if (secret) {
     const token = clean(body?.turnstileToken, 2048);
     if (!token) {
-      return json({ ok: false, error: 'Complete the captcha and try again.' }, 400);
+      return json({ ok: false, code: 'captcha_required', error: 'Complete the captcha and try again.' }, 400);
     }
 
     const verifyBody = new URLSearchParams({ secret, response: token });
@@ -75,9 +82,11 @@ export default async (req) => {
   }
 
   const supabaseUrl = (readEnv('VITE_SUPABASE_URL') || readEnv('SUPABASE_URL')).replace(/\/+$/, '');
-  const anonKey = readEnv('VITE_SUPABASE_ANON_KEY') || readEnv('SUPABASE_ANON_KEY');
-  if (!supabaseUrl || !anonKey) {
-    return json({ ok: false, error: 'Contact form is not configured.' }, 500);
+  const insertKey =
+    readEnv('SUPABASE_SERVICE_ROLE_KEY') || readEnv('VITE_SUPABASE_ANON_KEY') || readEnv('SUPABASE_ANON_KEY');
+  if (!supabaseUrl || !insertKey) {
+    // 503 + code lets the browser fall back to its direct insert.
+    return json({ ok: false, code: 'not_configured', error: 'Contact form is not configured.' }, 503);
   }
 
   const row = {
@@ -100,20 +109,23 @@ export default async (req) => {
     insertResponse = await fetch(`${supabaseUrl}${INSERT_PATH}`, {
       method: 'POST',
       headers: {
-        apikey: anonKey,
-        Authorization: `Bearer ${anonKey}`,
+        apikey: insertKey,
+        Authorization: `Bearer ${insertKey}`,
         'content-type': 'application/json',
         Prefer: 'return=minimal',
       },
       body: JSON.stringify(row),
     });
   } catch {
-    return json({ ok: false, error: 'Could not send your message. Please try again.' }, 502);
+    return json({ ok: false, code: 'insert_failed', error: 'Could not send your message. Please try again.' }, 502);
   }
 
   if (!insertResponse.ok) {
-    return json({ ok: false, error: 'Could not send your message. Please try again.' }, 502);
+    return json({ ok: false, code: 'insert_failed', error: 'Could not send your message. Please try again.' }, 502);
   }
+
+  // Awaited so the runtime does not stop before the email is out; capped by a timeout.
+  await sendContactAlert(row, readEnv);
 
   return json({ ok: true }, 201);
 };
