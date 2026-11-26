@@ -5,6 +5,7 @@ import { usePortfolioSettings } from "context/PortfolioSettingsContext";
 import { safeHref } from "lib/safeUrl";
 import SocialLinks from "./SocialLinks";
 import { useI18n } from "i18n/I18nContext";
+import { whatsappUrl } from "lib/whatsapp.mjs";
 
 const contactMethodColorMap = {
   accent: { bg10: "bg-accent/10 dark:bg-accent-subtle", bg20: "bg-accent/20 dark:bg-accent-fill/20", text: "text-accent dark:text-accent-text" },
@@ -25,6 +26,8 @@ const ContactInfo = () => {
   const { t } = useI18n();
   
   const cvUrl = safeHref(profile?.cv_url || profile?.resume_url);
+  // Hidden until a WhatsApp number is saved in Settings > Profile.
+  const whatsapp = whatsappUrl(profile?.whatsapp, t("contact.whatsapp.message"));
 
   const contactMethods = [
     profile?.email && {
@@ -68,6 +71,19 @@ const ContactInfo = () => {
           {t("contact.info.subtitle")}
         </p>
       </div>
+
+      {whatsapp && (
+        <a
+          href={whatsapp}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mb-6 flex items-center justify-center gap-3 w-full rounded-xl bg-[#167a40] hover:bg-[#11633a] text-white font-semibold py-3.5 px-4 shadow-md hover:shadow-lg transition-all"
+          data-whatsapp-button
+        >
+          <Icon name="MessageCircle" size={20} strokeWidth={2} />
+          <span>{t("contact.whatsapp.cta")}</span>
+        </a>
+      )}
 
       <div className="space-y-6">
         {contactMethods.map((method, index) => {

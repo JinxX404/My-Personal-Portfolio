@@ -5,16 +5,18 @@ import Icon from 'components/AppIcon';
 import {
   CAREER_SPEC,
   describeMissing,
+  FAQ_SPEC,
   missingArabic,
   PROFILE_SPEC,
   PROJECT_SPEC,
   SEO_SPEC,
+  SERVICE_SPEC,
   SITE_SPEC,
   SKILL_CATEGORY_SPEC,
 } from '../../../i18n/content.mjs';
 
 /** Everything with English text but no Arabic, grouped by where to fix it. */
-export const arabicGaps = ({ projects = [], settings = {}, skillCategories = {} }) => {
+export const arabicGaps = ({ projects = [], settings = {}, skillCategories = {}, services = [], faqs = [] }) => {
   const items = [];
   const settingsTabs = [
     { tab: 'profile', label: 'Profile', source: settings.profile, spec: PROFILE_SPEC },
@@ -37,13 +39,26 @@ export const arabicGaps = ({ projects = [], settings = {}, skillCategories = {} 
   if (categories.length) {
     items.push({ key: 'skills', kind: 'skills', label: 'Skill categories', missing: categories.map((category) => category.title), to: '/skills-manager' });
   }
+  services
+    .filter((service) => service.published)
+    .forEach((service) => {
+      const missing = missingArabic(service, SERVICE_SPEC);
+      if (missing.length) items.push({ key: `service-${service.id}`, kind: 'service', label: `Service: ${service.title}`, missing, to: '/services-manager' });
+    });
+  const faqGaps = faqs.filter((faq) => faq.published && missingArabic(faq, FAQ_SPEC).length);
+  if (faqGaps.length) {
+    items.push({ key: 'faqs', kind: 'faq', label: 'FAQ', missing: faqGaps.map((faq) => faq.question), to: '/services-manager' });
+  }
   return items;
 };
 
-const ICONS = { settings: 'User', project: 'Briefcase', skills: 'Layers' };
+const ICONS = { settings: 'User', project: 'Briefcase', skills: 'Layers', service: 'Layers', faq: 'HelpCircle' };
 
-const ArabicChecklist = ({ projects, settings, skillCategories }) => {
-  const items = useMemo(() => arabicGaps({ projects, settings, skillCategories }), [projects, settings, skillCategories]);
+const ArabicChecklist = ({ projects, settings, skillCategories, services, faqs }) => {
+  const items = useMemo(
+    () => arabicGaps({ projects, settings, skillCategories, services, faqs }),
+    [projects, settings, skillCategories, services, faqs]
+  );
   const fieldCount = items.reduce((sum, item) => sum + item.missing.length, 0);
 
   return (
@@ -90,7 +105,7 @@ const ArabicChecklist = ({ projects, settings, skillCategories }) => {
                       {item.label}
                     </span>
                     <span className="block text-xs text-secondary-600 dark:text-text-secondary mt-0.5 truncate">
-                      {item.missing.length} missing: {(item.kind === 'skills' ? item.missing : describeMissing(item.missing)).slice(0, 4).join(', ')}
+                      {item.missing.length} missing: {(item.kind === 'skills' || item.kind === 'faq' ? item.missing : describeMissing(item.missing)).slice(0, 4).join(', ')}
                       {item.missing.length > 4 ? '…' : ''}
                     </span>
                   </span>

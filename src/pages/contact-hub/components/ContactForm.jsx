@@ -6,13 +6,14 @@ import TurnstileField, { turnstileSiteKey } from 'components/TurnstileField';
 import { useToast } from 'context/ToastContext';
 import { submitContactForm } from 'services/contactService';
 import { useI18n } from 'i18n/I18nContext';
+import { budgetOptions as rangesFor, CURRENCIES, currencyOfBudget, defaultCurrency } from 'lib/budget.mjs';
 
 const INQUIRY_OPTIONS = [
   { id: 'project', label: 'contact.form.typeProject', icon: 'Briefcase' },
   { id: 'general', label: 'contact.form.typeGeneral', icon: 'MessageCircle' },
 ];
 
-const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
+const ContactForm = ({ selectedInquiryType, onInquiryTypeChange, initialSubject = '' }) => {
   const { error: showError } = useToast();
   const { t, lang } = useI18n();
   const [formData, setFormData] = useState({
@@ -26,6 +27,24 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
     timeline: ''
   });
   
+  // Budget ranges in Egyptian pounds or US dollars (EGP first on /ar).
+  const [currency, setCurrency] = useState(() => defaultCurrency(lang));
+  const subjectTouched = useRef(false);
+
+  // Coming from a service card (?service=...): the subject names the service.
+  useEffect(() => {
+    if (!initialSubject || subjectTouched.current) return;
+    setFormData((prev) => (prev.subject ? prev : { ...prev, subject: initialSubject }));
+  }, [initialSubject]);
+
+  const changeCurrency = (next) => {
+    setCurrency(next);
+    setFormData((prev) => {
+      const owner = currencyOfBudget(prev.budget);
+      return owner && owner !== next ? { ...prev, budget: '' } : prev;
+    });
+  };
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errors, setErrors] = useState({});
@@ -113,6 +132,7 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === 'subject') subjectTouched.current = true;
     setFormData(prev => ({ ...prev, [name]: value }));
     
     // Clear error when user starts typing
@@ -133,11 +153,7 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
 
   const budgetOptions = [
     { value: '', label: t('contact.form.budgetSelect') },
-    { value: 'under-5k', label: t('contact.form.budgetUnder5k') },
-    { value: '5k-15k', label: t('contact.form.budget5to15') },
-    { value: '15k-50k', label: t('contact.form.budget15to50') },
-    { value: 'over-50k', label: t('contact.form.budgetOver50k') },
-    { value: 'discuss', label: t('contact.form.budgetDiscuss') }
+    ...rangesFor(currency, lang),
   ];
 
   const timelineOptions = [
@@ -309,9 +325,27 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
         {selectedInquiryType === 'project' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="budget" className="block text-sm font-medium text-text-primary mb-2">
-                {t('contact.form.budget')} *
-              </label>
+              <div className="flex items-center justify-between gap-3 mb-2">
+                <label htmlFor="budget" className="block text-sm font-medium text-text-primary">
+                  {t('contact.form.budget')} *
+                </label>
+                <div role="radiogroup" aria-label={t('contact.form.currency')} className="inline-flex rounded-lg border border-border dark:border-border-strong p-0.5 text-xs font-semibold" data-budget-currency>
+                  {CURRENCIES.map((code) => (
+                    <button
+                      key={code}
+                      type="button"
+                      role="radio"
+                      aria-checked={currency === code}
+                      onClick={() => changeCurrency(code)}
+                      className={`px-2.5 py-1 rounded-md transition-colors ${
+                        currency === code ? 'bg-accent text-white dark:bg-accent-fill' : 'text-text-secondary hover:text-text-primary'
+                      }`}
+                    >
+                      {t(code === 'EGP' ? 'contact.form.currencyEgp' : 'contact.form.currencyUsd')}
+                    </button>
+                  ))}
+                </div>
+              </div>
               <select
                 id="budget"
                 name="budget"
@@ -475,6 +509,7 @@ const ContactForm = ({ selectedInquiryType, onInquiryTypeChange }) => {
 ContactForm.propTypes = {
   selectedInquiryType: PropTypes.oneOf(['project', 'collaboration', 'speaking', 'general']).isRequired,
   onInquiryTypeChange: PropTypes.func,
+  initialSubject: PropTypes.string,
 };
 
 export default ContactForm;

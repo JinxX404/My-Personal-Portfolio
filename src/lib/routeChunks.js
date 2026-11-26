@@ -6,6 +6,7 @@ export const pageLoaders = {
   project: () => import('pages/case-study-detail'),
   about: () => import('pages/about-story'),
   contact: () => import('pages/contact-hub'),
+  services: () => import('pages/services'),
 };
 
 const started = new Set();
@@ -17,6 +18,7 @@ const loaderForPath = (path = '') => {
   if (/^\/projects\/[^/]+/.test(clean)) return 'project';
   if (clean.startsWith('/about-story')) return 'about';
   if (clean.startsWith('/contact-hub')) return 'contact';
+  if (clean === '/services') return 'services';
   return null;
 };
 

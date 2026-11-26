@@ -13,6 +13,7 @@ const LOCALIZED_PATTERNS = [
   /^\/projects(\/[^/]+)?\/?$/,
   /^\/about-story\/?$/,
   /^\/contact-hub\/?$/,
+  /^\/services\/?$/,
 ];
 
 export function languageFromPath(pathname = '/') {

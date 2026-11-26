@@ -17,7 +17,7 @@
   "scripts": {
     "start": "vite",
     "build": "vite build",
-    "test": "node --test src/lib/screenshotLayout.test.mjs src/lib/screenshotSlices.test.mjs src/lib/validation.screenshots.test.mjs src/i18n/paths.test.mjs src/lib/pageMeta.test.mjs src/i18n/content.test.mjs",
+    "test": "node --test src/lib/screenshotLayout.test.mjs src/lib/screenshotSlices.test.mjs src/lib/validation.screenshots.test.mjs src/i18n/paths.test.mjs src/lib/pageMeta.test.mjs src/i18n/content.test.mjs src/lib/phase4.test.mjs",
     "slices:build": "node scripts/build-screenshot-slices.mjs",
     "serve": "vite preview",
     "test:e2e": "playwright test",

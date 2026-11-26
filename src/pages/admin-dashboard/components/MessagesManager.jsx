@@ -5,6 +5,7 @@ import Breadcrumb from 'components/ui/Breadcrumb';
 import EmptyState from 'components/ui/EmptyState';
 import LoadError from 'components/ui/LoadError';
 import { useToast } from 'context/ToastContext';
+import { budgetLabel } from 'lib/budget.mjs';
 import {
   deleteMessage,
   listMessages,
@@ -366,7 +367,7 @@ const MessagesManager = () => {
                     {selected.budget && (
                       <div>
                         <dt className="text-secondary-500 dark:text-muted">Budget</dt>
-                        <dd className="font-medium text-primary-800 dark:text-text-primary"><bdi>{selected.budget}</bdi></dd>
+                        <dd className="font-medium text-primary-800 dark:text-text-primary"><bdi>{budgetLabel(selected.budget)}</bdi></dd>
                       </div>
                     )}
                     {selected.timeline && (

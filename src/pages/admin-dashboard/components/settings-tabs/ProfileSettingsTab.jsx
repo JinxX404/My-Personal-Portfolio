@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { whatsappNumber } from 'lib/whatsapp.mjs';
 import Icon from 'components/AppIcon';
 import Image from 'components/AppImage';
 import BilingualField from 'components/admin/BilingualField';
@@ -192,6 +193,31 @@ const ProfileSettingsTab = ({ settings, onChange, freelanceProjects, onFreelance
               />
               <Icon name="Phone" size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary-400 dark:text-muted" />
             </div>
+          </div>
+
+          {/* WhatsApp */}
+          <div>
+            <label htmlFor="profile-whatsapp" className="block text-sm font-semibold text-primary-700 mb-2 dark:text-text-primary">
+              WhatsApp Number
+            </label>
+            <div className="relative">
+              <input
+                id="profile-whatsapp"
+                type="tel"
+                dir="ltr"
+                value={settings.whatsapp || ''}
+                onChange={(e) => onChange({ ...settings, whatsapp: e.target.value })}
+                placeholder="+20 100 000 0000"
+                className="w-full pl-12 pr-4 py-3 border border-primary-200 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent dark:border-border"
+                aria-describedby="profile-whatsapp-hint"
+              />
+              <Icon name="MessageCircle" size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-secondary-400 dark:text-muted" />
+            </div>
+            <p id="profile-whatsapp-hint" className={`mt-1 text-xs ${settings.whatsapp && !whatsappNumber(settings.whatsapp) ? 'text-error' : 'text-secondary-500 dark:text-muted'}`}>
+              {settings.whatsapp && !whatsappNumber(settings.whatsapp)
+                ? 'Use the international format with the country code, e.g. +20 100 000 0000.'
+                : 'Shows a "Chat on WhatsApp" button on the contact page. Leave empty to hide it.'}
+            </p>
           </div>
 
           {/* Location */}

@@ -37,6 +37,10 @@ test('alternatePath only for pages that exist in both languages', () => {
   assert.equal(alternatePath('/login', 'ar'), null);
   assert.equal(alternatePath('/nope', 'ar'), null);
   assert.equal(isLocalizedPath('/projects/'), true);
+  assert.equal(alternatePath('/services', 'ar'), '/ar/services');
+  assert.equal(alternatePath('/ar/services', 'en'), '/services');
+  assert.equal(localizePath('/contact-hub?service=abc', 'ar'), '/ar/contact-hub?service=abc');
+  assert.equal(localizePath('/services-manager', 'ar'), '/services-manager');
 });
 
 test('Arabic and English dictionaries have the same keys and placeholders', () => {

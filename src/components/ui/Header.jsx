@@ -7,6 +7,7 @@ import { prefetchPath } from 'lib/routeChunks';
 import { useI18n } from 'i18n/I18nContext';
 import { stripLanguage } from 'i18n/paths.mjs';
 import LanguageSwitcher from './LanguageSwitcher';
+import { useHasServices } from 'hooks/usePublicServices';
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -16,13 +17,16 @@ const Header = () => {
   const { t, lp } = useI18n();
   // Active-link and header-style checks use the path without the /ar prefix.
   const pathname = stripLanguage(location.pathname);
+  // The Services link appears once at least one service is published.
+  const showServices = useHasServices() || pathname === '/services';
 
   const navigationItems = [
     { name: t('nav.home'), path: '/', icon: 'Home' },
     { name: t('nav.portfolio'), path: '/projects', icon: 'Briefcase' },
+    showServices && { name: t('nav.services'), path: '/services', icon: 'Layers' },
     { name: t('nav.about'), path: '/about-story', icon: 'User' },
     { name: t('nav.contact'), path: '/contact-hub', icon: 'Mail' }
-  ];
+  ].filter(Boolean);
 
   // Throttle scroll handler for performance
   const throttledHandleScroll = useCallback(() => {
