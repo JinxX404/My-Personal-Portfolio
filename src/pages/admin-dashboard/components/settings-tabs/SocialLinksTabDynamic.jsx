@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
+import { detectPlatform as detectSocialPlatform } from 'lib/socialPlatforms.mjs';
 import Icon from 'components/AppIcon';
 
 const platformColorMap = {
+  success:       { bg10: 'bg-success/10 dark:bg-success-900/30',  text: 'text-success dark:text-success-text' },
+  accent:        { bg10: 'bg-accent/10 dark:bg-accent-subtle',     text: 'text-accent dark:text-accent-text' },
+  warning:       { bg10: 'bg-warning/10 dark:bg-warning-900/40',   text: 'text-warning' },
   'primary-600': { bg10: 'bg-primary-600/10 dark:bg-white/10', text: 'text-primary-600 dark:text-slate-200' },
   'gray-700':    { bg10: 'bg-gray-700/10 dark:bg-white/10',    text: 'text-gray-700 dark:text-gray-200' },
   'blue-600':    { bg10: 'bg-blue-600/10 dark:bg-blue-400/15', text: 'text-blue-600 dark:text-blue-400' },
@@ -27,58 +31,13 @@ const SocialLinksTabDynamic = ({ settings, onChange }) => {
   const [newLinkLabel, setNewLinkLabel] = useState('');
   const [newLinkUrl, setNewLinkUrl] = useState('');
 
-  // Platform detection from URL
-  const detectPlatform = (url) => {
-    if (!url) return { name: 'Link', icon: 'Link', color: 'primary-600' };
-    const urlLower = url.toLowerCase();
-    
-    const platforms = {
-      'github.com': { name: 'GitHub', icon: 'Github', color: 'gray-700' },
-      'linkedin.com': { name: 'LinkedIn', icon: 'Linkedin', color: 'blue-600' },
-      'twitter.com': { name: 'X', icon: 'X', color: 'gray-900' },
-      'x.com': { name: 'X', icon: 'X', color: 'gray-900' },
-      'dribbble.com': { name: 'Dribbble', icon: 'Dribbble', color: 'pink-500' },
-      'behance.net': { name: 'Behance', icon: 'Box', color: 'blue-500' },
-      'instagram.com': { name: 'Instagram', icon: 'Instagram', color: 'pink-600' },
-      'facebook.com': { name: 'Facebook', icon: 'Facebook', color: 'blue-700' },
-      'youtube.com': { name: 'YouTube', icon: 'Youtube', color: 'red-600' },
-      'medium.com': { name: 'Medium', icon: 'FileText', color: 'gray-700' },
-      'dev.to': { name: 'DEV', icon: 'Code2', color: 'gray-800' },
-      'stackoverflow.com': { name: 'Stack Overflow', icon: 'HelpCircle', color: 'orange-500' },
-      'codepen.io': { name: 'CodePen', icon: 'Code', color: 'gray-800' },
-      'upwork.com': { name: 'Upwork', icon: 'Briefcase', color: 'green-600' },
-      'fiverr.com': { name: 'Fiverr', icon: 'DollarSign', color: 'green-500' },
-      'freelancer.com': { name: 'Freelancer', icon: 'Users', color: 'blue-500' },
-      'toptal.com': { name: 'Toptal', icon: 'Award', color: 'blue-700' },
-      '99designs.com': { name: '99designs', icon: 'Palette', color: 'orange-500' },
-      'figma.com': { name: 'Figma', icon: 'Figma', color: 'purple-500' },
-      'pinterest.com': { name: 'Pinterest', icon: 'Image', color: 'red-500' },
-      'telegram.org': { name: 'Telegram', icon: 'Send', color: 'blue-500' },
-      't.me': { name: 'Telegram', icon: 'Send', color: 'blue-500' },
-      'discord.com': { name: 'Discord', icon: 'MessageSquare', color: 'indigo-500' },
-      'twitch.tv': { name: 'Twitch', icon: 'Tv', color: 'purple-600' },
-      'tiktok.com': { name: 'TikTok', icon: 'Music', color: 'gray-900' },
-      'reddit.com': { name: 'Reddit', icon: 'MessageCircle', color: 'orange-600' },
-      'gitlab.com': { name: 'GitLab', icon: 'GitBranch', color: 'orange-500' },
-      'bitbucket.org': { name: 'Bitbucket', icon: 'GitBranch', color: 'blue-600' },
-      'notion.so': { name: 'Notion', icon: 'FileText', color: 'gray-800' },
-      'threads.net': { name: 'Threads', icon: 'AtSign', color: 'gray-900' },
-      'snapchat.com': { name: 'Snapchat', icon: 'Camera', color: 'yellow-400' },
-    };
-
-    for (const [domain, platform] of Object.entries(platforms)) {
-      if (urlLower.includes(domain)) {
-        return platform;
-      }
-    }
-    
-    return { name: 'Website', icon: 'ExternalLink', color: 'primary-600' };
-  };
+  // Shared with the public site (src/lib/socialPlatforms.mjs).
+  const detectPlatform = (url, key) => detectSocialPlatform(url, key);
 
   // Convert object to array for easier manipulation
   const linksArray = Object.entries(settings || {})
     .filter(([key, value]) => value !== '')
-    .map(([key, url]) => ({ key, url, platform: detectPlatform(url) }));
+    .map(([key, url]) => ({ key, url, platform: detectPlatform(url, key) }));
 
   const handleAddLink = () => {
     if (!newLinkUrl.trim()) return;
@@ -249,7 +208,8 @@ const SocialLinksTabDynamic = ({ settings, onChange }) => {
             {[
               { name: 'GitHub', placeholder: 'https://github.com/username' },
               { name: 'LinkedIn', placeholder: 'https://linkedin.com/in/username' },
-              { name: 'Twitter', placeholder: 'https://twitter.com/username' },
+              { name: 'X (Twitter)', placeholder: 'https://x.com/username' },
+              { name: 'Mostaql', placeholder: 'https://mostaql.com/u/username' },
               { name: 'Upwork', placeholder: 'https://upwork.com/freelancers/~username' },
               { name: 'Fiverr', placeholder: 'https://fiverr.com/username' },
               { name: 'Dribbble', placeholder: 'https://dribbble.com/username' },

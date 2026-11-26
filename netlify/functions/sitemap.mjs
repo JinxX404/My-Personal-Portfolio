@@ -4,6 +4,9 @@
 
 const SITE_ORIGIN = 'https://moatazz.site';
 const STATIC_PATHS = ['/', '/projects', '/about-story', '/contact-hub'];
+// Listed only while at least one service is published (the page is hidden from
+// the menu otherwise).
+const SERVICES_PATH = '/rest/v1/services?select=id&published=eq.true&limit=1';
 const PROJECTS_PATH =
   '/rest/v1/projects?select=id,updated_at,created_at' +
   '&publishing_status=in.(published,in_progress)&visibility=eq.public&order=created_at.desc';
@@ -28,9 +31,10 @@ const arabicPath = (path) => (path === '/' ? '/ar' : `/ar${path}`);
 
 // Every page is listed in English and Arabic (/ar), each with hreflang links to
 // both versions plus x-default (English), as Google asks for bilingual sites.
-export function buildSitemap(projects = []) {
+export function buildSitemap(projects = [], { hasServices = false } = {}) {
   const pages = [
     ...STATIC_PATHS.map((path) => ({ path })),
+    ...(hasServices ? [{ path: '/services' }] : []),
     ...projects
       .filter((p) => p && typeof p.id === 'string' && /^[A-Za-z0-9-]+$/.test(p.id))
       .map((p) => ({
@@ -56,12 +60,12 @@ export function buildSitemap(projects = []) {
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${body}\n</urlset>\n`;
 }
 
-async function loadProjects() {
+async function loadRows(path) {
   const supabaseUrl = (readEnv('VITE_SUPABASE_URL') || readEnv('SUPABASE_URL')).replace(/\/+$/, '');
   const anonKey = readEnv('VITE_SUPABASE_ANON_KEY') || readEnv('SUPABASE_ANON_KEY');
   if (!supabaseUrl || !anonKey) return [];
   try {
-    const response = await fetch(`${supabaseUrl}${PROJECTS_PATH}`, {
+    const response = await fetch(`${supabaseUrl}${path}`, {
       headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}`, Accept: 'application/json' },
     });
     if (!response.ok) {
@@ -77,8 +81,9 @@ async function loadProjects() {
 }
 
 export default async () => {
-  const projects = await loadProjects();
-  return new Response(buildSitemap(projects), {
+  // The services table may not exist yet (migration 009); that just means no /services.
+  const [projects, services] = await Promise.all([loadRows(PROJECTS_PATH), loadRows(SERVICES_PATH)]);
+  return new Response(buildSitemap(projects, { hasServices: services.length > 0 }), {
     status: 200,
     headers: {
       'content-type': 'application/xml; charset=utf-8',

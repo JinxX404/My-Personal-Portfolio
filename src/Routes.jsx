@@ -15,6 +15,7 @@ const PortfolioGallery = lazy(pageLoaders.projects);
 const CaseStudyDetail = lazy(pageLoaders.project);
 const AboutStory = lazy(pageLoaders.about);
 const ContactHub = lazy(pageLoaders.contact);
+const ServicesPage = lazy(pageLoaders.services);
 const Login = lazy(() => import("pages/login"));
 const ForgotPassword = lazy(() => import("pages/forgot-password"));
 const NotFound = lazy(() => import("pages/not-found"));
@@ -27,6 +28,7 @@ const ProjectsManager = lazy(() => import("pages/admin-dashboard/components/Proj
 const SettingsManager = lazy(() => import("pages/admin-dashboard/components/SettingsManager"));
 
 const MessagesManager = lazy(() => import("pages/admin-dashboard/components/MessagesManager"));
+const ServicesManager = lazy(() => import("pages/admin-dashboard/components/ServicesManager"));
 
 // Old project URLs keep working but send visitors to the canonical address.
 const LegacyProjectRedirect = () => {
@@ -55,6 +57,7 @@ const localizedRoutes = (prefix) => [
   <Route key={`${prefix}project`} path={`${prefix}/projects/:id`} element={<CaseStudyDetail />} />,
   <Route key={`${prefix}about`} path={`${prefix}/about-story`} element={<AboutStory />} />,
   <Route key={`${prefix}contact`} path={`${prefix}/contact-hub`} element={<ContactHub />} />,
+  <Route key={`${prefix}services`} path={`${prefix}/services`} element={<ServicesPage />} />,
 ];
 
 const Routes = () => {
@@ -110,6 +113,13 @@ const Routes = () => {
                 <RequireAuth>
                   <AdminLayout>
                     <MessagesManager />
+                  </AdminLayout>
+                </RequireAuth>
+              } />
+              <Route path="/services-manager" element={
+                <RequireAuth>
+                  <AdminLayout>
+                    <ServicesManager />
                   </AdminLayout>
                 </RequireAuth>
               } />

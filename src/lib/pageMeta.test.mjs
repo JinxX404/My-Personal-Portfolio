@@ -28,6 +28,8 @@ test('route meta resolves in both languages; unknown /ar paths are 404s', () => 
   assert.equal(resolveRouteMeta('/ar/login').noindex, true);
   assert.equal(resolveRouteMeta('/ar/login').page, 'meta.notFound.page');
   assert.equal(resolveRouteMeta('/login').page, 'meta.login.page');
+  assert.equal(resolveRouteMeta('/ar/services').page, 'meta.services.page');
+  assert.equal(resolveRouteMeta('/services-manager').noindex, true);
 });
 
 test('page title', () => {

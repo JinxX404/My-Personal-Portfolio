@@ -29,6 +29,11 @@ const ROUTES = [
     description: 'meta.contact.description',
   },
   {
+    match: (pathname) => pathname === '/services' || pathname === '/services/',
+    page: 'meta.services.page',
+    description: 'meta.services.description',
+  },
+  {
     match: (pathname) =>
       /^\/projects\/[^/]+/.test(pathname) || pathname.startsWith('/case-study-detail'),
     page: 'meta.project.page',
@@ -36,7 +41,7 @@ const ROUTES = [
   },
   {
     match: (pathname) =>
-      ['/admin-dashboard', '/project-manager', '/skills-manager', '/projects-manager', '/settings-manager', '/messages-manager'].some(
+      ['/admin-dashboard', '/project-manager', '/skills-manager', '/projects-manager', '/settings-manager', '/messages-manager', '/services-manager'].some(
         (path) => pathname.startsWith(path)
       ),
     page: 'meta.admin.page',

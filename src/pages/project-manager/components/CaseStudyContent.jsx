@@ -108,18 +108,18 @@ const CaseStudyContent = ({ formData, setFormData }) => {
     }
   };
 
-  const updateTestimonial = (testimonialId, field, value) => {
+  // By position: testimonials saved outside this editor may have no id.
+  const updateTestimonial = (index, field, value) => {
     setFormData(prev => ({
       ...prev,
-      testimonials: (prev.testimonials || []).map(t => (t.id === testimonialId ? { ...t, [field]: value } : t))
+      testimonials: (prev.testimonials || []).map((t, i) => (i === index ? { ...t, [field]: value } : t))
     }));
   };
 
-  const removeTestimonial = (testimonialId) => {
-    const testimonials = formData?.testimonials || [];
+  const removeTestimonial = (index) => {
     setFormData(prev => ({
       ...prev,
-      testimonials: testimonials.filter(t => t.id !== testimonialId)
+      testimonials: (prev.testimonials || []).filter((_, i) => i !== index)
     }));
   };
 
@@ -290,8 +290,8 @@ const CaseStudyContent = ({ formData, setFormData }) => {
             {/* Testimonials List */}
             {formData?.testimonials?.length > 0 && (
               <div className="space-y-3">
-                {formData.testimonials.map(testimonial => (
-                  <div key={testimonial.id} className="p-4 border border-secondary-200 rounded-lg dark:border-border">
+                {formData.testimonials.map((testimonial, index) => (
+                  <div key={testimonial.id ?? `t-${index}`} className="p-4 border border-secondary-200 rounded-lg dark:border-border">
                     <div className="flex justify-between items-start mb-2">
                       <div className="flex items-center">
                         {testimonial.avatar && (
@@ -310,7 +310,7 @@ const CaseStudyContent = ({ formData, setFormData }) => {
                       </div>
                       <button
                         type="button"
-                        onClick={() => removeTestimonial(testimonial.id)}
+                        onClick={() => removeTestimonial(index)}
                         className="text-error-600 hover:text-error-800 transition-colors dark:text-error"
                       >
                         <Icon name="Trash2" size={16} />
@@ -323,8 +323,8 @@ const CaseStudyContent = ({ formData, setFormData }) => {
                         rows={3}
                         value={testimonial.content}
                         valueAr={testimonial.content_ar}
-                        onChange={(value) => updateTestimonial(testimonial.id, 'content', value)}
-                        onChangeAr={(value) => updateTestimonial(testimonial.id, 'content_ar', value)}
+                        onChange={(value) => updateTestimonial(index, 'content', value)}
+                        onChangeAr={(value) => updateTestimonial(index, 'content_ar', value)}
                         placeholderAr="نص الشهادة بالعربية"
                       />
                       <div className="grid grid-cols-1 gap-3">
@@ -332,27 +332,38 @@ const CaseStudyContent = ({ formData, setFormData }) => {
                           label="Name"
                           value={testimonial.name}
                           valueAr={testimonial.name_ar}
-                          onChange={(value) => updateTestimonial(testimonial.id, 'name', value)}
-                          onChangeAr={(value) => updateTestimonial(testimonial.id, 'name_ar', value)}
+                          onChange={(value) => updateTestimonial(index, 'name', value)}
+                          onChangeAr={(value) => updateTestimonial(index, 'name_ar', value)}
                           placeholderAr="الاسم"
                         />
                         <BilingualField
                           label="Role"
                           value={testimonial.role}
                           valueAr={testimonial.role_ar}
-                          onChange={(value) => updateTestimonial(testimonial.id, 'role', value)}
-                          onChangeAr={(value) => updateTestimonial(testimonial.id, 'role_ar', value)}
+                          onChange={(value) => updateTestimonial(index, 'role', value)}
+                          onChangeAr={(value) => updateTestimonial(index, 'role_ar', value)}
                           placeholderAr="المسمى"
                         />
                         <BilingualField
                           label="Company"
                           value={testimonial.company}
                           valueAr={testimonial.company_ar}
-                          onChange={(value) => updateTestimonial(testimonial.id, 'company', value)}
-                          onChangeAr={(value) => updateTestimonial(testimonial.id, 'company_ar', value)}
+                          onChange={(value) => updateTestimonial(index, 'company', value)}
+                          onChangeAr={(value) => updateTestimonial(index, 'company_ar', value)}
                           placeholderAr="الشركة"
                         />
                       </div>
+                      <label className="flex items-center gap-2 text-sm text-secondary-700 dark:text-text-secondary cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={testimonial.featured === true}
+                          onChange={(e) => updateTestimonial(index, 'featured', e.target.checked)}
+                          className="h-4 w-4 rounded border-primary-300 text-accent focus:ring-accent"
+                          data-testimonial-featured
+                        />
+                        Show on the homepage
+                        <span className="text-xs text-secondary-500 dark:text-muted">(published projects only)</span>
+                      </label>
                     </div>
                   </div>
                 ))}

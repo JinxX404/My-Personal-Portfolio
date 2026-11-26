@@ -4,7 +4,7 @@ import Icon from 'components/AppIcon';
 import { useFocusTrap } from 'hooks/useFocusTrap';
 import { useI18n } from 'i18n/I18nContext';
 
-const Modal = ({ isOpen, onClose, title, children, footer }) => {
+const Modal = ({ isOpen, onClose, title, children, footer, size = 'md' }) => {
   const modalRef = useRef(null);
   const { t } = useI18n();
   const focusTrapRef = useFocusTrap(isOpen);
@@ -47,7 +47,7 @@ const Modal = ({ isOpen, onClose, title, children, footer }) => {
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-surface dark:bg-surface rounded-xl shadow-xl max-w-md w-full p-6 max-h-[90vh] overflow-y-auto border border-border dark:border-border-strong"
+          className={`bg-surface dark:bg-surface rounded-xl shadow-xl ${size === 'xl' ? 'max-w-3xl' : 'max-w-md'} w-full p-6 max-h-[90vh] overflow-y-auto border border-border dark:border-border-strong`}
           onClick={(e) => e.stopPropagation()}
           ref={combinedRef}
         >

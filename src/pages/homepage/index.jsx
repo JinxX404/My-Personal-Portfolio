@@ -10,6 +10,7 @@ import HeroSection from './components/HeroSection';
 import FeaturedWork from './components/FeaturedWork';
 import SkillsVisualization from './components/SkillsVisualization';
 import WhoAmI from './components/WhoAmI';
+import TestimonialsStrip from './components/TestimonialsStrip';
 
 const Homepage = () => {
   const progressRef = useRef(null);
@@ -71,6 +72,9 @@ const Homepage = () => {
           <FeaturedWork />
         </div>
       </section>
+
+      {/* Client testimonials (hidden until one is featured) */}
+      <TestimonialsStrip />
 
       {/* Skills Visualization Section */}
       <section className="py-20 bg-surface dark:bg-surface transition-theme">

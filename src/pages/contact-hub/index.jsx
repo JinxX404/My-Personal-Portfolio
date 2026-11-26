@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import Icon from "components/AppIcon";
 
@@ -7,13 +8,24 @@ import ContactInfo from "./components/ContactInfo";
 import { usePortfolioSettings } from "context/PortfolioSettingsContext";
 import { safeHref } from "lib/safeUrl";
 import { useI18n } from "i18n/I18nContext";
+import { usePublicServices } from "hooks/usePublicServices";
+import { prepareServices } from "lib/services.mjs";
 
 const ContactHub = () => {
-  const [selectedInquiryType, setSelectedInquiryType] = useState("general");
+  const [searchParams] = useSearchParams();
+  const serviceId = searchParams.get("service");
+  // A link from a service card opens the project form about that service.
+  const [selectedInquiryType, setSelectedInquiryType] = useState(serviceId ? "project" : "general");
   const { siteSettings, profile } = usePortfolioSettings();
   const formEnabled = siteSettings?.enable_contact_form !== false;
   const email = profile?.email?.trim();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const { services } = usePublicServices();
+  const service = useMemo(
+    () => (serviceId ? prepareServices(services, lang).find((item) => item.id === serviceId) : null),
+    [serviceId, services, lang]
+  );
+  const initialSubject = service ? t("contact.form.serviceSubject", { service: service.title }) : "";
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -94,6 +106,7 @@ const ContactHub = () => {
                 <ContactForm
                   selectedInquiryType={selectedInquiryType}
                   onInquiryTypeChange={setSelectedInquiryType}
+                  initialSubject={initialSubject}
                 />
               ) : (
                 <div className="bg-surface rounded-2xl shadow-lg p-8 border border-border dark:border-border-strong text-center">

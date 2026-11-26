@@ -4,6 +4,7 @@ import Icon from "components/AppIcon";
 import { usePortfolioSettings } from "context/PortfolioSettingsContext";
 import { safeHref } from "lib/safeUrl";
 import { useI18n } from "i18n/I18nContext";
+import { detectPlatform } from "lib/socialPlatforms.mjs";
 
 const socialColorMap = {
   "blue-600": {
@@ -71,89 +72,14 @@ const socialColorMap = {
 
 const SocialLinks = ({ embedded = false }) => {
   const { socialLinks } = usePortfolioSettings();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
 
-  const platformMeta = {
-    github: {
-      name: "GitHub",
-      icon: "Github",
-      description: "Open source projects & code",
-      color: "gray-800",
-    },
-    linkedin: {
-      name: "LinkedIn",
-      icon: "Linkedin",
-      description: "Professional updates & networking",
-      color: "blue-600",
-    },
-    twitter: {
-      name: "Twitter / X",
-      icon: "Twitter",
-      description: "Tech insights & thoughts",
-      color: "blue-400",
-    },
-    dribbble: {
-      name: "Dribbble",
-      icon: "Dribbble",
-      description: "Design work & creative process",
-      color: "pink-500",
-    },
-    behance: {
-      name: "Behance",
-      icon: "Box",
-      description: "Creative showcase",
-      color: "blue-500",
-    },
-    instagram: {
-      name: "Instagram",
-      icon: "Instagram",
-      description: "Visual content",
-      color: "pink-600",
-    },
-    facebook: {
-      name: "Facebook",
-      icon: "Facebook",
-      description: "Social profile",
-      color: "blue-700",
-    },
-    youtube: {
-      name: "YouTube",
-      icon: "Youtube",
-      description: "Video content",
-      color: "red-600",
-    },
-    medium: {
-      name: "Medium",
-      icon: "FileText",
-      description: "Articles & writing",
-      color: "gray-700",
-    },
-    dev_to: {
-      name: "DEV.to",
-      icon: "Code",
-      description: "Developer community",
-      color: "gray-800",
-    },
-    stackoverflow: {
-      name: "Stack Overflow",
-      icon: "HelpCircle",
-      description: "Q&A profile",
-      color: "orange-600",
-    },
-    codepen: {
-      name: "CodePen",
-      icon: "Code2",
-      description: "Code snippets & experiments",
-      color: "gray-800",
-    },
-  };
-
+  // Every saved link is shown; the platform (name, icon, colour) comes from the
+  // link's address, so profiles such as Mostaql get their own label.
   const socialPlatforms = Object.entries(socialLinks || {})
-    .filter(([key, url]) => platformMeta[key] && safeHref(url))
-    .map(([key, url]) => ({
-      ...platformMeta[key],
-      url: safeHref(url),
-    }));
+    .map(([key, url]) => ({ key, url: safeHref(url), platform: detectPlatform(url, key, lang) }))
+    .filter((link) => link.url)
+    .map(({ key, url, platform }) => ({ key, url, name: platform.label, icon: platform.icon, color: platform.color }));
 
   const cardWrapper = embedded ? "" : "bg-surface dark:bg-surface rounded-2xl shadow-lg p-8 border border-border dark:border-border-strong";
 
@@ -183,7 +109,7 @@ const SocialLinks = ({ embedded = false }) => {
               socialColorMap[platform.color] || socialColorMap["blue-600"];
             return (
               <motion.a
-                key={platform.name}
+                key={platform.key}
                 href={platform.url}
                 target="_blank"
                 rel="noopener noreferrer"

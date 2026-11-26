@@ -51,6 +51,12 @@ const Sidebar = ({ isOpen, onClose }) => {
       description: 'Manage skills & tech'
     },
     {
+      name: 'Services & FAQ',
+      path: '/services-manager',
+      icon: 'Layers',
+      description: 'What you offer'
+    },
+    {
       name: 'New Project',
       path: '/project-manager',
       icon: 'Plus',

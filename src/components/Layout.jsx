@@ -60,7 +60,8 @@ const Layout = ({ children }) => {
     '/skills-manager',
     '/projects-manager',
     '/settings-manager',
-    '/messages-manager'
+    '/messages-manager',
+    '/services-manager'
   ];
 
   const shouldHide = hideLayoutRoutes.some(route => location.pathname.startsWith(route));

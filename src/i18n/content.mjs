@@ -172,7 +172,7 @@ export function describeMissing(paths) {
     const match = /^(\w+)\[(\d+)\]\.(\w+)$/.exec(path);
     if (!match) return label(path);
     const [, list, index, field] = match;
-    const singular = { content_sections: 'section', metrics: 'metric', testimonials: 'testimonial', screenshots: 'screenshot', timeline: 'timeline item', values: 'value', interests: 'interest' }[list] || list;
+    const singular = { content_sections: 'section', metrics: 'metric', testimonials: 'testimonial', screenshots: 'screenshot', timeline: 'timeline item', values: 'value', interests: 'interest', deliverables: 'deliverable' }[list] || list;
     return `${singular} ${Number(index) + 1} ${label(field)}`;
   });
 }
@@ -191,4 +191,38 @@ export function stripArabicColumns(row) {
 export function isMissingArabicColumnError(error) {
   const text = `${error?.code || ''} ${error?.message || error || ''}`;
   return /PGRST204|column/i.test(text) && /_ar\b/.test(text);
+}
+
+// ---------------------------------------------------------------- Phase 4
+
+export const SERVICE_SPEC = {
+  fields: ['title', 'description', 'price_note'],
+  lists: { deliverables: ['text'] },
+};
+export const FAQ_SPEC = { fields: ['question', 'answer'] };
+
+/** Testimonials marked "featured" on public projects, localized, newest project first. */
+export function featuredTestimonials(projects = [], lang = 'en') {
+  const out = [];
+  for (const project of Array.isArray(projects) ? projects : []) {
+    // Same rule as the project page: testimonials show only with the case study on.
+    if (!project || project.enable_case_study === false || !Array.isArray(project.testimonials)) continue;
+    const local = localize(project, PROJECT_SPEC, lang);
+    local.testimonials.forEach((item, index) => {
+      const raw = project.testimonials[index];
+      const quote = item && (item.content || item.quote);
+      if (!raw || raw.featured !== true || !hasText(quote)) return;
+      out.push({
+        key: `${project.id}-${raw.id || index}`,
+        projectId: project.id,
+        projectTitle: local.title || '',
+        quote,
+        name: item.name || '',
+        role: item.role || '',
+        company: item.company || '',
+        avatar: item.avatar || '',
+      });
+    });
+  }
+  return out;
 }

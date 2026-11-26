@@ -10,6 +10,7 @@ import RecentActivity from './components/RecentActivity';
 import ContentChecklist from './components/ContentChecklist';
 import ArabicChecklist from './components/ArabicChecklist';
 import { useSkills } from 'context/SkillsContext';
+import { fetchAllFaqs, fetchAllServices } from 'services/servicesService';
 
 const formatDay = (value) => {
   const date = value ? new Date(value) : null;
@@ -30,6 +31,19 @@ const AdminDashboard = () => {
   const { skillCategories } = useSkills();
   const [messages, setMessages] = useState([]);
   const [messagesLoading, setMessagesLoading] = useState(true);
+  const [services, setServices] = useState([]);
+  const [faqs, setFaqs] = useState([]);
+
+  // Services and FAQ only feed the Arabic checklist; empty before migration 009.
+  useEffect(() => {
+    let active = true;
+    Promise.all([fetchAllServices(), fetchAllFaqs()]).then(([s, f]) => {
+      if (!active) return;
+      setServices(s.success ? s.data : []);
+      setFaqs(f.success ? f.data : []);
+    });
+    return () => { active = false; };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -133,7 +147,7 @@ const AdminDashboard = () => {
         </div>
 
         <div className="mb-8">
-          <ArabicChecklist projects={projects} settings={settings} skillCategories={skillCategories} />
+          <ArabicChecklist projects={projects} settings={settings} skillCategories={skillCategories} services={services} faqs={faqs} />
         </div>
       </main>
     </>
